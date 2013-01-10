@@ -1,1 +1,5 @@
-MIT License
+Mongo-familiar wrapper for IndexedDB.
+
+## License
+
+MIT
