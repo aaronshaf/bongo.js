@@ -45,7 +45,7 @@ Or just use the ID:
 
 
 ```javascript
-db.people.findOne("12345", function(error,data) {
+db.people.get("12345", function(error,data) {
   if(!error) {
     //success
   }
