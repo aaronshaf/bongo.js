@@ -1,5 +1,5 @@
 (function(window){
-  //"use strict";
+  "use strict";
   var bongo = {};
 
   window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
