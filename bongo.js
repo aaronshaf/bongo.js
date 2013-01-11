@@ -58,6 +58,7 @@
           data._id = Math.random(); //Just for now... for testing
         }
 
+        this.db(function(){});
         this.db(function(db) {
           console.log('0');
           console.log(db);
@@ -69,6 +70,8 @@
           var request = objectStore.add(data);
           transaction.oncomplete = function(event) {
             console.log('transaction complete');
+            console.log(event);
+            callback(event.target.error);
           };
         }.bind(this));
       }
