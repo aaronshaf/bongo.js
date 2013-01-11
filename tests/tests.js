@@ -36,18 +36,10 @@ asyncTest("Insert record", function() {
   db.people.insert({
     name: "John Doe",
     email: "user@domain.com"
-  }, function(err, count) {
+  }, function(error) {
     collection.count(function(err, count) {
       equal(1, count);
       start();
-
-    });
-
-    collection.find().toArray(function(err, results) {
-      equal(1, results.length);
-      ok(results[0].a === 2);
-      start();
-      //client.close();
     });
   });
 });

@@ -15,8 +15,8 @@
   Object.defineProperties(bongo.Collection, {
     "db": {
       enumerable: false,
-      get: function(callback) {
-        var request = window.indexedDB.open(database.name, database.version);
+      value: function(callback) {
+        var request = window.indexedDB.open(this.database.name, this.database.version);
 
         request.onerror = function(event) {
           throw request.webkitErrorMessage || request.error.name;
@@ -24,15 +24,13 @@
 
         request.onsuccess = function(event) {
           console.log('success');
+          callback(event.target.result);
         };
 
         request.onupgradeneeded = function(event) {
           console.log('onupgradeneeded');
-
           var db = event.target.result;
-          console.log(db);
-
-          database.collections.forEach(function(collection) {
+          this.database.collections.forEach(function(collection) {
             if(db.objectStoreNames.contains(collection.name)) {
               db.deleteObjectStore(collection.name);
             }
@@ -45,25 +43,34 @@
             //   });
             // }
           });
-        };
+          callback(event.target.result);
+        }.bind(this);
       }
     },
 
-    "find": {
+    "insert": {
       enumerable: false,
       writable: false,
-      value: function() {
-        if(!this.collectionName) {
-          throw "Could not find collection name";
+      value: function(data, callback) {
+        if(!this.collectionName) return false;
+
+        if(!data._id) {
+          data._id = Math.random(); //Just for now... for testing
         }
 
-        var transaction = db.transaction([this.collectionName], "readonly");
-
-        this.objectStore(function() {
-          var transaction = db.transaction(["customers"], "readwrite");
-        });
-
-        //.add(customerData[i]);
+        this.db(function(db) {
+          console.log('0');
+          console.log(db);
+          console.log(this.collectionName);
+          var transaction = db.transaction([this.collectionName], "readwrite");
+          console.log(transaction);
+          console.log('1');
+          var objectStore = transaction.objectStore(this.collectionName);
+          var request = objectStore.add(data);
+          transaction.oncomplete = function(event) {
+            console.log('transaction complete');
+          };
+        }.bind(this));
       }
     }
   });
@@ -91,8 +98,8 @@
             enumerable: false,
             writable: false
           },
-          'databaseName': {
-            value: database.name,
+          'database': {
+            value: database,
             enumerable: false
           }
         })
