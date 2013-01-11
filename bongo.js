@@ -23,18 +23,16 @@
         };
 
         request.onsuccess = function(event) {
-          console.log('success');
           callback(event.target.result);
         };
 
         request.onupgradeneeded = function(event) {
-          console.log('onupgradeneeded');
           var db = event.target.result;
           this.database.collections.forEach(function(collection) {
             if(db.objectStoreNames.contains(collection.name)) {
               db.deleteObjectStore(collection.name);
             }
-            var objectStore = db.createObjectStore(collection.name, {keyPath: "_id"});
+            var objectStore = db.createObjectStore(collection.name, {keyPath: "_id",autoIncrement:false});
 
             // objectStore.createIndex(collection.name + '__id', '_id', {unique: true});
             // if(collection.indexes) {
@@ -52,26 +50,65 @@
       enumerable: false,
       writable: false,
       value: function(data, callback) {
-        if(!this.collectionName) return false;
-
         if(!data._id) {
-          data._id = Math.random(); //Just for now... for testing
+          data._id = 'a' + Math.random(); //Just for now... for testing
         }
 
         this.db(function(){});
         this.db(function(db) {
-          console.log('0');
-          console.log(db);
-          console.log(this.collectionName);
           var transaction = db.transaction([this.collectionName], "readwrite");
-          console.log(transaction);
-          console.log('1');
           var objectStore = transaction.objectStore(this.collectionName);
           var request = objectStore.add(data);
-          transaction.oncomplete = function(event) {
-            console.log('transaction complete');
-            console.log(event);
+          request.onsuccess = function(event) {
+            callback(event.target.error,event.target.result);
+          };
+        }.bind(this));
+      }
+    },
+
+    "count": {
+      enumerable: false,
+      writable: false,
+      value: function(callback) {
+        this.db(function(){});
+        this.db(function(db) {
+          var transaction = db.transaction([this.collectionName], "readonly");
+          var objectStore = transaction.objectStore(this.collectionName);
+          var request = objectStore.count();
+          request.onsuccess = function(event) {
+            callback(event.target.error,event.target.result);
+          };
+        }.bind(this));
+      }
+    },
+
+    "remove": {
+      enumerable: false,
+      writable: false,
+      value: function(id,callback) {
+        this.db(function(){});
+        this.db(function(db) {
+          var transaction = db.transaction([this.collectionName], "readwrite");
+          var objectStore = transaction.objectStore(this.collectionName);
+          var request = objectStore.delete(id);
+          request.onsuccess = function(event) {
             callback(event.target.error);
+          };
+        }.bind(this));
+      }
+    },
+
+    "findOne": {
+      enumerable: false,
+      writable: false,
+      value: function(criteria,callback) {
+        this.db(function(){});
+        this.db(function(db) {
+          var transaction = db.transaction([this.collectionName], "readonly");
+          var objectStore = transaction.objectStore(this.collectionName);
+          var request = objectStore.count();
+          request.onsuccess = function(event) {
+            callback(event.target.error,event.target.result);
           };
         }.bind(this));
       }
