@@ -104,8 +104,4 @@
   };
 
   window.bongo = bongo;
-
-  if ( typeof define === "function" && define.amd && define.amd.bongo ) {
-    define( "bongo", [], function () { return bongo; } );
-  }
 }(window));
