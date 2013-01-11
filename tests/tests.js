@@ -30,23 +30,31 @@ asyncTest("Get database", function() {
 */
 
 asyncTest("Insert record", function() {
-  //stop(2);
+  stop();
 
   db = bongo.defineDatabase(testDatabase);
   db.people.insert({
     name: "John Doe",
     email: "user@domain.com"
   }, function(error) {
+    ok(!error);
+    start();
+
+    db.people.count(function(error, count) {
+      ok(!error);
+      start();
+    });
+
+    /*
     collection.count(function(err, count) {
       equal(1, count);
       start();
     });
+*/
   });
 });
 
 asyncTest("findOne record", function() {
-  stop();
-
   bongo.defineDatabase(testDatabase);
   bongo.test.people.findOne({
     "_id": "123"
