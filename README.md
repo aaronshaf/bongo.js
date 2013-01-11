@@ -5,8 +5,8 @@
 ```javascript
 var db = bongo.db({
   name: 'acme',
-  version: new Date("2012-12-12 01:13:01"),
-  collections: ["people"]
+  version: new Date("2012-12-12 12:12:12"),
+  collections: ["users"]
 });
 ```
 
@@ -19,7 +19,7 @@ var db = bongo.acme;
 ### Insert
 
 ```javascript
-db.people.insert({
+db.users.insert({
   name: "John Doe",
   email: "john@domain.com"
 });
@@ -28,7 +28,7 @@ db.people.insert({
 ### Get
 
 ```javascript
-db.people.get({
+db.users.get({
   email: "john@domain.com"
 }, function(error,data) {
   if(!error) {
@@ -37,11 +37,11 @@ db.people.get({
 });
 ```
 
-Or just use the ID:
+Or just use the key:
 
 
 ```javascript
-db.people.get("12345", function(error,data) {
+db.users.get("[key]", function(error,data) {
   if(!error) {
     //success
   }
@@ -51,7 +51,7 @@ db.people.get("12345", function(error,data) {
 ### Remove
 
 ```javascript
-db.people.remove({
+db.users.remove({
   email: "john@domain.com"
 }, function(error, data) {
   if(!error) {
@@ -60,11 +60,11 @@ db.people.remove({
 });
 ```
 
-Or just use the ID:
+Or just use the key:
 
 
 ```javascript
-db.people.remove("12345", function(error, data) {
+db.users.remove("[key]", function(error, data) {
   if(!error) {
     //success
   }
