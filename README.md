@@ -1,4 +1,4 @@
-Mongo-familiar wrapper for IndexedDB.
+Easy, peasy, lemon squeezy:
 
 ```javascript
 var db = bongo.defineDatabase({
