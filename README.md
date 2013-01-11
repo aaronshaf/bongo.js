@@ -1,4 +1,6 @@
-Easy, peasy, lemon squeezy:
+## Easy, peasy, lemon squeezy:
+
+### Define database
 
 ```javascript
 var db = bongo.defineDatabase({
@@ -12,6 +14,8 @@ var db = bongo.defineDatabase({
 });
 ```
 
+### Insert
+
 ```javascript
 db.people.insert({
   name: "John Doe",
@@ -19,10 +23,31 @@ db.people.insert({
 });
 ```
 
+### findOne
+
 ```javascript
 db.people.findOne({
   email: "john@domain.com"
 }, function(error,data) {
+  console.log(data);
+});
+```
+
+### Remove
+
+```javascript
+db.people.remove({
+  email: "john@domain.com"
+}, function(error,data) {
+  console.log(data);
+});
+```
+
+Or just use the ID:
+
+
+```javascript
+db.people.remove("12345", function(error,data) {
   console.log(data);
 });
 ```
