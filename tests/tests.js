@@ -12,54 +12,64 @@ var testDatabase = {
 
 test('Define database',function() {
   var database = bongo.defineDatabase(testDatabase);
-  console.log(database);
   ok((typeof database) !== "undefined", "Passed!" );
 });
 
-/*
-asyncTest("Get database", function() {
-  stop();
-
-  bongo.defineDatabase(testDatabase);
-  console.log(bongo.test);
-  bongo.test.then(function() {
-    ok( true, "Passed and ready to resume!" );
-    start();
-  });
-});
-*/
-
-asyncTest("Insert record", function() {
-  stop();
+asyncTest("Insert", function() {
+  expect(1);
 
   db = bongo.defineDatabase(testDatabase);
   db.people.insert({
     name: "John Doe",
     email: "user@domain.com"
-  }, function(error) {
-    ok(!error);
+  }, function(error,id) {
+    ok(!error && id);
     start();
-
-    db.people.count(function(error, count) {
-      ok(!error);
-      start();
-    });
-
-    /*
-    collection.count(function(err, count) {
-      equal(1, count);
-      start();
-    });
-*/
   });
 });
 
-asyncTest("findOne record", function() {
-  bongo.defineDatabase(testDatabase);
-  bongo.test.people.findOne({
-    "_id": "123"
-  },function(data) {
-    ok(data._id);
+asyncTest("count", function() {
+  expect(1);
+
+  db = bongo.defineDatabase(testDatabase);
+  db.people.count(function(error, count) {
+    ok(!error && count === 1);
     start();
   });
+});
+
+/*
+asyncTest("findOne", function() {
+  expect(1);
+
+  bongo.defineDatabase(testDatabase);
+  bongo.test.people.findOne({
+    "name": "John Doe"
+  },function(error,data) {
+    console.log(data);
+    ok(!error && data && data._id);
+    start();
+  });
+});
+*/
+
+asyncTest("remove", function() {
+  expect(1);
+  var id;
+
+  bongo.defineDatabase(testDatabase);
+
+  bongo.test.people.insert({
+    "name": "Jane Doe"
+  },function(error,data) {
+    ok(!error && data && data._id);
+    id = data._id;
+
+    bongo.test.people.remove(id,function(error) {
+      ok(!error);
+      start();
+    });
+  });
+
+
 });
