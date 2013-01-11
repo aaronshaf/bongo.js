@@ -6,9 +6,18 @@ var testDatabase = {
   collections: ['people']
 };
 
-test('db',function() {
+test('db', function() {
   var database = bongo.db(testDatabase);
   ok((typeof database) !== "undefined", "Passed!" );
+});
+
+test('default key generator', function() {
+  var key;
+
+  for(var x = 0;x < 101;x++) {
+    key = bongo.key();
+    ok(typeof key === "string" && key.indexOf('NaN') === -1);
+  }
 });
 
 asyncTest("insert", function() {

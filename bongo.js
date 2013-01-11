@@ -35,7 +35,10 @@
             if(db.objectStoreNames.contains(collection.name)) {
               db.deleteObjectStore(collection.name);
             }
-            var objectStore = db.createObjectStore(collection.name, {keyPath: "_id",autoIncrement:false});
+            var objectStore = db.createObjectStore(collection.name, {
+              keyPath: "_id",
+              autoIncrement:false
+            });
 
             // objectStore.createIndex(collection.name + '__id', '_id', {unique: true});
             // if(collection.indexes) {
@@ -54,7 +57,7 @@
       writable: false,
       value: function(data, callback) {
         if(!data._id) {
-          data._id = 'a' + Math.random(); //Just for now... for testing
+          data._id = bongo.key();
         }
 
         this.db(function(){});
@@ -117,6 +120,31 @@
       }
     }
   });
+
+  bongo.key = function() { //A cheap Mongo-esque key
+    var key_t = Math.floor(new Date().valueOf() / 1000).toString(16);
+    if(!this.key_m) {
+      this.key_m = Math.floor(Math.random() * (16777216)).toString(16);
+    }
+    if(!this.key_p) {
+      this.key_p = Math.floor(Math.random() * (32767)).toString(16);
+    }
+    if(typeof this.key_i === "undefined") {
+      this.key_i = 0;
+    } else if(this.key_i > 0xffffff) {
+      this.key_i = 0;
+    }
+    this.key_i = Number(this.key_i);
+    
+    this.key_i++;
+    var i = this.key_i.toString(16);
+
+    var r = '00000000'.substr(0, 6 - key_t.length) + key_t +
+        '000000'.substr(0, 6 - this.key_m.length) + this.key_m +
+        '0000'.substr(0, 4 - this.key_p.length) + this.key_p +
+        '000000'.substr(0, 6 - i.length) + i;
+    return r;
+  };
 
   bongo.db = function(database) {
     if(!database.name || !database.version) {
