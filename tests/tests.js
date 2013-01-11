@@ -32,8 +32,8 @@ asyncTest("Get database", function() {
 asyncTest("Insert record", function() {
   //stop(2);
 
-  bongo.defineDatabase(testDatabase);
-  bongo.test.people.insert({
+  db = bongo.defineDatabase(testDatabase);
+  db.people.insert({
     name: "John Doe",
     email: "user@domain.com"
   }, function(err, count) {
