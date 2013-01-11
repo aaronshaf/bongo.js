@@ -9,9 +9,11 @@
     throw 'IndexedDB not supported';
   }
 
+  bongo.Database = {};
+
   bongo.Collection = {};
   Object.defineProperties(bongo.Collection, {
-    "objectStore": {
+    "db": {
       enumerable: false,
       get: function(callback) {
         var request = window.indexedDB.open(database.name, database.version);
@@ -31,12 +33,10 @@
           console.log(db);
 
           database.collections.forEach(function(collection) {
-            console.log(collection);
-
             if(db.objectStoreNames.contains(collection.name)) {
               db.deleteObjectStore(collection.name);
             }
-            var objectStore = db.createObjectStore(collection.name, {keyPath: "id",autoIncrement: true});
+            var objectStore = db.createObjectStore(collection.name, {keyPath: "_id"});
 
             // objectStore.createIndex(collection.name + '__id', '_id', {unique: true});
             // if(collection.indexes) {
@@ -57,8 +57,10 @@
           throw "Could not find collection name";
         }
 
+        var transaction = db.transaction([this.collectionName], "readonly");
+
         this.objectStore(function() {
-          
+          var transaction = db.transaction(["customers"], "readwrite");
         });
 
         //.add(customerData[i]);
@@ -72,30 +74,29 @@
       return false;
     }
 
-    var collections = [];
-
-    database.collections.forEach(function(collection) {
-      Object.defineProperty(database,collection.name,{
-
-      });
-    });
-
     if(database.version instanceof Date) {
       database.version = Math.round(database.version.getTime());
     }
 
-    Object.defineProperty(bongo,database.name, {
-      enumerable: true,
-      configurable: true,
-      get: function() {
-
-        /*
-
-        */
-      }
+    database.collections.forEach(function(collection) {
+      Object.defineProperty(database,collection.name, {
+        enumerable: true,
+        value: Object.create(bongo.Collection, {
+          'collectionName' : {
+            value: collection.name,
+            enumerable: false,
+            writable: false
+          },
+          'databaseName': {
+            value: database.name,
+            enumerable: false
+          }
+        })
+      });
     });
 
-    return true;
+    bongo[database.name] = database;
+    return database;
   };
 
   window.bongo = bongo;
