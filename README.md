@@ -1,4 +1,4 @@
-## Easy, peasy, lemon squeezy:
+## Easy, peasy, lemon squeezy
 
 ### Define database
 
@@ -29,7 +29,9 @@ db.people.insert({
 db.people.findOne({
   email: "john@domain.com"
 }, function(error,data) {
-  console.log(data);
+  if(!error) {
+    //success
+  }
 });
 ```
 
@@ -38,8 +40,10 @@ db.people.findOne({
 ```javascript
 db.people.remove({
   email: "john@domain.com"
-}, function(error,data) {
-  console.log(data);
+}, function(error, data) {
+  if(!error) {
+    //success
+  }
 });
 ```
 
@@ -47,8 +51,10 @@ Or just use the ID:
 
 
 ```javascript
-db.people.remove("12345", function(error,data) {
-  console.log(data);
+db.people.remove("12345", function(error, data) {
+  if(!error) {
+    //success
+  }
 });
 ```
 
