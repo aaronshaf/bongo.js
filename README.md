@@ -14,6 +14,12 @@ var db = bongo.defineDatabase({
 });
 ```
 
+### Access database
+
+```javascript
+var db = bongo.acme;
+```
+
 ### Insert
 
 ```javascript
@@ -23,12 +29,23 @@ db.people.insert({
 });
 ```
 
-### findOne
+### Get
 
 ```javascript
-db.people.findOne({
+db.people.get({
   email: "john@domain.com"
 }, function(error,data) {
+  if(!error) {
+    //success
+  }
+});
+```
+
+Or just use the ID:
+
+
+```javascript
+db.people.findOne("12345", function(error,data) {
   if(!error) {
     //success
   }

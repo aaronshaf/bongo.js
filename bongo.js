@@ -98,7 +98,7 @@
       }
     },
 
-    "findOne": {
+    "get": {
       enumerable: false,
       writable: false,
       value: function(criteria,callback) {
@@ -106,7 +106,7 @@
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readonly");
           var objectStore = transaction.objectStore(this.collectionName);
-          var request = objectStore.count();
+          var request = objectStore.get(criteria);
           request.onsuccess = function(event) {
             callback(event.target.error,event.target.result);
           };
