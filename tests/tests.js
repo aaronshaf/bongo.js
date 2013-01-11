@@ -12,6 +12,7 @@ var testDatabase = {
 
 test('Define database',function() {
   var database = bongo.defineDatabase(testDatabase);
+  console.log(database);
   ok((typeof database) !== "undefined", "Passed!" );
 });
 
