@@ -7,14 +7,14 @@ var testDatabase = {
 };
 
 test('db',function() {
-  var database = bongo.defineDatabase(testDatabase);
+  var database = bongo.db(testDatabase);
   ok((typeof database) !== "undefined", "Passed!" );
 });
 
 asyncTest("insert", function() {
   expect(1);
 
-  db = bongo.defineDatabase(testDatabase);
+  db = bongo.db(testDatabase);
   db.people.insert({
     name: "John Doe",
     email: "user@domain.com"
@@ -27,7 +27,7 @@ asyncTest("insert", function() {
 asyncTest("count", function() {
   expect(2);
 
-  db = bongo.defineDatabase(testDatabase);
+  db = bongo.db(testDatabase);
   db.people.insert({
     name: "Bobby Doe",
     email: "user@domain.com"
@@ -45,7 +45,7 @@ asyncTest("count", function() {
 asyncTest("get", function() {
   expect(2);
 
-  bongo.defineDatabase(testDatabase);
+  bongo.db(testDatabase);
   bongo.test.people.insert({
     "name": "James Doe"
   },function(error,id) {
@@ -61,7 +61,7 @@ asyncTest("remove", function() {
   expect(3);
   var id;
 
-  bongo.defineDatabase(testDatabase);
+  bongo.db(testDatabase);
 
   bongo.test.people.insert({
     "name": "Jane Doe"

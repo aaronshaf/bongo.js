@@ -118,7 +118,7 @@
     }
   });
 
-  bongo.defineDatabase = function(database) {
+  bongo.db = function(database) {
     if(!database.name || !database.version) {
       window.console.log('Database name or version missing.');
       return false;

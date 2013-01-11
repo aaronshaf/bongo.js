@@ -3,7 +3,7 @@
 ### Define database
 
 ```javascript
-var db = bongo.defineDatabase({
+var db = bongo.db({
   name: 'acme',
   version: new Date("2012-12-12 01:13:01"),
   collections: ["people"]
