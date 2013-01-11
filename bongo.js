@@ -78,6 +78,10 @@
       database.version = Math.round(database.version.getTime());
     }
 
+    if(typeof bongo[database.name] !== 'undefined' && database.version === bongo[database.name].version) {
+      return bongo[database.name];
+    }
+
     database.collections.forEach(function(collection) {
       Object.defineProperty(database,collection.name, {
         enumerable: true,
