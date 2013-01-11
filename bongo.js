@@ -29,6 +29,9 @@
         request.onupgradeneeded = function(event) {
           var db = event.target.result;
           this.database.collections.forEach(function(collection) {
+            if(typeof collection === "string") {
+              collection = {name: collection};
+            }
             if(db.objectStoreNames.contains(collection.name)) {
               db.deleteObjectStore(collection.name);
             }
@@ -130,6 +133,9 @@
     }
 
     database.collections.forEach(function(collection) {
+      if(typeof collection === "string") {
+        collection = {name: collection};
+      }
       Object.defineProperty(database,collection.name, {
         enumerable: true,
         value: Object.create(bongo.Collection, {

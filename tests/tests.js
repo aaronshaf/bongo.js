@@ -3,11 +3,7 @@
 var testDatabase = {
   name: 'test',
   version: new Date(), //new Date("2012-12-12 11:13:01"),
-  collections: [
-    {
-      name: 'people'
-    }
-  ]
+  collections: ['people']
 };
 
 test('db',function() {
