@@ -1,5 +1,3 @@
-[![Build Status](https://secure.travis-ci.org/aaronshaf/bongo.png)](http://travis-ci.org/aaronshaf/bongo)
-
 ## Easy, peasy, lemon squeezy
 
 ### Define database
