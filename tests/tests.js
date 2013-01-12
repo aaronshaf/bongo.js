@@ -2,13 +2,18 @@
 
 var testDatabase = {
   name: 'test',
-  version: new Date(), //new Date("2012-12-12 11:13:01"),
+  //version: new Date(), //new Date("2012-12-12 11:13:01"),
   collections: ['people']
 };
 
 test('db', function() {
+  expect(2);
+
   var database = bongo.db(testDatabase);
-  ok((typeof database) !== "undefined", "Passed!" );
+  ok((typeof database) !== "undefined");
+
+  var database = bongo.db('test',['people']);
+  ok((typeof database) !== "undefined", "Alternative");
 });
 
 test('default key generator', function() {

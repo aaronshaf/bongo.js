@@ -16,6 +16,7 @@
     "db": {
       enumerable: false,
       value: function(callback) {
+        var tries = 1;
         var request = window.indexedDB.open(this.database.name, this.database.version);
 
         request.onerror = function(event) {
@@ -146,10 +147,55 @@
     return r;
   };
 
-  bongo.db = function(database) {
-    if(!database.name || !database.version) {
-      window.console.log('Database name or version missing.');
+  var lastMonday = function() {
+    var d = new Date();
+    d.setHours(0,0,0,0);
+    var dif = (d.getDay() + 6) % 7;
+    return new Date(d - dif * 24 * 60 * 60 * 1000);
+  };
+
+  function clone(obj) {
+    var clonedObject = Object.create(obj.prototype || null);
+    Object.keys(obj).map(function (i) {
+      clonedObject[i] = obj[i];
+    });
+    return clonedObject;
+  }
+
+  bongo.db = function(database,collections) {
+    if(typeof database === "string") {
+      database = {
+        name: database
+      };
+    }
+
+    if(!database.name) {
+      window.console.log('Database name missing.');
       return false;
+    }
+
+    if(typeof collections !== "undefined" && collections instanceof Array) {
+      database.collections = collections;
+    }
+    
+    database = clone(database);
+
+    if(typeof database.version === "undefined") {
+      // THIS CODE NEEDS SOME TENDER LOVING CARE
+      var version;
+      var databaseString = JSON.stringify(database);
+      var dbCache = window.localStorage.getItem('bongo-' + database.name);
+      if(dbCache && (dbCache = JSON.parse(dbCache)) && databaseString === JSON.stringify(dbCache.definition)) {
+        version = parseInt(dbCache.version,10);
+      } else {
+        version = lastMonday();
+      }
+
+      window.localStorage.setItem('bongo:' + database.name,JSON.stringify({
+        definition: database,
+        version: version
+      }));
+      database.version = version;
     }
 
     if(database.version instanceof Date) {
@@ -165,7 +211,7 @@
         collection = {name: collection};
       }
       Object.defineProperty(database,collection.name, {
-        enumerable: true,
+        enumerable: false,
         value: Object.create(bongo.Collection, {
           'collectionName' : {
             value: collection.name,
