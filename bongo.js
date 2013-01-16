@@ -108,7 +108,7 @@
     "get": {
       enumerable: false,
       writable: false,
-      value: function(criteria,callback) {
+      value: function(criteria, callback) {
         this.db(function(){});
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readonly");
@@ -116,6 +116,44 @@
           var request = objectStore.get(criteria);
           request.onsuccess = function(event) {
             callback(event.target.error,event.target.result);
+          };
+        }.bind(this));
+      }
+    },
+
+    "find": {
+      enumerable: false,
+      writable: false,
+      value: function(criteria, callback) {
+        this.db(function(){});
+        this.db(function(db) {
+          var transaction = db.transaction([this.collectionName], "readonly");
+          var objectStore = transaction.objectStore(this.collectionName);
+
+          var criteriaKeys = Object.keys(criteria);
+          var data = [];
+
+          objectStore.openCursor().onsuccess = function(event) {
+            if(event.target.error) {
+              return callback(event.target.error);
+            }
+            var cursor = event.target.result;
+
+            if(cursor) {
+              if(!criteriaKeys.length) {
+                data.push(cursor.value);
+              } else {
+                var match = false;
+                criteriaKeys.forEach(function(key) {
+                  if(cursor.value[key] && cursor.value[key] === criteria[key]) {
+                    data.push(cursor.value);
+                  }
+                });
+              }
+              cursor.continue();
+            } else {
+              callback(null,data);
+            }
           };
         }.bind(this));
       }

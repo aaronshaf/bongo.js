@@ -91,3 +91,14 @@ asyncTest("remove", function() {
     });
   });
 });
+
+asyncTest("find", function() {
+  expect(1);
+
+  bongo.db(testDatabase);
+
+  bongo.test.people.find({},function(error,data) {
+    ok(!error && data.length, 'Simple find; no criteria');
+    start();
+  });
+});
