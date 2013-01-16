@@ -1,3 +1,6 @@
+// https://github.com/aaronshaf/bongo
+// License: MIT
+
 (function(window){
   "use strict";
   var bongo = {};
