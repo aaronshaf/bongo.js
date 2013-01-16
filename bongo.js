@@ -80,6 +80,7 @@
       enumerable: false,
       writable: false,
       value: function(data, callback) {
+        callback = callback || noop;
         this.db(function(){});
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readwrite");
@@ -239,7 +240,10 @@
     return r;
   };
 
+  var noop = function() {};
+
   var extend = function(destination, source) {
+    destination = destination || {};
     for (var property in source) {
         if (source.hasOwnProperty(property)) {
             destination[property] = source[property];
