@@ -73,6 +73,57 @@
       }
     },
 
+    "save": {
+      enumerable: false,
+      writable: false,
+      value: function(data, callback) {
+        this.db(function(){});
+        this.db(function(db) {
+          var transaction = db.transaction([this.collectionName], "readwrite");
+          var objectStore = transaction.objectStore(this.collectionName);
+          var ids = [];
+
+          function save(data) {
+            var request;
+
+            if(!data._id) {
+              data._id = bongo.key();
+              request = objectStore.add(data);
+              request.onsuccess = function(event) {
+                if(!event.target.error && event.target.result) {
+                  ids.push(event.target.result);
+                }
+              };
+            } else {
+              request = objectStore.get(data._id);
+              request.onsuccess = function(event) {
+                data = extend(event.target.result,data);
+                var request = objectStore.put(data,data._id);
+                request.onsuccess = function(event) {
+                  if(!event.target.error && event.target.result) {
+                    ids.push(event.target.result);
+                  }
+                };
+              };
+            }
+          }
+
+          if(data instanceof Array) {
+            data.forEach(function(record) {
+              save(record);
+            });
+          } else {
+            save(data);
+          }
+
+          transaction.oncomplete = function() {
+            callback(null,ids);
+          };
+
+        }.bind(this));
+      }
+    },
+
     "count": {
       enumerable: false,
       writable: false,
@@ -183,6 +234,15 @@
         '0000'.substr(0, 4 - this.key_p.length) + this.key_p +
         '000000'.substr(0, 6 - i.length) + i;
     return r;
+  };
+
+  var extend = function(destination, source) {
+    for (var property in source) {
+        if (source.hasOwnProperty(property)) {
+            destination[property] = source[property];
+        }
+    }
+    return destination;
   };
 
   var lastMonday = function() {

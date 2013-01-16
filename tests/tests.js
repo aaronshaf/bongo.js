@@ -38,6 +38,32 @@ asyncTest("insert", function() {
   });
 });
 
+asyncTest("save", function() {
+  expect(2);
+
+  db = bongo.db(testDatabase);
+  db.people.save({
+    name: "John Doe",
+    email: "user@domain.com"
+  }, function(error,ids) {
+    ok(!error && ids.length === 1,"Save one new records");
+  });
+
+  db.people.save([
+      {
+        name: "John Doe",
+        email: "user@domain.com"
+      },
+      {
+        name: "Jane Doe",
+        email: "user@domain.com"
+      }
+    ], function(error,ids) {
+    ok(!error && ids.length === 2,"Save multiple new records");
+    start();
+  });
+});
+
 asyncTest("count", function() {
   expect(2);
 
