@@ -44,12 +44,14 @@
               autoIncrement:false
             });
 
-            // objectStore.createIndex(collection.name + '__id', '_id', {unique: true});
-            // if(collection.indexes) {
-            //   collection.indexes.forEach(function(index) {
+            /*
+            objectStore.createIndex(collection.name + '__id', '_id', {unique: true});
+            if(collection.indexes) {
+              collection.indexes.forEach(function(index) {
 
-            //   });
-            // }
+              });
+            }
+            */
           });
           callback(event.target.result);
         }.bind(this);
@@ -164,7 +166,7 @@
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readwrite");
           var objectStore = transaction.objectStore(this.collectionName);
-          var request = objectStore.delete(id);
+          var request = objectStore['delete'](id);
           request.onsuccess = function(event) {
             callback(event.target.error);
           };
@@ -221,7 +223,7 @@
                   data.push(cursor.value);
                 }
               }
-              cursor.continue();
+              cursor['continue']();
             } else {
               callback(null,data);
             }
