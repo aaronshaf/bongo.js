@@ -107,7 +107,6 @@
                 var request;
 
                 if(!event.target.result) {
-                  console.log('insert');
                   request = objectStore.add(data);
                 } else {
                   data = extend(event.target.result,data);
@@ -115,7 +114,7 @@
                 }
                 
                 request.onerror = function(event) {
-                  console.log(event);
+                  //console.log(event);
                 };
                 request.onsuccess = function(event) {
                   if(!event.target.error && event.target.result) {
@@ -194,6 +193,10 @@
       enumerable: false,
       writable: false,
       value: function(criteria, callback) {
+        // self.postMessage({
+        //   debug: criteria
+        // });
+
         this.db(function(){});
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readonly");
@@ -215,7 +218,10 @@
                 var match = true;
                 var key;
                 for(key in criteriaKeys) {
-                  if(!(cursor.value[criteriaKeys[key]] && cursor.value[criteriaKeys[key]] === criteria[criteriaKeys[key]])) {
+                  if(typeof cursor.value[criteriaKeys[key]] === "undefined" || cursor.value[criteriaKeys[key]] !== criteria[criteriaKeys[key]]) {
+                    // self.postMessage({
+                    //   error: cursor.value[criteriaKeys[key]] + ' !== ' + criteria[criteriaKeys[key]]
+                    // });
                     match = false;
                   }
                 }
@@ -293,7 +299,7 @@
     }
 
     if(!database.name) {
-      window.console.log('Database name missing.');
+      //window.console.log('Database name missing.');
       return false;
     }
 
@@ -347,6 +353,13 @@
           }
         })
       });
+    });
+
+    Object.defineProperty(database,'delete', {
+      enumerable: false,
+      value: function() {
+        var request = window.indexedDB.deleteDatabase(database.name);
+      }
     });
 
     bongo[database.name] = database;
