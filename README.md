@@ -31,23 +31,32 @@ db.users.insert({
 });
 ```
 
+### Save
+
+```javascript
+db.users.save({
+  _id: "[key]", //optional
+  name: "John Doe",
+  email: "john@domain.com"
+});
+```
+
 ### Get
 
 ```javascript
-db.users.get({
-  email: "john@domain.com"
-}, function(error,data) {
+db.users.get("[key]", function(error,data) {
   if(!error) {
     //success
   }
 });
 ```
 
-Or just use the key:
-
+### Find
 
 ```javascript
-db.users.get("[key]", function(error,data) {
+db.users.find({
+  email: "john@domain.com"
+}, function(error,data) {
   if(!error) {
     //success
   }
