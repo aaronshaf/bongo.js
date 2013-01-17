@@ -88,6 +88,7 @@
           var ids = [];
 
           function save(data) {
+            if(typeof data === "undefined") return;
             var request;
 
             if(!data._id) {
@@ -101,8 +102,19 @@
             } else {
               request = objectStore.get(data._id);
               request.onsuccess = function(event) {
-                data = extend(event.target.result,data);
-                var request = objectStore.put(data,data._id);
+                var request;
+
+                if(!event.target.result) {
+                  console.log('insert');
+                  request = objectStore.add(data);
+                } else {
+                  data = extend(event.target.result,data);
+                  request = objectStore.put(data);
+                }
+                
+                request.onerror = function(event) {
+                  console.log(event);
+                };
                 request.onsuccess = function(event) {
                   if(!event.target.error && event.target.result) {
                     ids.push(event.target.result);
@@ -198,12 +210,16 @@
               if(!criteriaKeys.length) {
                 data.push(cursor.value);
               } else {
-                var match = false;
-                criteriaKeys.forEach(function(key) {
-                  if(cursor.value[key] && cursor.value[key] === criteria[key]) {
-                    data.push(cursor.value);
+                var match = true;
+                var key;
+                for(key in criteriaKeys) {
+                  if(cursor.value[key] && cursor.value[key] !== criteria[key]) {
+                    match = false;
                   }
-                });
+                }
+                if(match) {
+                  data.push(cursor.value);
+                }
               }
               cursor.continue();
             } else {
@@ -288,18 +304,18 @@
     if(typeof database.version === "undefined") {
       // THIS CODE NEEDS SOME TENDER LOVING CARE
       var version;
-      var databaseString = JSON.stringify(database);
-      var dbCache = window.localStorage.getItem('bongo-' + database.name);
-      if(dbCache && (dbCache = JSON.parse(dbCache)) && databaseString === JSON.stringify(dbCache.definition)) {
-        version = parseInt(dbCache.version,10);
-      } else {
+      // var databaseString = JSON.stringify(database);
+      // var dbCache = window.localStorage.getItem('bongo-' + database.name);
+      // if(dbCache && (dbCache = JSON.parse(dbCache)) && databaseString === JSON.stringify(dbCache.definition)) {
+      //   version = parseInt(dbCache.version,10);
+      // } else {
         version = lastMonday();
-      }
+      // }
 
-      window.localStorage.setItem('bongo:' + database.name,JSON.stringify({
-        definition: database,
-        version: version
-      }));
+      // window.localStorage.setItem('bongo:' + database.name,JSON.stringify({
+      //   definition: database,
+      //   version: version
+      // }));
       database.version = version;
     }
 
@@ -336,4 +352,4 @@
   };
 
   window.bongo = bongo;
-}(window));
+}(self));
