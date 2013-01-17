@@ -119,12 +119,18 @@ asyncTest("remove", function() {
 });
 
 asyncTest("find", function() {
-  expect(1);
+  expect(2);
 
   bongo.db(testDatabase);
 
   bongo.test.people.find({},function(error,data) {
-    ok(!error && data.length, 'Simple find; no criteria');
-    start();
+    ok(!error && data.length, 'No criteria');
+  });
+
+  bongo.test.people.count(function(error, count) {
+    bongo.test.people.find({name: "Bobby Doe"},function(error,data) {
+      ok(!error && data.length < count, 'Find with simple criteria');
+      start();
+    });
   });
 });

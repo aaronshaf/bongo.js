@@ -213,7 +213,7 @@
                 var match = true;
                 var key;
                 for(key in criteriaKeys) {
-                  if(cursor.value[key] && cursor.value[key] !== criteria[key]) {
+                  if(!(cursor.value[criteriaKeys[key]] && cursor.value[criteriaKeys[key]] === criteria[criteriaKeys[key]])) {
                     match = false;
                   }
                 }
