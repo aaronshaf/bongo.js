@@ -12,27 +12,43 @@
     throw 'IndexedDB not supported';
   }
 
-  bongo.Database = {};
+  // bongo.Database = {};
 
   bongo.Collection = {};
   Object.defineProperties(bongo.Collection, {
     "db": {
       enumerable: false,
       value: function(callback) {
-        var tries = 1;
+        if(this.database.instance) {
+          return callback(this.database.instance);
+        }
         var request = window.indexedDB.open(this.database.name, this.database.version);
 
-        request.onerror = function(event) {
-          throw request.webkitErrorMessage || request.error.name;
+        // self.postMessage({error:[this.database.name, this.database.version]});
+  
+        request.onblocked = function(event) {
+          // self.postMessage({error:'blocked'});
+          // self.postMessage({error:request.webkitErrorMessage || request.error.name});
         };
 
         request.onsuccess = function(event) {
-          callback(event.target.result);
+          // self.postMessage({error:"success"});
+          if(!this.database.instance) {
+            this.database.instance = event.target.result;
+          }
+          callback(this.database.instance);
+        }.bind(this);
+
+        request.onerror = function(event) {
+          // self.postMessage({error:'error'});
+          throw request.webkitErrorMessage || request.error.name;
         };
 
         request.onupgradeneeded = function(event) {
+          // self.postMessage({error:'Database upgrade needed.'});
+
           var db = event.target.result;
-          this.database.collections.forEach(function(collection) {
+          var define = function(collection) {
             if(typeof collection === "string") {
               collection = {name: collection};
             }
@@ -44,17 +60,64 @@
               autoIncrement:false
             });
 
-            /*
-            objectStore.createIndex(collection.name + '__id', '_id', {unique: true});
             if(collection.indexes) {
-              collection.indexes.forEach(function(index) {
-
-              });
+              if(collection.indexes instanceof Array) {
+                collection.indexes.forEach(function(index) {
+                  if(typeof index === "string") {
+                    objectStore.createIndex(index,index,{unique: false});
+                  }
+                });
+              } else {
+                // Add support for object literal
+              }
             }
-            */
-          });
+          };
+
+          if(this.database.collections instanceof Array) {
+           this. database.collections.forEach(function(collection) {
+              define(collection);
+            });
+          } else {
+            var collection, collectionName;
+            for(collectionName in this.database.collections) {
+              collection = this.database.collections[collectionName];
+              collection.name = collectionName;
+              define(collection);
+            }
+          }
           callback(event.target.result);
         }.bind(this);
+      }
+    },
+
+    "prepare": {
+      enumerable: false,
+      writable: false,
+      value: function(data) {
+        var x;
+        //If there's an indexed field in the record that is boolean, change to 0/1 number
+        
+        var prepare = function(data) {
+          if(this.indexes instanceof Array) {
+            // self.postMessage({error:1});
+            this.indexes.forEach(function(index) {
+              if(typeof data[index] === "boolean") {
+                data[index] = data[index] ? 1 : 0;
+              }
+            });
+          }
+          return data;
+        }.bind(this);
+
+        if(data instanceof Array) {
+          for(x = 0;x < data.length;x++) {
+            data[x] = prepare(data[x]);
+          }
+        } else {
+          data = prepare(data);
+        }
+
+        return data;
       }
     },
 
@@ -65,8 +128,9 @@
         if(!data._id) {
           data._id = bongo.key();
         }
+        data = this.prepare(data);
 
-        this.db(function(){});
+        // this.db(function(){});
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readwrite");
           var objectStore = transaction.objectStore(this.collectionName);
@@ -83,13 +147,14 @@
       writable: false,
       value: function(data, callback) {
         callback = callback || noop;
-        this.db(function(){});
+        data = this.prepare(data);
+        //this.db(function(){});
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readwrite");
           var objectStore = transaction.objectStore(this.collectionName);
           var ids = [];
 
-          function save(data) {
+          var save = function(data) {
             if(typeof data === "undefined") return;
             var request;
 
@@ -123,7 +188,7 @@
                 };
               };
             }
-          }
+          };
 
           if(data instanceof Array) {
             data.forEach(function(record) {
@@ -145,7 +210,7 @@
       enumerable: false,
       writable: false,
       value: function(callback) {
-        this.db(function(){});
+        // this.db(function(){});
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readonly");
           var objectStore = transaction.objectStore(this.collectionName);
@@ -161,11 +226,13 @@
       enumerable: false,
       writable: false,
       value: function(id,callback) {
-        this.db(function(){});
+        if(typeof id === "undefined" || !id) return;
+        callback = callback || noop;
+        // this.db(function(){});
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readwrite");
           var objectStore = transaction.objectStore(this.collectionName);
-          var request = objectStore['delete'](id);
+          var request = objectStore.delete(id);
           request.onsuccess = function(event) {
             callback(event.target.error);
           };
@@ -177,7 +244,7 @@
       enumerable: false,
       writable: false,
       value: function(criteria, callback) {
-        this.db(function(){});
+        // this.db(function(){});
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readonly");
           var objectStore = transaction.objectStore(this.collectionName);
@@ -193,10 +260,6 @@
       enumerable: false,
       writable: false,
       value: function(criteria, callback) {
-        // self.postMessage({
-        //   debug: criteria
-        // });
-
         this.db(function(){});
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readonly");
@@ -205,35 +268,59 @@
           var criteriaKeys = Object.keys(criteria);
           var data = [];
 
-          objectStore.openCursor().onsuccess = function(event) {
-            if(event.target.error) {
-              return callback(event.target.error);
-            }
-            var cursor = event.target.result;
+          if(criteriaKeys.length === 1 &&
+              objectStore.indexNames &&
+              objectStore.indexNames.contains(criteriaKeys[0])) {
+            var index = objectStore.index(criteriaKeys[0]);
 
-            if(cursor) {
-              if(!criteriaKeys.length) {
+            if(typeof criteria[criteriaKeys[0]] === "boolean") {
+              criteria[criteriaKeys[0]] = criteria[criteriaKeys[0]] ? 1 : 0;
+            }
+            var singleKeyRange = window.IDBKeyRange.only(criteria[criteriaKeys[0]]);
+
+            index.openCursor(singleKeyRange).onsuccess = function(event) {
+              if(event.target.error) {
+                return callback(event.target.error);
+              }
+              var cursor = event.target.result;
+              if(cursor) {
                 data.push(cursor.value);
+                cursor['continue']();
               } else {
-                var match = true;
-                var key;
-                for(key in criteriaKeys) {
-                  if(typeof cursor.value[criteriaKeys[key]] === "undefined" || cursor.value[criteriaKeys[key]] !== criteria[criteriaKeys[key]]) {
-                    // self.postMessage({
-                    //   error: cursor.value[criteriaKeys[key]] + ' !== ' + criteria[criteriaKeys[key]]
-                    // });
-                    match = false;
+                callback(null,data);
+              }
+            };
+          } else {
+            objectStore.openCursor().onsuccess = function(event) {
+              if(event.target.error) {
+                return callback(event.target.error);
+              }
+
+              var cursor = event.target.result;
+              if(cursor) {
+                if(!criteriaKeys.length) {
+                  data.push(cursor.value);
+                } else {
+                  var match = true;
+                  var key;
+                  for(key in criteriaKeys) {
+                    if(typeof cursor.value[criteriaKeys[key]] === "undefined" || cursor.value[criteriaKeys[key]] !== criteria[criteriaKeys[key]]) {
+                      // self.postMessage({
+                      //   error: cursor.value[criteriaKeys[key]] + ' !== ' + criteria[criteriaKeys[key]]
+                      // });
+                      match = false;
+                    }
+                  }
+                  if(match) {
+                    data.push(cursor.value);
                   }
                 }
-                if(match) {
-                  data.push(cursor.value);
-                }
+                cursor['continue']();
+              } else {
+                callback(null,data);
               }
-              cursor['continue']();
-            } else {
-              callback(null,data);
-            }
-          };
+            };
+          }
         }.bind(this));
       }
     }
@@ -331,11 +418,12 @@
       database.version = Math.round(database.version.getTime());
     }
 
+    // self.postMessage({info:database.version});
     if(typeof bongo[database.name] !== 'undefined' && database.version === bongo[database.name].version) {
       return bongo[database.name];
     }
 
-    database.collections.forEach(function(collection) {
+    var define = function(collection) {
       if(typeof collection === "string") {
         collection = {name: collection};
       }
@@ -350,10 +438,27 @@
           'database': {
             value: database,
             enumerable: false
+          },
+          'indexes': {
+            value: collection.indexes || [],
+            enumerable: false
           }
         })
       });
-    });
+    };
+
+    if(database.collections instanceof Array) {
+      database.collections.forEach(function(collection) {
+        define(collection);
+      });
+    } else {
+      var collection, collectionName;
+      for(collectionName in database.collections) {
+        collection = database.collections[collectionName];
+        collection.name = collectionName;
+        define(collection);
+      }
+    }
 
     Object.defineProperty(database,'delete', {
       enumerable: false,
@@ -367,4 +472,4 @@
   };
 
   window.bongo = bongo;
-}(self));
+}(window || self));
