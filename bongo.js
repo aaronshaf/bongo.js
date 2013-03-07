@@ -1,6 +1,10 @@
 // https://github.com/aaronshaf/bongo
 // License: MIT
 
+var debug = function(data) {
+  // console.log({error:data});
+};
+
 (function(window){
   "use strict";
   var bongo = {};
@@ -13,7 +17,7 @@
   }
 
   // bongo.Database = {};
-
+  
   bongo.Collection = {};
   Object.defineProperties(bongo.Collection, {
     "db": {
@@ -22,17 +26,20 @@
         if(this.database.instance) {
           return callback(this.database.instance);
         }
-        var request = window.indexedDB.open(this.database.name, this.database.version);
 
-        // self.postMessage({error:[this.database.name, this.database.version]});
-  
+        var request = window.indexedDB.open(this.database.name,this.database.version);
+
+        // setTimeout(function(){
+        //   console.log({error:JSON.stringify(Object.keys(request))});
+        //   console.log({error:request.readyState});
+        // },300);
+
         request.onblocked = function(event) {
-          // self.postMessage({error:'blocked'});
-          // self.postMessage({error:request.webkitErrorMessage || request.error.name});
+          console.log({error:'blocked'});
+          console.log({error:request.webkitErrorMessage || request.error.name});
         };
 
         request.onsuccess = function(event) {
-          // self.postMessage({error:"success"});
           if(!this.database.instance) {
             this.database.instance = event.target.result;
           }
@@ -40,12 +47,13 @@
         }.bind(this);
 
         request.onerror = function(event) {
-          // self.postMessage({error:'error'});
+          console.log({error:'error'});
           throw request.webkitErrorMessage || request.error.name;
         };
+        request.onfailure = request.onerror;
 
         request.onupgradeneeded = function(event) {
-          // self.postMessage({error:'Database upgrade needed.'});
+          console.log({error:'Database upgrade needed.'});
 
           var db = event.target.result;
           var define = function(collection) {
@@ -63,6 +71,9 @@
             if(collection.indexes) {
               if(collection.indexes instanceof Array) {
                 collection.indexes.forEach(function(index) {
+                  if(index instanceof Array) {
+                    objectStore.createIndex(index.join(),index,{unique: false});
+                  }
                   if(typeof index === "string") {
                     objectStore.createIndex(index,index,{unique: false});
                   }
@@ -74,7 +85,7 @@
           };
 
           if(this.database.collections instanceof Array) {
-           this. database.collections.forEach(function(collection) {
+           this.database.collections.forEach(function(collection) {
               define(collection);
             });
           } else {
@@ -99,12 +110,27 @@
         
         var prepare = function(data) {
           if(this.indexes instanceof Array) {
-            // self.postMessage({error:1});
+            // console.log({error:1});
             this.indexes.forEach(function(index) {
               if(typeof data[index] === "boolean") {
                 data[index] = data[index] ? 1 : 0;
               }
             });
+
+            // this.compoundIndexes.forEach(function(compoundIndex) {
+            //   var allPartsThere = true;
+            //   var values = [];
+            //   compoundIndex.forEach(function(index) {
+            //     if(typeof data[index] !== "undefined" && data[index]) {
+            //       allPartsThere = false;
+            //     } else {
+            //       values.push(data[index]);
+            //     }
+            //   });
+            //   if(allPartsThere) {
+            //     data[compoundIndex.join()] = values.join();
+            //   }
+            // });
           }
           return data;
         }.bind(this);
@@ -145,8 +171,9 @@
     "save": {
       enumerable: false,
       writable: false,
-      value: function(data, callback) {
+      value: function(data, callback, options) {
         callback = callback || noop;
+        options = options || {};
         data = this.prepare(data);
         //this.db(function(){});
         this.db(function(db) {
@@ -167,6 +194,11 @@
                 }
               };
             } else {
+              if(options.put) {
+                request = objectStore.put(data);
+                return;
+              }
+
               request = objectStore.get(data._id);
               request.onsuccess = function(event) {
                 var request;
@@ -209,15 +241,37 @@
     "count": {
       enumerable: false,
       writable: false,
-      value: function(callback) {
-        // this.db(function(){});
+      value: function(criteria,callback) {
+        if(typeof callback === 'undefined' && typeof criteria === 'function') {
+          callback = criteria;
+          criteria = null;
+        }
+        var request;
+        // callback = callback || noop;
+
+        var success = function(event) {
+          callback(event.target.error,event.target.result);
+        };
+
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readonly");
           var objectStore = transaction.objectStore(this.collectionName);
-          var request = objectStore.count();
-          request.onsuccess = function(event) {
-            callback(event.target.error,event.target.result);
-          };
+
+          if(criteria) {
+            var criteriaKeys = Object.keys(criteria);
+            if(criteriaKeys.length === 1 &&
+                objectStore.indexNames &&
+                objectStore.indexNames.contains(criteriaKeys[0])) {
+              var index = objectStore.index(criteriaKeys[0]);
+              var range = window.IDBKeyRange.only(criteria[criteriaKeys[0]]);
+              request = index.count(range);
+              request.onsuccess = success;
+              return;
+            }
+          }
+
+          request = objectStore.count();
+          request.onsuccess = success;
         }.bind(this));
       }
     },
@@ -243,7 +297,9 @@
     "get": {
       enumerable: false,
       writable: false,
-      value: function(criteria, callback) {
+      value: function(options, callback) {
+        var criteria = options.criteria || {};
+
         // this.db(function(){});
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readonly");
@@ -259,68 +315,135 @@
     "find": {
       enumerable: false,
       writable: false,
-      value: function(criteria, callback) {
-        this.db(function(){});
+      value: function(options, callback) {
+        var options = options || {};
+        var criteria = options.criteria || {};
+        var skip = options.skip || 0;
+        callback = callback || noop;
+
+        // this.db(function(){});
         this.db(function(db) {
-          var transaction = db.transaction([this.collectionName], "readonly");
+          var transaction;
+          // transaction.onerror = function(event) {
+          //   event.cancelBubble = true;
+          //   debug('test1');
+          // };
+
+          try {
+            transaction = db.transaction([this.collectionName], "readonly");
+          } catch(e) {
+            debug('Could not find ' + this.collectionName);
+            return callback(null,[]);
+          }
+
           var objectStore = transaction.objectStore(this.collectionName);
+          var sortKeys = [];
+          if(options.sort){
+            sortKeys = Object.keys(options.sort);
+          }
 
           var criteriaKeys = Object.keys(criteria);
+          if(typeof criteria[criteriaKeys[0]] === "boolean") {
+            criteria[criteriaKeys[0]] = criteria[criteriaKeys[0]] ? 1 : 0;
+          }
           var data = [];
+          var range,index,cursorSuccess;
 
           if(criteriaKeys.length === 1 &&
               objectStore.indexNames &&
               objectStore.indexNames.contains(criteriaKeys[0])) {
-            var index = objectStore.index(criteriaKeys[0]);
-
-            if(typeof criteria[criteriaKeys[0]] === "boolean") {
-              criteria[criteriaKeys[0]] = criteria[criteriaKeys[0]] ? 1 : 0;
-            }
-            var singleKeyRange = window.IDBKeyRange.only(criteria[criteriaKeys[0]]);
-
-            index.openCursor(singleKeyRange).onsuccess = function(event) {
+            cursorSuccess = function(event) {
               if(event.target.error) {
                 return callback(event.target.error);
               }
               var cursor = event.target.result;
-              if(cursor) {
+
+              if(skip > 0) {
+                skip--;
+              } else if(cursor) {
                 data.push(cursor.value);
+              }
+
+              if(cursor && (!options.limit || data.length < options.limit)) {
                 cursor['continue']();
               } else {
                 callback(null,data);
+                return;
               }
             };
-          } else {
-            objectStore.openCursor().onsuccess = function(event) {
-              if(event.target.error) {
-                return callback(event.target.error);
-              }
 
-              var cursor = event.target.result;
-              if(cursor) {
-                if(!criteriaKeys.length) {
-                  data.push(cursor.value);
+            if(options.sort && this.compoundIndexes.length) {
+              var compoundKey = [criteriaKeys[0],sortKeys[0]].join();
+              if(compoundKey === this.compoundIndexes[0].join()) {
+                // var singleKeyRange = window.IDBKeyRange.only(criteria[criteriaKeys[0]]);
+                // console.log([[criteria[criteriaKeys[0]],[]], [criteria[criteriaKeys[0]],"zzzzzzzzz"], true, true]);
+                range = window.IDBKeyRange.bound([criteria[criteriaKeys[0]],0], [criteria[criteriaKeys[0]],"zzzzzzzzz"], true, true);
+                index = objectStore.index(this.compoundIndexes[0].join());
+
+                if(options.sort[sortKeys[0]] !== 1) {
+                  index.openCursor(range, 'prev').onsuccess = cursorSuccess;
                 } else {
-                  var match = true;
-                  var key;
-                  for(key in criteriaKeys) {
-                    if(typeof cursor.value[criteriaKeys[key]] === "undefined" || cursor.value[criteriaKeys[key]] !== criteria[criteriaKeys[key]]) {
-                      // self.postMessage({
-                      //   error: cursor.value[criteriaKeys[key]] + ' !== ' + criteria[criteriaKeys[key]]
-                      // });
-                      match = false;
-                    }
-                  }
-                  if(match) {
-                    data.push(cursor.value);
+                  index.openCursor(range).onsuccess = cursorSuccess;
+                }
+                return;
+              }
+            }
+
+            index = objectStore.index(criteriaKeys[0]);
+            range = window.IDBKeyRange.only(criteria[criteriaKeys[0]]);
+            index.openCursor(range).onsuccess = cursorSuccess;
+            return;
+          }
+
+          cursorSuccess = function(event) {
+            if(event.target.error) {
+              return callback(event.target.error);
+            }
+
+            var cursor = event.target.result;
+            if(cursor) {
+              if(!criteriaKeys.length) {
+                if(skip > 0) {
+                  skip--;
+                } else if(cursor) {
+                  data.push(cursor.value);
+                }
+              } else {
+                var match = true;
+                var key;
+                for(key in criteriaKeys) {
+                  if(typeof cursor.value[criteriaKeys[key]] === "undefined" || cursor.value[criteriaKeys[key]] !== criteria[criteriaKeys[key]]) {
+                    match = false;
                   }
                 }
+                if(match) {
+                  data.push(cursor.value);
+                }
+              }
+              if(!options.limit || data.length < options.limit) {
                 cursor['continue']();
               } else {
                 callback(null,data);
+                return;
               }
-            };
+            } else {
+              callback(null,data);
+              return;
+            }
+          };
+
+          if(options.sort && objectStore.indexNames.contains(sortKeys[0])) {
+            index = objectStore.index(sortKeys[0]);
+
+            if(options.sort[sortKeys[0]] === 1) {
+              index.openCursor().onsuccess = cursorSuccess;
+            } else {
+              index.openCursor(null, 'prev').onsuccess = cursorSuccess;
+            }
+            return;
           }
+
+          objectStore.openCursor().onsuccess = cursorSuccess;
         }.bind(this));
       }
     }
@@ -378,6 +501,26 @@
     return clonedObject;
   }
 
+  function findCompoundIndexes(indexes) {
+    var compoundIndexes = [];
+    indexes.forEach(function(index) {
+      if(index instanceof Array) {
+        compoundIndexes.push(index);
+      }
+    });
+    return compoundIndexes;
+
+    // for(x = 0;x > objectStore.indexNames.length;x++) {
+    //   if(objectStore.indexNames.item(x).indexOf(',') !== -1) {
+    //     fields = objectStore.indexNames.item(x).split(',');
+    //     hasAllFields = true;
+    //     fields.forEach(function(field) {
+          
+    //     });
+    //   }
+    // }
+  }
+
   bongo.db = function(database,collections) {
     if(typeof database === "string") {
       database = {
@@ -418,7 +561,7 @@
       database.version = Math.round(database.version.getTime());
     }
 
-    // self.postMessage({info:database.version});
+    // console.log({info:database.version});
     if(typeof bongo[database.name] !== 'undefined' && database.version === bongo[database.name].version) {
       return bongo[database.name];
     }
@@ -441,6 +584,10 @@
           },
           'indexes': {
             value: collection.indexes || [],
+            enumerable: false
+          },
+          'compoundIndexes': {
+            value: findCompoundIndexes(collection.indexes || []),
             enumerable: false
           }
         })
@@ -472,4 +619,4 @@
   };
 
   window.bongo = bongo;
-}(window || self));
+}(self));
