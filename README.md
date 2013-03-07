@@ -89,3 +89,7 @@ db.users.remove("[key]", function(error, data) {
 ## License
 
 MIT
+
+## See also
+
+* [Aaron Powell's db.js](https://github.com/aaronpowell/db.js)
