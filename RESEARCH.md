@@ -8,6 +8,8 @@ Other libraries
 * https://github.com/axemclion/IndexedDB
 * https://github.com/curosk/IndexedDB-Wrap
 * https://github.com/grgrssll/IndexedDB
+* https://github.com/brianleroux/lawnchair/blob/master/src/adapters/indexed-db.js
+* https://github.com/daleharvey/pouchdb/blob/master/src/adapters/pouch.idb.js
 
 Also
 * http://www.codeproject.com/Articles/438028/A-New-JavaScript-Wrapper-Library-for-HTML5-s-Index
