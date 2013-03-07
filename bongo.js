@@ -1,10 +1,6 @@
 // https://github.com/aaronshaf/bongo
 // License: MIT
 
-var debug = function(data) {
-  // console.log({error:data});
-};
-
 (function(window){
   "use strict";
   var bongo = {};
@@ -15,8 +11,6 @@ var debug = function(data) {
   if(!window.indexedDB) {
     throw 'IndexedDB not supported';
   }
-
-  // bongo.Database = {};
   
   bongo.Collection = {};
   Object.defineProperties(bongo.Collection, {
@@ -28,11 +22,6 @@ var debug = function(data) {
         }
 
         var request = window.indexedDB.open(this.database.name,this.database.version);
-
-        // setTimeout(function(){
-        //   console.log({error:JSON.stringify(Object.keys(request))});
-        //   console.log({error:request.readyState});
-        // },300);
 
         request.onblocked = function(event) {
           console.log({error:'blocked'});
@@ -106,8 +95,7 @@ var debug = function(data) {
       writable: false,
       value: function(data) {
         var x;
-        //If there's an indexed field in the record that is boolean, change to 0/1 number
-        
+
         var prepare = function(data) {
           if(this.indexes instanceof Array) {
             // console.log({error:1});
@@ -156,7 +144,6 @@ var debug = function(data) {
         }
         data = this.prepare(data);
 
-        // this.db(function(){});
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readwrite");
           var objectStore = transaction.objectStore(this.collectionName);
@@ -175,7 +162,7 @@ var debug = function(data) {
         callback = callback || noop;
         options = options || {};
         data = this.prepare(data);
-        //this.db(function(){});
+
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readwrite");
           var objectStore = transaction.objectStore(this.collectionName);
@@ -209,7 +196,7 @@ var debug = function(data) {
                   data = extend(event.target.result,data);
                   request = objectStore.put(data);
                 }
-                
+
                 request.onerror = function(event) {
                   //console.log(event);
                 };
@@ -247,7 +234,6 @@ var debug = function(data) {
           criteria = null;
         }
         var request;
-        // callback = callback || noop;
 
         var success = function(event) {
           callback(event.target.error,event.target.result);
@@ -282,7 +268,6 @@ var debug = function(data) {
       value: function(id,callback) {
         if(typeof id === "undefined" || !id) return;
         callback = callback || noop;
-        // this.db(function(){});
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readwrite");
           var objectStore = transaction.objectStore(this.collectionName);
@@ -300,7 +285,6 @@ var debug = function(data) {
       value: function(options, callback) {
         var criteria = options.criteria || {};
 
-        // this.db(function(){});
         this.db(function(db) {
           var transaction = db.transaction([this.collectionName], "readonly");
           var objectStore = transaction.objectStore(this.collectionName);
@@ -326,7 +310,6 @@ var debug = function(data) {
           var transaction;
           // transaction.onerror = function(event) {
           //   event.cancelBubble = true;
-          //   debug('test1');
           // };
 
           try {
@@ -463,7 +446,7 @@ var debug = function(data) {
       this.key_i = 0;
     }
     this.key_i = Number(this.key_i);
-    
+
     this.key_i++;
     var i = this.key_i.toString(16);
 
@@ -561,7 +544,6 @@ var debug = function(data) {
       database.version = Math.round(database.version.getTime());
     }
 
-    // console.log({info:database.version});
     if(typeof bongo[database.name] !== 'undefined' && database.version === bongo[database.name].version) {
       return bongo[database.name];
     }
