@@ -3,12 +3,6 @@
 ### Define database
 
 ```javascript
-var db = bongo.db("acme",["users","products"]);
-```
-
-Or be more specific:
-
-```javascript
 var db = bongo.db({
   name: 'acme',
   version: new Date("2012-12-12 12:12:12"),
@@ -72,7 +66,7 @@ db.users.remove({
   if(!error) {
     //success
   }
-});
+})
 ```
 
 Or just use the key:
