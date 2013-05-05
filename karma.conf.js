@@ -60,7 +60,7 @@ autoWatch = true;
 // - Safari (only Mac)
 // - PhantomJS
 // - IE (only Windows)
-browsers = ['Chrome']; //,,'Safari','Opera'
+browsers = ['Chrome','Safari','Opera','ChromeCanary','Firefox'];
 
 
 // If browser does not capture in given timeout [ms], kill it
