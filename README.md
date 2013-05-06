@@ -47,7 +47,19 @@ db.users.get("[key]", function(error,data) {
 });
 ```
 
-### Filter (find)
+### Find
+
+```javascript
+db.users.find(
+  {name: "John Doe"}
+).toArray(function(error,results) {
+    if(!error) {
+      //success
+    }
+  });
+```
+
+### Filter
 
 ```javascript
 db.users.filter(function(doc) {
