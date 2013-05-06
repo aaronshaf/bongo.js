@@ -44,7 +44,11 @@ module bongo {
           throw request.webkitErrorMessage || request.error.name;
         }.bind(this);
       }
-      tryToDelete();
+
+      this.get((database) => {
+        database.close();
+        tryToDelete();  
+      });
     }
 
     get(callback) {
