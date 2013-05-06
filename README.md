@@ -115,6 +115,16 @@ db.users.remove("[key]", function(error, data) {
 });
 ```
 
+### Delete the database
+
+```javascript
+db.delete(function(error) {
+  if(!error) {
+    // Success
+  }
+});
+```
+
 ## License
 
 MIT
