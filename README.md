@@ -47,11 +47,22 @@ db.users.get("[key]", function(error,data) {
 });
 ```
 
-### Filter
+### Filter (find)
 
 ```javascript
 db.users.filter(function(doc) {
   return doc.age > 30;
+}).toArray(function(error,results) {
+  if(!error) {
+    //success
+  }
+});
+```
+
+```javascript
+var query = new RegExp('jane','i');
+db.users.filter(function(doc) {
+  return query.test(doc.name);
 }).toArray(function(error,results) {
   if(!error) {
     //success
@@ -64,18 +75,6 @@ db.users.filter(function(doc) {
 db.users.filter(function(doc) {
   return doc.age > 30;
 }).pick(['name','email']).toArray(function(error,results) {
-  if(!error) {
-    //success
-  }
-});
-```
-
-### Find
-
-```javascript
-db.users.find({
-  email: "john@domain.com"
-}, function(error,results) {
   if(!error) {
     //success
   }

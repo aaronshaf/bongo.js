@@ -144,7 +144,7 @@ describe("bongo", function() {
     });
   });
 
-  it("filters", function() {
+  it("filters (1)", function() {
     var filtered = false;
 
     bongo.acme.users
@@ -159,7 +159,28 @@ describe("bongo", function() {
 
     waitsFor(function() {
       return filtered;
-    }, "Records should be filtered", 200);
+    }, "Records should be filtered (1)", 200);
+
+    runs(function() {
+      expect(filtered).toBe(true);
+    });
+  });
+
+  it("filters (2)", function() {
+    var filtered = false;
+
+    var query = new RegExp('jane','i');
+    db.users.filter(function(doc) {
+      return query.test(doc.email);
+    }).toArray(function(error,results) {
+      if(!error && results.length) {
+        filtered = true;
+      }
+    });
+
+    waitsFor(function() {
+      return filtered;
+    }, "Records should be filtered (2)", 200);
 
     runs(function() {
       expect(filtered).toBe(true);
