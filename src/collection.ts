@@ -10,6 +10,11 @@ module bongo {
       return query.filter(fn);
     }
 
+    find(criteria) {
+      var query = new bongo.Query(this.database,[this.name]);
+      return query.find(criteria);
+    }
+
     count(criteria,callback) {
       if(typeof callback === 'undefined' && typeof criteria === 'function') {
         callback = [criteria, criteria = null][0]; // Is this fancy way even necessary?
@@ -104,7 +109,7 @@ module bongo {
       });
     }
 
-    find(options,callback) {
+    oldFind(options,callback) {
       var criteria = options.criteria || {};
       var skip = options.skip || 0;
 
