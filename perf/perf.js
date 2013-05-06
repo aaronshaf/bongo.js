@@ -12,7 +12,26 @@ describe("bongo performance", function() {
     expect((typeof bongo.acme === 'undefined')).toBe(false);
   });
 
-  var total = 1000;
+  it("remove all records", function() {
+    var removed = false;
+    runs(function() {
+      bongo.acme.users.remove({},function(error) {
+        if(!error) {
+          removed = true;
+        }
+      });
+    });
+
+    waitsFor(function() {
+      return removed;
+    }, "All records should be removed", 5000);
+
+    runs(function() {
+      expect(removed).toBe(true);
+    });
+  });
+
+  var total = 2000;
   it("inserts " + total + " records", function() {
     var inserted = 0;
 
