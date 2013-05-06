@@ -91,6 +91,12 @@ var bongo;
             ]);
             return query.filter(fn);
         };
+        Collection.prototype.find = function (criteria) {
+            var query = new bongo.Query(this.database, [
+                this.name
+            ]);
+            return query.find(criteria);
+        };
         Collection.prototype.count = function (criteria, callback) {
             var _this = this;
             if(typeof callback === 'undefined' && typeof criteria === 'function') {
@@ -170,7 +176,7 @@ var bongo;
                 };
             });
         };
-        Collection.prototype.find = function (options, callback) {
+        Collection.prototype.oldFind = function (options, callback) {
             var _this = this;
             var criteria = options.criteria || {
             };
@@ -299,6 +305,22 @@ var bongo;
             this.filters = [];
             this.keys = [];
         }
+        Query.prototype.find = function (criteria) {
+            if (typeof criteria === "undefined") { criteria = {
+            }; }
+            this.filters.push(function (doc) {
+                var match = true;
+                for(bongo.key in criteria) {
+                    if(typeof criteria[bongo.key] === 'string') {
+                        if(typeof doc[bongo.key] === 'undefined' || doc[bongo.key] != criteria[bongo.key]) {
+                            return false;
+                        }
+                    }
+                }
+                return match;
+            });
+            return this;
+        };
         Query.prototype.filter = function (fn) {
             this.filters.push(fn);
             return this;
