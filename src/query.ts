@@ -11,6 +11,22 @@ module bongo {
 
     constructor(public database,public objectStores) {}
 
+    find(criteria = {}) {
+      this.filters.push(function(doc) {
+        var match = true;
+        for(key in criteria) {
+          if(typeof criteria[key] === 'string') {
+            if(typeof doc[key] === 'undefined' || doc[key] != criteria[key]) {
+              return false;
+            }
+          }
+        }
+        return match;
+      });
+
+      return this;
+    }
+
     filter(fn) {
       this.filters.push(fn);
       return this;
