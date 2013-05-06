@@ -104,7 +104,7 @@ describe("bongo", function() {
     };
 
     var findRecords = function() {
-      bongo.acme.users.find({},function(error,results) {
+      bongo.acme.users.find({}).toArray(function(error,results) {
         if(!error && results && results.length) {
           found = true;
         }
@@ -117,7 +117,7 @@ describe("bongo", function() {
 
     waitsFor(function() {
       return found;
-    }, "The record should be found", 500);
+    }, "The inserted record should be found", 500);
 
     runs(function() {
       expect(found).toBe(true);
@@ -184,6 +184,26 @@ describe("bongo", function() {
 
     runs(function() {
       expect(filtered).toBe(true);
+    });
+  });
+
+  it("find (1)", function() {
+    var found = false;
+
+    db.users.find({
+      name: 'Jane Doe'
+    }).toArray(function(error,results) {
+      if(!error && results.length) {
+        found = true;
+      }
+    });
+
+    waitsFor(function() {
+      return found;
+    }, "Records should be found (1)", 200);
+
+    runs(function() {
+      expect(found).toBe(true);
     });
   });
 
