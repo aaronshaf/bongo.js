@@ -1,3 +1,4 @@
 .DS_Store
 RESEARCH.md
-libpeerconnection.log
+tests/libpeerconnection.log
+perf/libpeerconnection.log
