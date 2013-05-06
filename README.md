@@ -50,7 +50,7 @@ db.users.get("[key]", function(error,data) {
 ```javascript
 db.users.find({
   email: "john@domain.com"
-}, function(error,data) {
+}, function(error,results) {
   if(!error) {
     //success
   }
@@ -71,7 +71,6 @@ db.users.remove({
 
 Or just use the key:
 
-
 ```javascript
 db.users.remove("[key]", function(error, data) {
   if(!error) {
@@ -86,4 +85,9 @@ MIT
 
 ## See also
 
-* [Aaron Powell's db.js](https://github.com/aaronpowell/db.js)
+* [aaronpowell/db.js](https://github.com/aaronpowell/db.js)
+* [jensarps/IDBWrapper](https://github.com/jensarps/IDBWrapper)
+* [axemclion/IndexedDB](https://github.com/axemclion/IndexedDB)
+* [grgrssll/IndexedDB](https://github.com/grgrssll/IndexedDB)
+* [brianleroux/lawnchair](https://github.com/brianleroux/lawnchair/blob/master/src/adapters/indexed-db.js) (adapter)
+* [daleharvey/pouchdb](https://github.com/daleharvey/pouchdb/blob/master/src/adapters/pouch.idb.js) (adapter)
