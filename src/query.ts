@@ -1,7 +1,7 @@
 module bongo {
   export class Query {
-    limit: number = 100;
-    skip: number = 0;
+    _limit: number = 100;
+    _skip: number = 0;
     from: any = null;
     to: any = null;
     before: any = null;
@@ -16,8 +16,13 @@ module bongo {
       return this;
     }
 
+    skip(skip: number) {
+      this._skip = skip;
+      return this;
+    }
+
     limit(limit: number) {
-      this.limit = limit;
+      this._limit = limit;
       return this;
     }
 
@@ -42,8 +47,8 @@ module bongo {
           if(cursor) {
             value = cursor.value;
             if(!this.filters.length) {
-              if(this.skip > 0) {
-                this.skip--;
+              if(this._skip > 0) {
+                this._skip--;
               } else {
                 if(this.keys.length) {
                   value = pick(value,this.keys);
@@ -64,7 +69,7 @@ module bongo {
                 results.push(value);
               }
             }
-            if(this.limit || results.length < this.limit) {
+            if(this._limit || results.length < this._limit) {
               cursor.continue();
             } else {
               callback(null,results);

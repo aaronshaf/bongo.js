@@ -290,8 +290,8 @@ var bongo;
         function Query(database, objectStores) {
             this.database = database;
             this.objectStores = objectStores;
-            this.limit = 100;
-            this.skip = 0;
+            this._limit = 100;
+            this._skip = 0;
             this.from = null;
             this.to = null;
             this.before = null;
@@ -303,8 +303,12 @@ var bongo;
             this.filters.push(fn);
             return this;
         };
+        Query.prototype.skip = function (skip) {
+            this._skip = skip;
+            return this;
+        };
         Query.prototype.limit = function (limit) {
-            this.limit = limit;
+            this._limit = limit;
             return this;
         };
         Query.prototype.pick = function (keys) {
@@ -325,8 +329,8 @@ var bongo;
                     if(cursor) {
                         value = cursor.value;
                         if(!_this.filters.length) {
-                            if(_this.skip > 0) {
-                                _this.skip--;
+                            if(_this._skip > 0) {
+                                _this._skip--;
                             } else {
                                 if(_this.keys.length) {
                                     value = pick(value, _this.keys);
@@ -347,7 +351,7 @@ var bongo;
                                 results.push(value);
                             }
                         }
-                        if(_this.limit || results.length < _this.limit) {
+                        if(_this._limit || results.length < _this._limit) {
                             cursor.continue();
                         } else {
                             callback(null, results);
