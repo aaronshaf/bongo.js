@@ -50,9 +50,9 @@ db.users.get("[key]", function(error,data) {
 ### Find
 
 ```javascript
-db.users.find(
-  {name: "John Doe"}
-).toArray(function(error,results) {
+db.users.find({
+  name: "John Doe"
+}).toArray(function(error,results) {
     if(!error) {
       //success
     }
