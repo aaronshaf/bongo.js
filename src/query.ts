@@ -130,3 +130,5 @@ module bongo {
     return copy;
   }
 }
+
+// See http://www.raymondcamden.com/index.cfm/2012/6/12/Issues-with-IndexedDB-and-Chrome
