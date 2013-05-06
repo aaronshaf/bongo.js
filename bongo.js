@@ -100,6 +100,12 @@ var bongo;
             ]);
             return query.find(criteria);
         };
+        Collection.prototype.findOne = function (criteria) {
+            var query = new bongo.Query(this.database, [
+                this.name
+            ]);
+            return query.findOne(criteria);
+        };
         Collection.prototype.count = function (criteria, callback) {
             var _this = this;
             if(typeof callback === 'undefined' && typeof criteria === 'function') {
@@ -308,6 +314,11 @@ var bongo;
             this.filters = [];
             this.keys = [];
         }
+        Query.prototype.findOne = function (criteria) {
+            this.limit = 1;
+            this.find(criteria);
+            return this;
+        };
         Query.prototype.find = function (criteria) {
             if (typeof criteria === "undefined") { criteria = {
             }; }
