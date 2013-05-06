@@ -15,6 +15,11 @@ module bongo {
       return query.find(criteria);
     }
 
+    findOne(criteria) {
+      var query = new bongo.Query(this.database,[this.name]);
+      return query.findOne(criteria);
+    }
+
     count(criteria,callback) {
       if(typeof callback === 'undefined' && typeof criteria === 'function') {
         callback = [criteria, criteria = null][0]; // Is this fancy way even necessary?
