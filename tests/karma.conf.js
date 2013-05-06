@@ -3,9 +3,9 @@ urlRoot = '/karma/';
 files = [
   JASMINE,
   JASMINE_ADAPTER,
-  'libs/*.js',
-  'bongo.js',
-  'tests/*.js'
+  '../libs/*.js',
+  '../src/bongo.es5.js',
+  'tests.js'
 ];
 exclude = [];
 reporters = ['progress'];

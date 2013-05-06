@@ -435,4 +435,4 @@ var bongo;
     }
     bongo.db = db;
 })(bongo || (bongo = {}));
-//@ sourceMappingURL=bongo.js.map
+//@ sourceMappingURL=bongo.es5.js.map

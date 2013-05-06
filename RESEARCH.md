@@ -1,5 +1,3 @@
-https://github.com/tildeio/rsvp.js
-
 MDN
 * https://developer.mozilla.org/en-US/docs/IndexedDB/Using_IndexedDB
 * https://developer.mozilla.org/en-US/docs/IndexedDB/Using_IndexedDB#Updating_the_version_of_the_database
