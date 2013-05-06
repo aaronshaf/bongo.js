@@ -1,6 +1,6 @@
 ## Easy, peasy, lemon squeezy
 
-Tested in Chrome 26, Chrome 28, Firefox 21, Opera 12.15, Safari 6, and IE 10.
+Tested in Chrome 26, Chrome 28, Firefox 21, Opera 12.15, Safari 6 (with shim), and IE 10.
 
 ### Define database
 
