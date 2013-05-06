@@ -144,6 +144,31 @@ describe("bongo", function() {
     });
   });
 
+  it("filters", function() {
+    var filtered = false;
+
+    bongo.acme.users
+      .filter(function(doc) {
+        return doc.name === "Jane Doe";
+      })
+      .toArray(function(error, results) {
+        if(!error && results.length) {
+          filtered = true;
+        }
+      });
+
+    waitsFor(function() {
+      return filtered;
+    }, "Records should be filtered", 200);
+
+    runs(function() {
+      expect(filtered).toBe(true);
+    });
+  });
+
+  // it("picks fields", function() {
+  // });
+
   it("remove all records", function() {
     var removed = false;
     runs(function() {

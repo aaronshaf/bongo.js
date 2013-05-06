@@ -17,9 +17,9 @@ var bongo;
             }; }
             var _this = this;
             var tries = 0;
-            this.collections.forEach(function (collection) {
-                delete this[collection.name];
-            });
+            for(var x = 0; x < this.collections.length; x++) {
+                delete this[this.collections[x].name];
+            }
             delete this.collections;
             var tryToDelete = function () {
                 var request = window.indexedDB.deleteDatabase(_this.name);
@@ -81,10 +81,16 @@ var bongo;
     var Collection = (function () {
         function Collection(database, name, indexes) {
             if (typeof indexes === "undefined") { indexes = []; }
+            this.database = database;
             this.name = name;
             this.indexes = indexes;
-            this.database = database;
         }
+        Collection.prototype.filter = function (fn) {
+            var query = new bongo.Query(this.database, [
+                this.name
+            ]);
+            return query.filter(fn);
+        };
         Collection.prototype.count = function (criteria, callback) {
             var _this = this;
             if(typeof callback === 'undefined' && typeof criteria === 'function') {
@@ -114,7 +120,7 @@ var bongo;
             return objectStore;
         };
         Collection.prototype.get = function (id, callback) {
-            if (typeof callback === "undefined") { callback = function () {
+            if (typeof callback === "undefined") { callback = function (error, result) {
             }; }
             var _this = this;
             this.database.get(function (database) {
@@ -129,7 +135,7 @@ var bongo;
             }.bind(this));
         };
         Collection.prototype.remove = function (criteria, callback) {
-            if (typeof callback === "undefined") { callback = function () {
+            if (typeof callback === "undefined") { callback = function (error, result) {
             }; }
             var _this = this;
             this.database.get(function (database) {
@@ -202,28 +208,6 @@ var bongo;
                             return;
                         }
                     };
-                    if(options.sort && _this.compoundIndexes.length) {
-                        var compoundKey = [
-                            criteriaKeys[0], 
-                            sortKeys[0]
-                        ].join();
-                        if(compoundKey === _this.compoundIndexes[0].join()) {
-                            range = window.IDBKeyRange.bound([
-                                criteria[criteriaKeys[0]], 
-                                0
-                            ], [
-                                criteria[criteriaKeys[0]], 
-                                "zzzzzzzzz"
-                            ], true, true);
-                            index = objectStore.index(_this.compoundIndexes[0].join());
-                            if(options.sort[sortKeys[0]] !== 1) {
-                                index.openCursor(range, 'prev').onsuccess = cursorSuccess;
-                            } else {
-                                index.openCursor(range).onsuccess = cursorSuccess;
-                            }
-                            return;
-                        }
-                    }
                     index = objectStore.index(criteriaKeys[0]);
                     range = window.IDBKeyRange.only(criteria[criteriaKeys[0]]);
                     index.openCursor(range).onsuccess = cursorSuccess;
@@ -299,6 +283,98 @@ var bongo;
         return r;
     }
     bongo.key = key;
+})(bongo || (bongo = {}));
+var bongo;
+(function (bongo) {
+    var Query = (function () {
+        function Query(database, objectStores) {
+            this.database = database;
+            this.objectStores = objectStores;
+            this.limit = 100;
+            this.skip = 0;
+            this.from = null;
+            this.to = null;
+            this.before = null;
+            this.after = null;
+            this.filters = [];
+            this.keys = [];
+        }
+        Query.prototype.filter = function (fn) {
+            this.filters.push(fn);
+            return this;
+        };
+        Query.prototype.limit = function (limit) {
+            this.limit = limit;
+            return this;
+        };
+        Query.prototype.pick = function (keys) {
+            this.keys = keys;
+            return this;
+        };
+        Query.prototype.toArray = function (callback) {
+            var _this = this;
+            this.database.get(function (database) {
+                var transaction = database.transaction(_this.objectStores, "readonly");
+                var objectStore = transaction.objectStore(_this.objectStores[0]);
+                var results = [];
+                var cursorSuccess = function (event) {
+                    if(event.target.error) {
+                        return callback(event.target.error);
+                    }
+                    var value, match, cursor = event.target.result;
+                    if(cursor) {
+                        value = cursor.value;
+                        if(!_this.filters.length) {
+                            if(_this.skip > 0) {
+                                _this.skip--;
+                            } else {
+                                if(_this.keys.length) {
+                                    value = pick(value, _this.keys);
+                                }
+                                results.push(value);
+                            }
+                        } else {
+                            match = true;
+                            for(var x = 0; x < _this.filters.length; x++) {
+                                if(!_this.filters[x](cursor.value)) {
+                                    match = false;
+                                }
+                            }
+                            if(match) {
+                                if(_this.keys.length) {
+                                    value = pick(value, _this.keys);
+                                }
+                                results.push(value);
+                            }
+                        }
+                        if(_this.limit || results.length < _this.limit) {
+                            cursor.continue();
+                        } else {
+                            callback(null, results);
+                            return;
+                        }
+                    } else {
+                        callback(null, results);
+                        return;
+                    }
+                };
+                objectStore.openCursor().onsuccess = cursorSuccess;
+            });
+        };
+        return Query;
+    })();
+    bongo.Query = Query;    
+    function pick(obj, keys) {
+        var copy = {
+        };
+        for(var x = 0; x < keys.length; x++) {
+            if(keys[x] in obj) {
+                copy[keys[x]] = obj[keys[x]];
+            }
+            ;
+        }
+        return copy;
+    }
 })(bongo || (bongo = {}));
 var bongo;
 (function (bongo) {

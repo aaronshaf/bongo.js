@@ -1,7 +1,7 @@
 module bongo {
   export class Database {
     name: string;
-    collections: Array = [];
+    collections: any[] = [];
     version: number;
 
     constructor(definition: DatabaseDefinition) {
@@ -17,9 +17,9 @@ module bongo {
 
     delete(callback = function() {}) {
       var tries = 0;
-      this.collections.forEach(function(collection) {
-        delete this[collection.name];
-      });
+      for(var x = 0;x < this.collections.length;x++) {
+        delete this[this.collections[x].name];
+      }
       delete this.collections;
 
       var tryToDelete = () => {

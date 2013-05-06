@@ -47,6 +47,27 @@ db.users.get("[key]", function(error,data) {
 });
 ```
 
+### Filter
+
+```javascript
+db.users.filter(function(doc) {
+  return doc.age > 30;
+}).toArray(function(error,results) {
+  if(!error) {
+    //success
+  }
+});
+```
+
+### Pick fields
+db.users.filter(function(doc) {
+  return doc.age > 30;
+}).pick(['name','email']).toArray(function(error,results) {
+  if(!error) {
+    //success
+  }
+});
+
 ### Find
 
 ```javascript

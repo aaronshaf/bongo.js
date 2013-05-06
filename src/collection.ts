@@ -1,11 +1,13 @@
 module bongo {
   export class Collection {
-    database: any;
-
-    constructor(database,public name,public indexes = []) {
-      this.database = database;
+    constructor(public database,public name,public indexes = []) {
       //this.compoundIndexes = findCompoundIndexes(collection.indexes || []);
 
+    }
+
+    filter(fn) {
+      var query = new bongo.Query(this.database,[this.name]);
+      return query.filter(fn);
     }
 
     count(criteria,callback) {
@@ -60,7 +62,7 @@ module bongo {
       return objectStore; 
     }
 
-    get(id: string,callback = function() {}) {
+    get(id: string,callback = function(error,result) {}) {
       this.database.get((database) => {
         var transaction = database.transaction([this.name], "readonly");
         var objectStore = transaction.objectStore(this.name);
@@ -71,7 +73,7 @@ module bongo {
       }.bind(this));
     }
 
-    remove(criteria: any,callback = function() {}) {
+    remove(criteria: any,callback = function(error,result) {}) {
       this.database.get((database) => {
         var transaction = database.transaction([this.name], "readwrite");
         var objectStore = transaction.objectStore(this.name);
@@ -144,6 +146,7 @@ module bongo {
             }
           };
 
+          /*
           if(options.sort && this.compoundIndexes.length) {
             var compoundKey = [criteriaKeys[0],sortKeys[0]].join();
             if(compoundKey === this.compoundIndexes[0].join()) {
@@ -160,6 +163,7 @@ module bongo {
               return;
             }
           }
+          */
 
           index = objectStore.index(criteriaKeys[0]);
           range = window.IDBKeyRange.only(criteria[criteriaKeys[0]]);

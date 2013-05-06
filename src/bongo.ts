@@ -1,6 +1,7 @@
 /// <reference path="bongo.d.ts" />
 /// <reference path="database.ts" />
 /// <reference path="collection.ts" />
+/// <reference path="query.ts" />
 
 module bongo {
   export function supported() {
