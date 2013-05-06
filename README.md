@@ -60,7 +60,7 @@ db.users.filter(function(doc) {
 ```
 
 ```javascript
-var query = new RegExp('jane','i');
+var query = new RegExp('john','i');
 db.users.filter(function(doc) {
   return query.test(doc.name);
 }).toArray(function(error,results) {
