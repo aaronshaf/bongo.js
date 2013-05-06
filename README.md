@@ -60,6 +60,7 @@ db.users.filter(function(doc) {
 ```
 
 ### Pick fields
+```javascript
 db.users.filter(function(doc) {
   return doc.age > 30;
 }).pick(['name','email']).toArray(function(error,results) {
@@ -67,6 +68,7 @@ db.users.filter(function(doc) {
     //success
   }
 });
+```
 
 ### Find
 
