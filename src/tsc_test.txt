@@ -1,0 +1,4 @@
+-w
+--target "ES5"
+--out ../tests/src/bongo.es5.js
+bongo.ts
