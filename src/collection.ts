@@ -20,15 +20,6 @@ module bongo {
       return query.findOne(criteria);
     }
 
-    clear(callback = function() {}) {
-      this.database.get((database) => {
-        var transaction = database.transaction([this.name], "readwrite");
-        var objectStore = transaction.objectStore(this.name);
-        var request = objectStore.clear();
-        request.onsuccess = callback;
-      });
-    }
-
     count(criteria,callback) {
       if(typeof callback === 'undefined' && typeof criteria === 'function') {
         callback = [criteria, criteria = null][0]; // Is this fancy way even necessary?
@@ -64,13 +55,9 @@ module bongo {
     }
 
     ensureObjectStore(database) {
-      if(bongo.debug) {
-        console.debug('ensureObjectStore');
-      }
+      if(bongo.debug) console.debug('ensureObjectStore');
       if(!database.objectStoreNames || !database.objectStoreNames.contains(this.name)) {
-        if(bongo.debug) {
-          console.debug('Creating ' + this.name);
-        }
+        if(bongo.debug) console.debug('Creating ' + this.name);
         var objectStore = database.createObjectStore(this.name, {
           keyPath: "_id",
           autoIncrement:false
