@@ -14,6 +14,6 @@ runnerPort = 9100;
 colors = true;
 logLevel = LOG_INFO;
 autoWatch = true;
-browsers = ['Chrome']; //,'IE' ,'Safari','Opera','ChromeCanary','Firefox'
+browsers = ['Chrome','Safari','Opera','ChromeCanary','Firefox']; //,'IE' ,
 captureTimeout = 60000;
 singleRun = false;
