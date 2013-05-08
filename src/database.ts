@@ -55,27 +55,26 @@ module bongo {
       //if(this.instance) {
       //  return callback(this.instance);
       //}
-
       var request = window.indexedDB.open(this.name); //,this.version
 
       request.onblocked = (event) => {
-        console.log('onblocked');
+        // console.log('onblocked');
         throw request.webkitErrorMessage || request.error.name;
       };
 
       request.onerror = (event) => {
-        console.log('onerror');
+        // console.log('onerror');
         throw request.webkitErrorMessage || request.error.name;
       };
       request.onfailure = request.onerror;
 
       request.onsuccess = (event) => {
-        //console.log('onsuccess');
+        // console.log('onsuccess');
         callback(event.target.result);
       }.bind(this);
 
       request.onupgradeneeded = (event) => {
-        //console.log('onupgradeneeded');
+        // console.log('onupgradeneeded');
 
         for(var x = 0;x < this.collections.length;x++) {
           this.collections[x].createObjectStore(event.target.result);
@@ -91,7 +90,7 @@ module bongo {
       if(typeof version === "undefined") {
         // THIS CODE NEEDS SOME TENDER LOVING CARE
 
-        var version;
+        var version = 1;
         // var databaseString = JSON.stringify(database);
         // var dbCache = window.localStorage.getItem('bongo-' + database.name);
         // if(dbCache && (dbCache = JSON.parse(dbCache)) && databaseString === JSON.stringify(dbCache.definition)) {
