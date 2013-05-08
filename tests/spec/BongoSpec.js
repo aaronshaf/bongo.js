@@ -187,6 +187,48 @@ describe("bongo", function() {
     });
   });
 
+  it("limit on find", function() {
+    var limited = false;
+    var resultCount = null;
+
+    db.users.find({}).limit(2).toArray(function(error,results) {
+      if(!error) {
+        resultCount = results.length;
+        limited = true;
+      }
+    });
+
+    waitsFor(function() {
+      return limited;
+    }, "Records should be filtered (2)", 200);
+
+    runs(function() {
+      expect(resultCount).toBe(2);
+    });
+  });
+
+  it("limit on filter", function() {
+    var limited = false;
+    var resultCount = null;
+
+    db.users.filter(function() {
+      return true;
+    }).limit(2).toArray(function(error,results) {
+      if(!error) {
+        resultCount = results.length;
+        limited = true;
+      }
+    });
+
+    waitsFor(function() {
+      return limited;
+    }, "Records should be filtered (2)", 200);
+
+    runs(function() {
+      expect(resultCount).toBe(2);
+    });
+  });
+
   it("find (1)", function() {
     var found = false;
 
