@@ -69,11 +69,17 @@ module bongo {
       request.onfailure = request.onerror;
 
       request.onsuccess = (event) => {
-        // console.log('onsuccess');
+        if(bongo.debug) {
+          console.debug('onsuccess');  
+        }
+        
         callback(event.target.result);
-      }.bind(this);
+      };
 
       request.onupgradeneeded = (event) => {
+        if(bongo.debug) {
+          console.debug('onupgradeneeded');
+        }
         for(var x = 0;x < this.collections.length;x++) {
           this.collections[x].ensureObjectStore(event.target.result);
         }
@@ -81,8 +87,14 @@ module bongo {
     }
 
     setVersion(version) {
+      if(typeof version === 'string') {
+        this.version = parseInt(version);
+        return;
+      }
+
       if(version instanceof Date) {
         this.version = Math.round(version.getTime());
+        return;
       }
 
       if(typeof version === "undefined") {
