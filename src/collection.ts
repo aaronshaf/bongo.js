@@ -20,6 +20,15 @@ module bongo {
       return query.findOne(criteria);
     }
 
+    clear(callback = function() {}) {
+      this.database.get((database) => {
+        var transaction = database.transaction([this.name], "readwrite");
+        var objectStore = transaction.objectStore(this.name);
+        var request = objectStore.clear();
+        request.onsuccess = callback;
+      });
+    }
+
     count(criteria,callback) {
       if(typeof callback === 'undefined' && typeof criteria === 'function') {
         callback = [criteria, criteria = null][0]; // Is this fancy way even necessary?
@@ -55,11 +64,22 @@ module bongo {
     }
 
     ensureObjectStore(database) {
+      if(bongo.debug) {
+        console.debug('ensureObjectStore');
+      }
       if(!database.objectStoreNames || !database.objectStoreNames.contains(this.name)) {
+        if(bongo.debug) {
+          console.debug('Creating ' + this.name);
+        }
         var objectStore = database.createObjectStore(this.name, {
           keyPath: "_id",
           autoIncrement:false
         });
+      } else {
+        // Check to see if keyPath or autoIncrement has changed
+        // If so, recreate objectStore
+
+        // Check to see if indexes have changed
       }
 
       /*
@@ -101,7 +121,7 @@ module bongo {
       }.bind(this));
     }
 
-    insert(data, callback: Function) {
+    insert(data, callback: Function = function() {}) {
       if(!data._id) {
         data._id = bongo.key();
       }
