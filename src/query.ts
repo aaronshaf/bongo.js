@@ -20,7 +20,7 @@ module bongo {
     find(criteria = {}) {
       this.filters.push(function(doc) {
         var match = true;
-        for(key in criteria) {
+        for(var key in criteria) {
           if(typeof criteria[key] === 'string') {
             if(typeof doc[key] === 'undefined' || doc[key] != criteria[key]) {
               return false;
@@ -91,7 +91,7 @@ module bongo {
                 results.push(value);
               }
             }
-            if(this._limit || results.length < this._limit) {
+            if(results.length < this._limit) {
               cursor.continue();
             } else {
               callback(null,results);
