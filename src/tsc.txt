@@ -2,5 +2,4 @@
 --target "ES5"
 --sourcemap
 --out bongo.es5.js
---out ../tests/src/bongo.es5.js
 bongo.ts
