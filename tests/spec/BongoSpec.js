@@ -68,7 +68,7 @@ describe("bongo", function() {
     });
   });
 
-  it("counts a record", function() {
+  it("count records", function() {
     var count;
 
     runs(function() {
