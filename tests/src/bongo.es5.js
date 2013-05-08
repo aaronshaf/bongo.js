@@ -40,10 +40,7 @@ var bongo;
                     throw request.webkitErrorMessage || request.error.name;
                 }.bind(_this);
             };
-            this.get(function (database) {
-                database.close();
-                tryToDelete();
-            });
+            tryToDelete();
         };
         Database.prototype.get = function (callback) {
             var _this = this;
@@ -56,18 +53,28 @@ var bongo;
             };
             request.onfailure = request.onerror;
             request.onsuccess = function (event) {
+                if(bongo.debug) {
+                    console.debug('onsuccess');
+                }
                 callback(event.target.result);
-            }.bind(this);
+            };
             request.onupgradeneeded = function (event) {
-                console.log('onupgradeneeded');
+                if(bongo.debug) {
+                    console.debug('onupgradeneeded');
+                }
                 for(var x = 0; x < _this.collections.length; x++) {
                     _this.collections[x].ensureObjectStore(event.target.result);
                 }
             }.bind(this);
         };
         Database.prototype.setVersion = function (version) {
+            if(typeof version === 'string') {
+                this.version = parseInt(version);
+                return;
+            }
             if(version instanceof Date) {
                 this.version = Math.round(version.getTime());
+                return;
             }
             if(typeof version === "undefined") {
                 var version = 1;
@@ -105,6 +112,19 @@ var bongo;
             ]);
             return query.findOne(criteria);
         };
+        Collection.prototype.clear = function (callback) {
+            if (typeof callback === "undefined") { callback = function () {
+            }; }
+            var _this = this;
+            this.database.get(function (database) {
+                var transaction = database.transaction([
+                    _this.name
+                ], "readwrite");
+                var objectStore = transaction.objectStore(_this.name);
+                var request = objectStore.clear();
+                request.onsuccess = callback;
+            });
+        };
         Collection.prototype.count = function (criteria, callback) {
             var _this = this;
             if(typeof callback === 'undefined' && typeof criteria === 'function') {
@@ -127,11 +147,18 @@ var bongo;
             }.bind(this));
         };
         Collection.prototype.ensureObjectStore = function (database) {
+            if(bongo.debug) {
+                console.debug('ensureObjectStore');
+            }
             if(!database.objectStoreNames || !database.objectStoreNames.contains(this.name)) {
+                if(bongo.debug) {
+                    console.debug('Creating ' + this.name);
+                }
                 var objectStore = database.createObjectStore(this.name, {
                     keyPath: "_id",
                     autoIncrement: false
                 });
+            } else {
             }
             return objectStore;
         };
@@ -171,6 +198,8 @@ var bongo;
             }.bind(this));
         };
         Collection.prototype.insert = function (data, callback) {
+            if (typeof callback === "undefined") { callback = function () {
+            }; }
             var _this = this;
             if(!data._id) {
                 data._id = bongo.key();
@@ -435,5 +464,39 @@ var bongo;
         return bongo[definition.name];
     }
     bongo.db = db;
+    bongo.debug = false;
+    function info(name) {
+        if (typeof name === "undefined") { name = null; }
+        console.group('Bongo');
+        var request;
+        var debugDb = function (name) {
+            var request = window.indexedDB.open(name);
+            request.onsuccess = function () {
+                var db = event.target.result;
+                console.log(db);
+                var objectStoreNames = [];
+                for(var x = 0; x < db.objectStoreNames.length; x++) {
+                    objectStoreNames.push(db.objectStoreNames.item(x));
+                }
+                console.log({
+                    name: db.name,
+                    objectStores: objectStoreNames,
+                    version: db.version
+                });
+            };
+        };
+        if(name) {
+            debugDb(name);
+        } else {
+            request = window.indexedDB.webkitGetDatabaseNames();
+            request.onsuccess = function (event) {
+                var dbNameList = event.target.result;
+                for(var x = 0; x < dbNameList.length; x++) {
+                    debugDb(dbNameList.item(x));
+                }
+            };
+        }
+        console.groupEnd();
+    }
+    bongo.info = info;
 })(bongo || (bongo = {}));
-//@ sourceMappingURL=bongo.es5.js.map
