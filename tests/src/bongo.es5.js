@@ -47,7 +47,7 @@ var bongo;
         };
         Database.prototype.get = function (callback) {
             var _this = this;
-            var request = window.indexedDB.open(this.name);
+            var request = window.indexedDB.open(this.name, this.version);
             request.onblocked = function (event) {
                 throw request.webkitErrorMessage || request.error.name;
             };
@@ -59,8 +59,9 @@ var bongo;
                 callback(event.target.result);
             }.bind(this);
             request.onupgradeneeded = function (event) {
+                console.log('onupgradeneeded');
                 for(var x = 0; x < _this.collections.length; x++) {
-                    _this.collections[x].createObjectStore(event.target.result);
+                    _this.collections[x].ensureObjectStore(event.target.result);
                 }
             }.bind(this);
         };
@@ -125,11 +126,13 @@ var bongo;
                 request.onsuccess = success;
             }.bind(this));
         };
-        Collection.prototype.createObjectStore = function (database) {
-            var objectStore = database.createObjectStore(this.name, {
-                keyPath: "_id",
-                autoIncrement: false
-            });
+        Collection.prototype.ensureObjectStore = function (database) {
+            if(!database.objectStoreNames || !database.objectStoreNames.contains(this.name)) {
+                var objectStore = database.createObjectStore(this.name, {
+                    keyPath: "_id",
+                    autoIncrement: false
+                });
+            }
             return objectStore;
         };
         Collection.prototype.get = function (id, callback) {
