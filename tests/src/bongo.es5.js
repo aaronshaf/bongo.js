@@ -40,7 +40,10 @@ var bongo;
                     throw request.webkitErrorMessage || request.error.name;
                 }.bind(_this);
             };
-            tryToDelete();
+            this.get(function (database) {
+                database.close();
+                tryToDelete();
+            });
         };
         Database.prototype.get = function (callback) {
             var _this = this;
