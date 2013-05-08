@@ -54,11 +54,13 @@ module bongo {
       }.bind(this));
     }
 
-    createObjectStore(database) {
-      var objectStore = database.createObjectStore(this.name, {
-        keyPath: "_id",
-        autoIncrement:false
-      });
+    ensureObjectStore(database) {
+      if(!database.objectStoreNames || !database.objectStoreNames.contains(this.name)) {
+        var objectStore = database.createObjectStore(this.name, {
+          keyPath: "_id",
+          autoIncrement:false
+        });
+      }
 
       /*
       this.indexes.forEach(function(index) {
