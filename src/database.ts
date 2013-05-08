@@ -55,7 +55,7 @@ module bongo {
       //if(this.instance) {
       //  return callback(this.instance);
       //}
-      var request = window.indexedDB.open(this.name); //,this.version
+      var request = window.indexedDB.open(this.name,this.version);
 
       request.onblocked = (event) => {
         // console.log('onblocked');
@@ -74,10 +74,8 @@ module bongo {
       }.bind(this);
 
       request.onupgradeneeded = (event) => {
-        // console.log('onupgradeneeded');
-
         for(var x = 0;x < this.collections.length;x++) {
-          this.collections[x].createObjectStore(event.target.result);
+          this.collections[x].ensureObjectStore(event.target.result);
         }
       }.bind(this);
     }
