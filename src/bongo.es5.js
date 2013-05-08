@@ -49,11 +49,9 @@ var bongo;
             var _this = this;
             var request = window.indexedDB.open(this.name);
             request.onblocked = function (event) {
-                console.log('onblocked');
                 throw request.webkitErrorMessage || request.error.name;
             };
             request.onerror = function (event) {
-                console.log('onerror');
                 throw request.webkitErrorMessage || request.error.name;
             };
             request.onfailure = request.onerror;
@@ -71,7 +69,7 @@ var bongo;
                 this.version = Math.round(version.getTime());
             }
             if(typeof version === "undefined") {
-                var version;
+                var version = 1;
                 this.version = version;
             }
         };
@@ -387,7 +385,7 @@ var bongo;
                                 results.push(value);
                             }
                         }
-                        if(_this._limit || results.length < _this._limit) {
+                        if(results.length < _this._limit) {
                             cursor.continue();
                         } else {
                             callback(null, results);
