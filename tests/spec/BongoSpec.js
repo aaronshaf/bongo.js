@@ -8,7 +8,7 @@ describe("bongo", function() {
   it("defines a database", function() {
     db = bongo.db({
       name: 'acme',
-      version: new Date("2012-12-12 12:12:16"),
+      version: new Date(), //"2012-12-12 12:12:18"
       collections: ["users"]
     });
 
