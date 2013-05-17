@@ -229,6 +229,14 @@ describe("bongo", function() {
     });
   });
 
+  it("skip records", function() {
+    // Forthcoming
+  });
+
+  it("use single index to speed up simple query", function() {
+    // Forthcoming
+  });
+
   it("find (1)", function() {
     var found = false;
 
