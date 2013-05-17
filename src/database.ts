@@ -47,20 +47,22 @@ module bongo {
 
       this.get((database) => {
         database.close();
-        tryToDelete();  
+        tryToDelete();
       });
     }
 
-    get(callback) {
-      //if(this.instance) {
-      //  return callback(this.instance);
-      //}
-      var request = window.indexedDB.open(this.name,this.version);
+    get(callback,readwrite = false) {
+      if(readwrite) {
+        var request = window.indexedDB.open(this.name,this.version);
+      } else {
+        var request = window.indexedDB.open(this.name);
+      }
 
       request.onsuccess = (event) => {
         if(bongo.debug) {
           console.debug('onsuccess');  
         }
+
         callback(request.result);
       }
 
