@@ -57,6 +57,22 @@ module bongo {
       //}
       var request = window.indexedDB.open(this.name,this.version);
 
+      request.onsuccess = (event) => {
+        if(bongo.debug) {
+          console.debug('onsuccess');  
+        }
+        callback(request.result);
+      }
+
+      request.onupgradeneeded = (event) => {
+        if(bongo.debug) {
+          console.debug('onupgradeneeded');
+        }
+        for(var x = 0;x < this.collections.length;x++) {
+          this.collections[x].ensureObjectStore(request.result);
+        }
+      }.bind(this);
+
       request.onblocked = (event) => {
         // console.log('onblocked');
         throw request.webkitErrorMessage || request.error.name;
@@ -67,23 +83,6 @@ module bongo {
         throw request.webkitErrorMessage || request.error.name;
       };
       request.onfailure = request.onerror;
-
-      request.onsuccess = (event) => {
-        if(bongo.debug) {
-          console.debug('onsuccess');  
-        }
-        
-        callback(event.target.result);
-      };
-
-      request.onupgradeneeded = (event) => {
-        if(bongo.debug) {
-          console.debug('onupgradeneeded');
-        }
-        for(var x = 0;x < this.collections.length;x++) {
-          this.collections[x].ensureObjectStore(event.target.result);
-        }
-      }.bind(this);
     }
 
     setVersion(version) {
