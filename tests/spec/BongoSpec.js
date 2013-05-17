@@ -49,6 +49,30 @@ describe("bongo", function() {
     });
   });
 
+  it("saves a record", function() {
+    var inserted = false;
+
+    runs(function() {
+      db.users.save({
+        name: "John Doe",
+        email: "john@domain.com"
+      },function(error,resultId) {
+        if(!error && resultId) {
+          id = resultId;
+          inserted = true;
+        }
+      });
+    });
+
+    waitsFor(function() {
+      return inserted;
+    }, "The record should be inserted", 200);
+
+    runs(function() {
+      expect(inserted).toBe(true);
+    });
+  });
+
   it("fetch a record", function() {
     var fetched = false;
     runs(function() {
