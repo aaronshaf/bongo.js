@@ -48,12 +48,14 @@ module bongo {
     if(name) {
       debugDb(name);
     } else {
-      request = window.indexedDB.webkitGetDatabaseNames();
-      request.onsuccess = function(event) {
-        var dbNameList = event.target.result;
-        for(var x = 0;x < dbNameList.length;x++) {
-          debugDb(dbNameList.item(x));
-        }
+      if(window.indexedDB.webkitGetDatabaseNames) {
+        request = window.indexedDB.webkitGetDatabaseNames();
+        request.onsuccess = function(event) {
+          var dbNameList = event.target.result;
+          for(var x = 0;x < dbNameList.length;x++) {
+            debugDb(dbNameList.item(x));
+          }
+        } 
       }
     }
     console.groupEnd();
