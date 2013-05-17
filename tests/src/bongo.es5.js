@@ -71,8 +71,12 @@ var bongo;
             }.bind(this);
         };
         Database.prototype.setVersion = function (version) {
+            if(typeof version === 'number') {
+                this.version = version;
+                return;
+            }
             if(typeof version === 'string') {
-                this.version = parseInt(version);
+                this.version = parseInt(version, 10);
                 return;
             }
             if(version instanceof Date) {
@@ -114,19 +118,6 @@ var bongo;
                 this.name
             ]);
             return query.findOne(criteria);
-        };
-        Collection.prototype.clear = function (callback) {
-            if (typeof callback === "undefined") { callback = function () {
-            }; }
-            var _this = this;
-            this.database.get(function (database) {
-                var transaction = database.transaction([
-                    _this.name
-                ], "readwrite");
-                var objectStore = transaction.objectStore(_this.name);
-                var request = objectStore.clear();
-                request.onsuccess = callback;
-            });
         };
         Collection.prototype.count = function (criteria, callback) {
             var _this = this;
