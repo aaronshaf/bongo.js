@@ -9,11 +9,15 @@ describe("bongo", function() {
     db = bongo.db({
       name: 'acme',
       version: new Date(), //"2012-12-12 12:12:18"
-      collections: ["users"]
+      collections: ["users","employees"]
     });
 
     expect((typeof db === 'undefined')).toBe(false);
     expect((typeof bongo.acme === 'undefined')).toBe(false);
+  });
+
+  it("probes a database", function() {
+    bongo.info();
   });
 
   it('can generate mongo-esque keys', function() {
