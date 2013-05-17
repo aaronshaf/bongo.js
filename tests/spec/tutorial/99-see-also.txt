@@ -1,0 +1,64 @@
+http://www.w3.org/TR/IndexedDB/
+
+https://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html
+
+http://aaronpowell.github.io/talks/indexeddb/
+
+http://nparashuram.com/IndexedDB/
+
+http://nparashuram.com/misc.html
+  https://www.youtube.com/watch?v=r8xl9iSAXO0
+  http://www.youtube.com/watch?v=yZ4GBSk2aKQ
+  http://www.youtube.com/watch?v=xeu464xrjsw
+
+---
+
+http://architects.dzone.com/articles/who-needs-mysql-when-there
+
+Conceptual problems with IndexedDB (relationships etc.)
+http://stackoverflow.com/questions/8694941/conceptual-problems-with-indexeddb-relationships-etc
+
+"A document-oriented style is best with IndexedDB objects (store everything in the same store), but a secondary store is needed to house relations."
+http://stackoverflow.com/questions/7408241/indexeddb-and-many-to-many-relationships
+
+Maintaining Objects and Relationships in
+IndexedDB
+http://dl.dropboxusercontent.com/u/7288736/doc.pdf
+
+JayData
+http://jaydata.org
+
+Range queries
+http://dev.yathit.com/ydn-db/using/key-range-query.html
+
+q = db.query('customer', 'first').bound('B', 'B\uffff')
+
+YDN
+http://dev.yathit.com/ydn-db/getting-started.html
+
+ // IE10 does not support composite index
+
+ http://csimms.botonomy.com/2011/05/html5-storage-wars-localstorage-vs-indexeddb-vs-web-sql.html
+
+ http://blog.harritronics.com/2011/04/more-thoughts-on-indexeddb-and-web-sql.html
+
+ http://www.aaron-powell.com/web/indexeddb-storage
+
+ https://plus.google.com/+KevinDangoor/posts/PHqKjkcNbLU
+
+ http://www.html5rocks.com/en/tutorials/webdatabase/websql-indexeddb/
+
+ http://lists.w3.org/Archives/Public/public-webapps/2013JanMar/0634.html
+
+ http://lists.w3.org/Archives/Public/public-webapps/2013JanMar/0646.html
+
+ http://hacks.mozilla.org/2010/06/comparing-indexeddb-and-webdatabase/
+
+ http://hacks.mozilla.org/2010/06/beyond-html5-database-apis-and-the-road-to-indexeddb/
+
+ http://arandomurl.com/2013/02/21/thoughts-on-indexeddb.html
+
+ endkey=q+"\ufff0"
+ http://codepen.io/pen/
+
+ http://www.kristofdegrave.be/2012/02/indexed-db-to-provide-key-or-not-to.html

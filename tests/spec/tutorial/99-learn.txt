@@ -1,0 +1,13 @@
+http://www.w3.org/TR/IndexedDB/
+
+Parashuram Narasimhan
+  http://nparashuram.com/IndexedDB/
+
+  Performance tests
+    http://nparashuram.com/IndexedDB/perf/index.html
+
+  Polyfill
+    https://github.com/axemclion/IndexedDBShim
+
+  "IndexedDB with Parashuram Narasimhan"
+    https://www.youtube.com/watch?v=XlSizz7JHBg

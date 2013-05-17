@@ -5,7 +5,7 @@ files = [
   JASMINE_ADAPTER,
   '../libs/indexedDBShim.js',
   '../src/bongo.es5.js',
-  'spec/BongoSpec.js'
+  'spec/*Spec.js'
 ];
 exclude = [];
 reporters = ['progress'];

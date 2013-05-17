@@ -1,0 +1,36 @@
+A query language for JSON data?
+
+UnQL (evidently dead)
+http://www.unqlspec.org
+
+LINQ 
+http://msdn.microsoft.com/en-us/library/vstudio/bb397926.aspx
+errrr... http://goo.gl/uWNpz
+
+RQL
+http://www.rethinkdb.com/api/
+
+JSONiq (promising?)
+http://www.jsoniq.org
+
+let $stats := collection("stats")
+for $access in $stats
+group by $url := $access.url
+return 
+  {
+    "url": $url,
+    "avg": avg($access.response_time),
+    "hits": count($access)
+  }
+
+for $answers in collection("answers")
+let $id := $answers.question_id
+group by $id
+let $title := collection("faqs")[$$.question_id eq $id].title
+let $count := count($answers)
+order by $count descending
+return
+  {
+    title : $title,
+    count : $count
+  }
