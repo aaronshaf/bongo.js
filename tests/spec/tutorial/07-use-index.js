@@ -5,9 +5,10 @@ describe("IndexedDB", function() {
       var db = dbRequest.result;
       var objectStore = db.transaction("users").objectStore("users");
 
-      // Common pattern
       var users = [];
-      objectStore.openCursor().onsuccess = function(event) {
+      var index = objectStore.index("email");
+
+      index.openCursor().onsuccess = function(event) {
         var cursor = event.target.result;
         if(cursor) {
           users.push(cursor.value);
@@ -16,9 +17,6 @@ describe("IndexedDB", function() {
           console.log(users);
         }
       };
-
-      // To reverse direction
-      // objectStore.openCursor(null, IDBCursor.prev).onsuccess = function(event) {
     };
   });
 });

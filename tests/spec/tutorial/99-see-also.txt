@@ -1,4 +1,8 @@
+Spec
 http://www.w3.org/TR/IndexedDB/
+
+"Building a Notes App with IndexedDB, Redis and Node.js"
+https://hacks.mozilla.org/2013/05/building-a-notes-app-with-indexeddb-redis-and-node-js/
 
 https://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html
 

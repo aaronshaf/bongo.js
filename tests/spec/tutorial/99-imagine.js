@@ -6,7 +6,7 @@ WebRTC (peer)
 Holy grail:
   Real-time via WebSockets +
   Model synchronization +
-  Peer synchronization +
+  Peer synchronization (WebRTC) +
   Robust querying +
   Fallback
 
