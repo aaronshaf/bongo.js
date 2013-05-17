@@ -48,6 +48,20 @@ var bongo;
         Database.prototype.get = function (callback) {
             var _this = this;
             var request = window.indexedDB.open(this.name, this.version);
+            request.onsuccess = function (event) {
+                if(bongo.debug) {
+                    console.debug('onsuccess');
+                }
+                callback(request.result);
+            };
+            request.onupgradeneeded = function (event) {
+                if(bongo.debug) {
+                    console.debug('onupgradeneeded');
+                }
+                for(var x = 0; x < _this.collections.length; x++) {
+                    _this.collections[x].ensureObjectStore(request.result);
+                }
+            }.bind(this);
             request.onblocked = function (event) {
                 throw request.webkitErrorMessage || request.error.name;
             };
@@ -55,20 +69,6 @@ var bongo;
                 throw request.webkitErrorMessage || request.error.name;
             };
             request.onfailure = request.onerror;
-            request.onsuccess = function (event) {
-                if(bongo.debug) {
-                    console.debug('onsuccess');
-                }
-                callback(event.target.result);
-            };
-            request.onupgradeneeded = function (event) {
-                if(bongo.debug) {
-                    console.debug('onupgradeneeded');
-                }
-                for(var x = 0; x < _this.collections.length; x++) {
-                    _this.collections[x].ensureObjectStore(event.target.result);
-                }
-            }.bind(this);
         };
         Database.prototype.setVersion = function (version) {
             if(typeof version === 'number') {
@@ -190,6 +190,22 @@ var bongo;
                     callback(event.target.error, event.target.result);
                 };
             }.bind(this));
+        };
+        Collection.prototype.save = function (data, callback) {
+            if (typeof callback === "undefined") { callback = function () {
+            }; }
+            var _this = this;
+            if(!data._id) {
+                data._id = bongo.key();
+            }
+            this.database.get(function (database) {
+                var transaction = database.transaction(_this.name, "readwrite");
+                var objectStore = transaction.objectStore(_this.name);
+                var request = objectStore.put(data);
+                request.onsuccess = function (event) {
+                    callback(event.target.error, event.target.result);
+                };
+            });
         };
         Collection.prototype.insert = function (data, callback) {
             if (typeof callback === "undefined") { callback = function () {
