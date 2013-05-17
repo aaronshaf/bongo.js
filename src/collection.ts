@@ -108,6 +108,21 @@ module bongo {
       }.bind(this));
     }
 
+    save(data, callback: Function = function() {}) {
+      if(!data._id) {
+        data._id = bongo.key();
+      }
+
+      this.database.get((database) => {
+        var transaction = database.transaction(this.name, "readwrite");
+        var objectStore = transaction.objectStore(this.name);
+        var request = objectStore.put(data);
+        request.onsuccess = function(event) {
+          callback(event.target.error,event.target.result);
+        };
+      });
+    }
+
     insert(data, callback: Function = function() {}) {
       if(!data._id) {
         data._id = bongo.key();
