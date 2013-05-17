@@ -87,8 +87,13 @@ module bongo {
     }
 
     setVersion(version) {
+      if(typeof version === 'number') {
+        this.version = version;
+        return;
+      }
+
       if(typeof version === 'string') {
-        this.version = parseInt(version);
+        this.version = parseInt(version,10);
         return;
       }
 
