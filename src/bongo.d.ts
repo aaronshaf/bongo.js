@@ -1,8 +1,14 @@
 interface DatabaseDefinition {
   name: string;
   version: number;
-  collections: Array;
-  instance?: any;
+  objectStores: any[];
+}
+
+interface ObjectStoreDefinition {
+  database: any;
+  keyPath?: string;
+  name: string;
+  indexes?: any[];
 }
 
 interface Window {

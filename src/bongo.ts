@@ -1,6 +1,6 @@
 /// <reference path="bongo.d.ts" />
 /// <reference path="database.ts" />
-/// <reference path="collection.ts" />
+/// <reference path="objectstore.ts" />
 /// <reference path="query.ts" />
 
 module bongo {
@@ -24,43 +24,91 @@ module bongo {
   }
   export var debug = false;
 
-  export function signature(name,callback = function() {}) {
+  export function getStoredVersion(name,callback = function() {}) {
     var request = window.indexedDB.open(name);
     request.onsuccess = function(event) {
-      var x,db = event.target.result;
-      var objectStore,objectStores = [];
+      var db = event.target.result;
+      version = db.version;
+      //db.close();
+      callback(version);
+    }
+  }
+
+  export function getStoredSignature(name,callback = function() {}) {
+    var request = window.indexedDB.open(name);
+
+    request.onblocked = () => {
+      callback({});
+    };
+
+    request.onsuccess = function(event) {
+      var x,indexes,db = event.target.result;
+      var name,objectStore,objectStoreNames = [],objectStores = {};
 
       for(x = 0;x < db.objectStoreNames.length;x++) {
-        objectStores.push(db.objectStoreNames.item(x));
+        objectStoreNames.push(db.objectStoreNames.item(x));
       }
-      var transaction = db.transaction(objectStores, "readonly");
-      
-      objectStores = objectStores.map(function(objectStoreName) {
-        var objectStore = transaction.objectStore(objectStoreName);
-        console.log(objectStore);
-        var indexNames = [];
-        for(var x = 0;x < objectStore.indexNames.length;x++) {
-          indexNames.push(objectStore.indexNames.item(x));
-        }
-        return {
-          autoIncrement: objectStore.autoIncrement,
-          indexNames: indexNames,
-          keyPath: objectStore.keyPath,
-          name: objectStore.name
-        };
-      });
 
-      callback({
-        name: db.name,
-        objectStores: objectStores,
-        version: db.version
-      });
+      if(objectStoreNames.length) {
+        var transaction = db.transaction(objectStoreNames, "readonly");
+        objectStoreNames.forEach(function(objectStoreName) {
+          var objectStore = transaction.objectStore(objectStoreName);
+          indexes = [];
+          for(var x = 0;x < objectStore.indexNames.length;x++) {
+            indexes.push(objectStore.indexNames.item(x));
+          }
+          objectStores[objectStoreName] = {
+            autoIncrement: objectStore.autoIncrement,
+            indexes: indexes,
+            keyPath: objectStore.keyPath,
+            name: objectStore.name
+          };
+        });
+      }
+
       db.close(name);
+      //setTimeout(function() {
+        return callback({
+          name: db.name,
+          objectStores: objectStores
+        });
+      //},0);
     };
   }
 
-  export function normalizeSignature(signature) {
+  // For comparing database signatures
+  export function equals (x,y) {
+    var p;
+    if(x === y) return true;
+    
+    for(p in x) {
+      if(typeof(y[p])=='undefined') {return false;}
+    }
+    
+    for(p in y) {
+      if(typeof(x[p])=='undefined') {return false;}
+    }
+    
+    if(typeof x !== typeof y) return false;
 
+    if(typeof x === 'object') {
+      for(p in x) {
+        if(x[p]) {
+          if(typeof(x[p]) === 'object') {
+            if(!equals(x[p],y[p])) {
+              return false;
+            } 
+          } else {
+            if (x[p] !== y[p]) { return false; }
+          }
+        } else {
+          if(y[p]) return false;
+        }
+      }
+    } else {
+      return x === y; 
+    }
+    return true;
   }
 
   export function info(name = null) {
@@ -94,7 +142,7 @@ module bongo {
           for(var x = 0;x < dbNameList.length;x++) {
             debugDb(dbNameList.item(x));
           }
-        } 
+        }
       }
     }
     console.groupEnd();

@@ -7,8 +7,7 @@ Tested in Chrome 26, Chrome 28, Firefox 21, and IE 10. With shim, tested in Oper
 ```javascript
 var db = bongo.db({
   name: 'acme',
-  version: new Date("2012-12-12 12:12:12"),
-  collections: ["users"]
+  objectStores: ["users"]
 });
 ```
 

@@ -1,8 +1,11 @@
 module bongo {
-  export class Collection {
-    constructor(public database,public name,public indexes = []) {
-      //this.compoundIndexes = findCompoundIndexes(collection.indexes || []);
-
+  export class ObjectStore {
+    constructor(public database,definition: DatabaseDefinition) {
+      this.name = definition.name;
+      this.keyPath = definition.keyPath || '_id';
+      this.autoIncrement = !!definition.autoIncrement;
+      this.indexes = definition.indexes || [];
+      //this.compoundIndexes = findCompoundIndexes(objectStore.indexes || []);
     }
 
     filter(fn) {
@@ -81,7 +84,7 @@ module bongo {
       return objectStore; 
     }
 
-    get(id: string,callback = function(error,result) {}) {
+    get(id: string = '',callback = function(error,result) {}) {
       this.database.get((database) => {
         var transaction = database.transaction([this.name], "readonly");
         var objectStore = transaction.objectStore(this.name);
@@ -105,7 +108,7 @@ module bongo {
         request.onsuccess = function(event) {
           callback(event.target.error,event.target.result);
         };
-      }.bind(this));
+      },true);
     }
 
     save(data, callback: Function = function() {}) {
@@ -120,7 +123,7 @@ module bongo {
         request.onsuccess = function(event) {
           callback(event.target.error,event.target.result);
         };
-      });
+      },true);
     }
 
     insert(data, callback: Function = function() {}) {
@@ -135,7 +138,7 @@ module bongo {
         request.onsuccess = function(event) {
           callback(event.target.error,event.target.result);
         };
-      });
+      },true);
     }
 
     oldFind(options,callback) {
@@ -290,7 +293,7 @@ module bongo {
     
   }
 
-  function db(database,collections) {
+  function db(database,objectStores) {
     if(typeof database === "string") {
       database = {
         name: database
@@ -302,8 +305,8 @@ module bongo {
       return false;
     }
 
-    if(typeof collections !== "undefined" && collections instanceof Array) {
-      database.collections = collections;
+    if(typeof objectStores !== "undefined" && objectStores instanceof Array) {
+      database.objectStores = objectStores;
     }
     
     database = clone(database);

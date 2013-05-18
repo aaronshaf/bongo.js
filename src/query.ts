@@ -61,6 +61,7 @@ module bongo {
 
         var cursorSuccess = (event) => {
           if(event.target.error) {
+            database.close();
             return callback(event.target.error);
           }
 
@@ -94,10 +95,12 @@ module bongo {
             if(results.length < this._limit) {
               cursor.continue();
             } else {
+              database.close();
               callback(null,results);
               return;
             }
           } else {
+            database.close();
             callback(null,results);
             return;
           }
