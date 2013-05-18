@@ -24,15 +24,54 @@ module bongo {
   }
   export var debug = false;
 
+  export function signature(name,callback = function() {}) {
+    var request = window.indexedDB.open(name);
+    request.onsuccess = function(event) {
+      var x,db = event.target.result;
+      var objectStore,objectStores = [];
+
+      for(x = 0;x < db.objectStoreNames.length;x++) {
+        objectStores.push(db.objectStoreNames.item(x));
+      }
+      var transaction = db.transaction(objectStores, "readonly");
+      
+      objectStores = objectStores.map(function(objectStoreName) {
+        var objectStore = transaction.objectStore(objectStoreName);
+        console.log(objectStore);
+        var indexNames = [];
+        for(var x = 0;x < objectStore.indexNames.length;x++) {
+          indexNames.push(objectStore.indexNames.item(x));
+        }
+        return {
+          autoIncrement: objectStore.autoIncrement,
+          indexNames: indexNames,
+          keyPath: objectStore.keyPath,
+          name: objectStore.name
+        };
+      });
+
+      callback({
+        name: db.name,
+        objectStores: objectStores,
+        version: db.version
+      });
+      db.close(name);
+    };
+  }
+
+  export function normalizeSignature(signature) {
+
+  }
+
   export function info(name = null) {
     console.group('Bongo')
     var request;
 
     var debugDb = function(name) {
       var request = window.indexedDB.open(name);
-      request.onsuccess = function() {
+      request.onsuccess = function(event) {
         var db = event.target.result;
-        console.log(db);
+        // console.log(db);
         var objectStoreNames = [];
         for(var x = 0;x < db.objectStoreNames.length;x++) {
           objectStoreNames.push(db.objectStoreNames.item(x));
