@@ -2,7 +2,7 @@ module bongo {
   export class Database {
     name: string;
     version: number;
-    versionChecked: Boolean = false;
+    ensured: Boolean = false;
     objectStores: any[] = [];
 
     constructor(definition: DatabaseDefinition) {
@@ -77,46 +77,70 @@ module bongo {
     }
 
     get(callback) {
-      var request = window.indexedDB.open(this.name);
-
-      request.onupgradeneeded = (event) => {
-        if(bongo.debug) console.debug('onupgradeneeded');
-        for(var x = 0;x < this.objectStores.length;x++) {
-          this.objectStores[x].ensureObjectStore(request.result);
+      var tries = 500;
+      var tryToOpen = () => {
+        if(!this.ensured) {
+          if(bongo.debug) console.log('Database not ensured yet');
+          tries--;
+          if(tries > 0) {
+            setTimeout(() => {
+              tryToOpen();
+            },200);
+          }
+          return;
         }
+        if(bongo.debug) console.log('Database is ensured');
+
+        var request = window.indexedDB.open(this.name);
+
+        request.onupgradeneeded = (event) => {
+          // This should never be called here. It should be covered by the initial 'ensure'
+          if(bongo.debug) console.debug('onupgradeneeded');
+          var db = request.result;
+          for(var x = 0;x < this.objectStores.length;x++) {
+            this.objectStores[x].ensureObjectStore(db);
+          }
+          for(var name in signature.objectStores) {
+            if(typeof this[name] === 'undefined' && db.objectStoreNames.contains(name)) {
+              db.deleteObjectStore(name);
+            }
+          }
+          db.close();
+        };
+
+        request.onsuccess = (event) => {
+          if(bongo.debug) console.debug('onsuccess');
+          callback(event.target.result);
+        }
+
+        request.onblocked = (event) => {
+          console.log(this.version,request);
+          console.log('onblocked');
+          throw request.webkitErrorMessage || request.error.name;
+        };
+
+        request.onerror = (event) => {
+          console.log('onerror');
+          throw request.webkitErrorMessage || request.error.name;
+        };
+        request.onfailure = request.onerror;
       };
-
-      request.onsuccess = (event) => {
-        if(bongo.debug) console.debug('onsuccess');
-
-        callback(request.result);
-      }
-
-      request.onblocked = (event) => {
-        console.log(this.version,request);
-        console.log('onblocked');
-        throw request.webkitErrorMessage || request.error.name;
-      };
-
-      request.onerror = (event) => {
-        console.log('onerror');
-        throw request.webkitErrorMessage || request.error.name;
-      };
-      request.onfailure = request.onerror;
-            
+      tryToOpen();   
     }
 
     ensure(callback = function() {}) {
+      if(bongo.debug) console.debug('Ensuring ' + this.name);
       // Compare signature of definition and definition of current database
       bongo.getStoredSignature(this.name,(signature) => {
+        //console.log(bongo.equals(signature,this.signature()));
         if(bongo.equals(signature,this.signature())) {
           bongo.getStoredVersion(this.name,(version) => {
             this.version = version;
             callback();
           });
+          this.ensured = true;
           return;
         }
-        console.log();
         bongo.getStoredVersion(this.name,(version) => {
           this.version = version + 1;
 
@@ -137,6 +161,8 @@ module bongo {
                 db.deleteObjectStore(name);
               }
             }
+            db.close();
+            this.ensured = true;
           };
         });
       });
