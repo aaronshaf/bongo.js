@@ -6,13 +6,10 @@
 module bongo {
   export var debug = false;
 
-  bongo.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
-  bongo.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
-  bongo.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
-
-  export function supported() {
-    return !!bongo.indexedDB && !!bongo.IDBTransaction && !!bongo.IDBKeyRange;
-  }
+  export var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+  export var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+  export var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+  export var supported = !!bongo.indexedDB && !!bongo.IDBTransaction && !!bongo.IDBKeyRange;
 
   export function db(definition: DatabaseDefinition,callback = function() {}) {
     if(typeof bongo[definition.name] === 'undefined') {
