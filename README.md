@@ -2,6 +2,11 @@
 
 Tested in Chrome 26, Chrome 29, Firefox 22, and IE 10.
 
+### Check for support
+
+```javascript
+var supported = bongo.supported();
+
 ### Define database
 
 ```javascript
@@ -10,11 +15,6 @@ var db = bongo.db({
   objectStores: ["users"]
 });
 ```
-
-### Check for support
-
-```javascript
-var supported = bongo.supported();
 ```
 
 ### Access database
