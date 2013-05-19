@@ -48,7 +48,7 @@ module bongo {
       delete this.objectStores;
 
       var tryToDelete = () => {
-        var request = window.indexedDB.deleteDatabase(this.name);
+        var request = bongo.indexedDB.deleteDatabase(this.name);
 
         request.onsuccess = (event) => {
           callback();
@@ -91,7 +91,7 @@ module bongo {
         }
         if(bongo.debug) console.log('Database is ensured');
 
-        var request = window.indexedDB.open(this.name);
+        var request = bongo.indexedDB.open(this.name);
 
         request.onupgradeneeded = (event) => {
           // This should never be called here. It should be covered by the initial 'ensure'
@@ -144,7 +144,7 @@ module bongo {
         bongo.getStoredVersion(this.name,(version) => {
           this.version = version + 1;
 
-          var request = window.indexedDB.open(this.name,this.version);
+          var request = bongo.indexedDB.open(this.name,this.version);
           request.onblocked = (event) => {
             //console.log('blocked',request.error.name);
           }

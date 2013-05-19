@@ -7,10 +7,10 @@ module bongo {
   export var debug = false;
 
   export function supported() {
-    window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
-    window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
-    window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
-    return !!window.indexedDB && !!window.IDBTransaction && !!window.IDBKeyRange;
+    bongo.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+    bongo.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+    bongo.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+    return !!bongo.indexedDB && !!bongo.IDBTransaction && !!bongo.IDBKeyRange;
   }
 
   export function db(definition: DatabaseDefinition) {
@@ -24,7 +24,7 @@ module bongo {
   }
 
   export function getStoredVersion(name,callback = function(version: number) {console.log(version);}) {
-    var request = window.indexedDB.open(name);
+    var request = bongo.indexedDB.open(name);
     request.onsuccess = function(event) {
       var db = event.target.result;
       db.close();
@@ -33,7 +33,7 @@ module bongo {
   }
 
   export function getStoredSignature(name,callback = function(signature: any) {console.log(signature)}) {
-    var request = window.indexedDB.open(name);
+    var request = bongo.indexedDB.open(name);
 
     request.onblocked = (event) => {
       console.log('blocked',event);
@@ -115,7 +115,7 @@ module bongo {
     var request;
 
     var debugDb = function(name) {
-      var request = window.indexedDB.open(name);
+      var request = bongo.indexedDB.open(name);
       request.onsuccess = function(event) {
         var db = event.target.result;
         // console.log(db);
@@ -134,8 +134,8 @@ module bongo {
     if(name) {
       debugDb(name);
     } else {
-      if(window.indexedDB.webkitGetDatabaseNames) {
-        request = window.indexedDB.webkitGetDatabaseNames();
+      if(bongo.indexedDB.webkitGetDatabaseNames) {
+        request = bongo.indexedDB.webkitGetDatabaseNames();
         request.onsuccess = function(event) {
           var dbNameList = event.target.result;
           for(var x = 0;x < dbNameList.length;x++) {

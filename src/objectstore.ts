@@ -208,7 +208,7 @@ module bongo {
           */
 
           index = objectStore.index(criteriaKeys[0]);
-          range = window.IDBKeyRange.only(criteria[criteriaKeys[0]]);
+          range = bongo.IDBKeyRange.only(criteria[criteriaKeys[0]]);
           index.openCursor(range).onsuccess = cursorSuccess;
           return;
         }
