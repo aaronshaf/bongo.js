@@ -3,6 +3,7 @@ var bongo;
     var Database = (function () {
         function Database(definition) {
             this.versionChecked = false;
+            this.objectStores = [];
             definition.objectStores = definition.objectStores || [];
             this.name = definition.name;
             for(var x = 0; x < definition.objectStores.length; x++) {
