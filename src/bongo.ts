@@ -29,7 +29,7 @@ module bongo {
     var request = window.indexedDB.open(name);
     request.onsuccess = function(event) {
       var db = event.target.result;
-      //db.close();
+      db.close();
       callback(db.version);
     }
   }
@@ -37,8 +37,9 @@ module bongo {
   export function getStoredSignature(name,callback = function(signature: any) {console.log(signature)}) {
     var request = window.indexedDB.open(name);
 
-    request.onblocked = () => {
-      callback({});
+    request.onblocked = (event) => {
+      console.log('blocked',event);
+      //callback({});
     };
 
     request.onsuccess = function(event) {
