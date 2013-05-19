@@ -4,7 +4,7 @@ files = [
   MOCHA,
   MOCHA_ADAPTER,
   'lib/chai.js',
-  '../src/bongo.es5.js',
+  '../js/bongo.es5.js',
   'spec/*Spec.js'
 ];
 exclude = [];
