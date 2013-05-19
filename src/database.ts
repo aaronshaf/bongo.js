@@ -1,9 +1,9 @@
 module bongo {
   export class Database {
     name: string;
-    objectStores: any[];
     version: number;
     versionChecked: Boolean = false;
+    objectStores: any[] = [];
 
     constructor(definition: DatabaseDefinition) {
       definition.objectStores = definition.objectStores || [];
