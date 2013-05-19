@@ -1,7 +1,9 @@
 var bongo;
 (function (bongo) {
     var Database = (function () {
-        function Database(definition) {
+        function Database(definition, callback) {
+            if (typeof callback === "undefined") { callback = function () {
+            }; }
             this.ensured = false;
             this.objectStores = [];
             definition.objectStores = definition.objectStores || [];
@@ -17,7 +19,7 @@ var bongo;
                 this[objectStore.name] = objectStore;
                 this.objectStores.push(objectStore);
             }
-            this.ensure();
+            this.ensure(callback);
         }
         Database.prototype.signature = function () {
             var objectStores = {
@@ -142,6 +144,7 @@ var bongo;
                     _this.version = version + 1;
                     var request = bongo.indexedDB.open(_this.name, _this.version);
                     request.onblocked = function (event) {
+                        console.log('blocked', request.error.name);
                     };
                     request.onsuccess = function () {
                         callback();
@@ -158,6 +161,7 @@ var bongo;
                         }
                         db.close();
                         _this.ensured = true;
+                        callback();
                     };
                 });
             });
@@ -545,10 +549,12 @@ var bongo;
         return !!bongo.indexedDB && !!bongo.IDBTransaction && !!bongo.IDBKeyRange;
     }
     bongo.supported = supported;
-    function db(definition) {
+    function db(definition, callback) {
+        if (typeof callback === "undefined") { callback = function () {
+        }; }
         if(typeof bongo[definition.name] === 'undefined') {
             Object.defineProperty(bongo, definition.name, {
-                value: new bongo.Database(definition)
+                value: new bongo.Database(definition, callback)
             });
         }
         return bongo[definition.name];
