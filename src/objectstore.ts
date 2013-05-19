@@ -23,9 +23,9 @@ module bongo {
       return query.find(criteria);
     }
 
-    findOne(criteria) {
+    findOne(criteria,callback) {
       var query = new bongo.Query(this.database,[this.name]);
-      return query.findOne(criteria);
+      return query.findOne(criteria,callback);
     }
 
     count(criteria,callback: Function) {
