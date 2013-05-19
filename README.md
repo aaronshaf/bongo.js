@@ -5,7 +5,9 @@ Tested in Chrome 26, Chrome 29, Firefox 22, and IE 10.
 ### Check for support
 
 ```javascript
-var supported = bongo.supported();
+if(bongo.supported) {
+  // Woo hoo!
+}
 ```
 
 ### Define database
@@ -23,7 +25,7 @@ var db = bongo.db({
 var db = bongo.acme;
 ```
 
-### Insert
+### insert
 
 ```javascript
 db.users.insert({
@@ -32,7 +34,7 @@ db.users.insert({
 });
 ```
 
-### Save
+### save
 
 ```javascript
 db.users.save({
@@ -42,7 +44,7 @@ db.users.save({
 });
 ```
 
-### Get
+### get
 
 ```javascript
 db.users.get("[key]", function(error,data) {
@@ -52,7 +54,7 @@ db.users.get("[key]", function(error,data) {
 });
 ```
 
-### Find
+### find
 
 ```javascript
 db.users.find({
@@ -64,7 +66,19 @@ db.users.find({
   });
 ```
 
-### Filter
+### findOne
+
+```javascript
+db.users.findOne({
+  name: "John Doe"
+}),function(error,record) {
+    if(!error) {
+      //success
+    }
+  });
+```
+
+### filter
 
 ```javascript
 db.users.filter(function(doc) {
@@ -87,7 +101,7 @@ db.users.filter(function(doc) {
 });
 ```
 
-### Pick fields
+### pick
 ```javascript
 db.users.filter(function(doc) {
   return doc.age > 30;
@@ -98,7 +112,7 @@ db.users.filter(function(doc) {
 });
 ```
 
-### Limit results
+### limit
 ```javascript
 db.users.filter(function(doc) {
   return doc.age > 30;
@@ -109,7 +123,7 @@ db.users.filter(function(doc) {
 });
 ```
 
-### Skip results
+### skip
 ```javascript
 db.users.filter(function(doc) {
   return doc.age > 30;
@@ -120,7 +134,7 @@ db.users.filter(function(doc) {
 });
 ```
 
-### Remove
+### remove
 
 ```javascript
 db.users.remove({
