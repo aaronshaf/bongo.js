@@ -62,7 +62,6 @@ describe("bongo", function() {
       expect(inserted).toBe(true);
     });
   });
-  return;
 
   it("saves a record", function() {
     var inserted = false;
