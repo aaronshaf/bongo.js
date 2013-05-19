@@ -433,7 +433,6 @@ var bongo;
             this.after = null;
             this.filters = [];
             this.keys = [];
-            this.results = [];
         }
         Query.prototype.findOne = function (criteria, callback) {
             this.find(criteria).limit(1).toArray(function (error, results) {
