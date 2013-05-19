@@ -192,11 +192,11 @@ var bongo;
             ]);
             return query.find(criteria);
         };
-        ObjectStore.prototype.findOne = function (criteria) {
+        ObjectStore.prototype.findOne = function (criteria, callback) {
             var query = new bongo.Query(this.database, [
                 this.name
             ]);
-            return query.findOne(criteria);
+            return query.findOne(criteria, callback);
         };
         ObjectStore.prototype.count = function (criteria, callback) {
             var _this = this;
@@ -433,11 +433,19 @@ var bongo;
             this.after = null;
             this.filters = [];
             this.keys = [];
+            this.results = [];
         }
-        Query.prototype.findOne = function (criteria) {
-            this._limit = 1;
-            this.find(criteria);
-            return this;
+        Query.prototype.findOne = function (criteria, callback) {
+            this.find(criteria).limit(1).toArray(function (error, results) {
+                if(error) {
+                    return callback(error);
+                }
+                if(!results.length) {
+                    callback(error, null);
+                } else {
+                    callback(error, results[0]);
+                }
+            });
         };
         Query.prototype.find = function (criteria) {
             if (typeof criteria === "undefined") { criteria = {
@@ -545,10 +553,7 @@ var bongo;
     bongo.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
     bongo.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
     bongo.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
-    function supported() {
-        return !!bongo.indexedDB && !!bongo.IDBTransaction && !!bongo.IDBKeyRange;
-    }
-    bongo.supported = supported;
+    bongo.supported = !!bongo.indexedDB && !!bongo.IDBTransaction && !!bongo.IDBKeyRange;
     function db(definition, callback) {
         if (typeof callback === "undefined") { callback = function () {
         }; }
