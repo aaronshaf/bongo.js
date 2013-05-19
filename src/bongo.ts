@@ -13,10 +13,10 @@ module bongo {
     return !!bongo.indexedDB && !!bongo.IDBTransaction && !!bongo.IDBKeyRange;
   }
 
-  export function db(definition: DatabaseDefinition) {
+  export function db(definition: DatabaseDefinition,callback = function() {}) {
     if(typeof bongo[definition.name] === 'undefined') {
       Object.defineProperty(bongo,definition.name,{
-        value: new bongo.Database(definition)
+        value: new bongo.Database(definition,callback)
       });
     }
 
