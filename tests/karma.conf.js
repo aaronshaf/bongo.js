@@ -3,7 +3,6 @@ urlRoot = '/karma/';
 files = [
   JASMINE,
   JASMINE_ADAPTER,
-  // '../libs/indexedDBShim.js',
   '../src/bongo.es5.js',
   'spec/*Spec.js'
 ];
