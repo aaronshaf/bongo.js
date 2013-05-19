@@ -11,10 +11,15 @@ module bongo {
 
     constructor(public database,public objectStores) {}
 
-    findOne(criteria) {
-      this._limit = 1;
-      this.find(criteria);
-      return this;
+    findOne(criteria,callback) {
+      this.find(criteria).limit(1).toArray(function(error,results){
+        if(error) return callback(error);
+        if(!results.length) {
+          callback(error,null);
+        } else {
+          callback(error,results[0]);
+        }
+      });
     }
 
     find(criteria = {}) {
