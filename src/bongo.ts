@@ -7,7 +7,6 @@ module bongo {
   export var debug = false;
 
   export function supported() {
-    // Ensure support
     window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
     window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
     window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
@@ -15,8 +14,7 @@ module bongo {
   }
 
   export function db(definition: DatabaseDefinition) {
-    // Is database already defined? If so, just return it
-    if(typeof bongo[definition.name] === 'undefined') { // && definition.version === bongo[definition.name].version
+    if(typeof bongo[definition.name] === 'undefined') {
       Object.defineProperty(bongo,definition.name,{
         value: new bongo.Database(definition)
       });
