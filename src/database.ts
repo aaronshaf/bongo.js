@@ -151,7 +151,9 @@ module bongo {
           request.onsuccess = () => {
             callback();
           }
+
           // See: https://groups.google.com/a/chromium.org/forum/?fromgroups#!topic/chromium-html5/pHoKbX78rxA
+          // See: https://groups.google.com/a/chromium.org/forum/?fromgroups#!topic/chromium-html5/8C-NWF2FajA
           request.onupgradeneeded = (event) => {
             var db = request.result;
             for(var x = 0;x < this.objectStores.length;x++) {
