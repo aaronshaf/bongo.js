@@ -11,6 +11,12 @@ var db = bongo.db({
 });
 ```
 
+### Check for support
+
+```javascript
+var supported = bongo.supported();
+```
+
 ### Access database
 
 ```javascript
