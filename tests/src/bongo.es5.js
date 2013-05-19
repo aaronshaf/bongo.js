@@ -2,7 +2,7 @@ var bongo;
 (function (bongo) {
     var Database = (function () {
         function Database(definition) {
-            this.versionChecked = false;
+            this.ensured = false;
             this.objectStores = [];
             definition.objectStores = definition.objectStores || [];
             this.name = definition.name;
@@ -70,45 +70,74 @@ var bongo;
         };
         Database.prototype.get = function (callback) {
             var _this = this;
-            var request = window.indexedDB.open(this.name);
-            request.onupgradeneeded = function (event) {
+            var tries = 500;
+            var tryToOpen = function () {
+                if(!_this.ensured) {
+                    if(bongo.debug) {
+                        console.log('Database not ensured yet');
+                    }
+                    tries--;
+                    if(tries > 0) {
+                        setTimeout(function () {
+                            tryToOpen();
+                        }, 200);
+                    }
+                    return;
+                }
                 if(bongo.debug) {
-                    console.debug('onupgradeneeded');
+                    console.log('Database is ensured');
                 }
-                for(var x = 0; x < _this.objectStores.length; x++) {
-                    _this.objectStores[x].ensureObjectStore(request.result);
-                }
+                var request = window.indexedDB.open(_this.name);
+                request.onupgradeneeded = function (event) {
+                    if(bongo.debug) {
+                        console.debug('onupgradeneeded');
+                    }
+                    var db = request.result;
+                    for(var x = 0; x < _this.objectStores.length; x++) {
+                        _this.objectStores[x].ensureObjectStore(db);
+                    }
+                    for(var name in signature.objectStores) {
+                        if(typeof _this[name] === 'undefined' && db.objectStoreNames.contains(name)) {
+                            db.deleteObjectStore(name);
+                        }
+                    }
+                    db.close();
+                };
+                request.onsuccess = function (event) {
+                    if(bongo.debug) {
+                        console.debug('onsuccess');
+                    }
+                    callback(event.target.result);
+                };
+                request.onblocked = function (event) {
+                    console.log(_this.version, request);
+                    console.log('onblocked');
+                    throw request.webkitErrorMessage || request.error.name;
+                };
+                request.onerror = function (event) {
+                    console.log('onerror');
+                    throw request.webkitErrorMessage || request.error.name;
+                };
+                request.onfailure = request.onerror;
             };
-            request.onsuccess = function (event) {
-                if(bongo.debug) {
-                    console.debug('onsuccess');
-                }
-                callback(request.result);
-            };
-            request.onblocked = function (event) {
-                console.log(_this.version, request);
-                console.log('onblocked');
-                throw request.webkitErrorMessage || request.error.name;
-            };
-            request.onerror = function (event) {
-                console.log('onerror');
-                throw request.webkitErrorMessage || request.error.name;
-            };
-            request.onfailure = request.onerror;
+            tryToOpen();
         };
         Database.prototype.ensure = function (callback) {
             if (typeof callback === "undefined") { callback = function () {
             }; }
             var _this = this;
+            if(bongo.debug) {
+                console.debug('Ensuring ' + this.name);
+            }
             bongo.getStoredSignature(this.name, function (signature) {
                 if(bongo.equals(signature, _this.signature())) {
                     bongo.getStoredVersion(_this.name, function (version) {
                         _this.version = version;
                         callback();
                     });
+                    _this.ensured = true;
                     return;
                 }
-                console.log();
                 bongo.getStoredVersion(_this.name, function (version) {
                     _this.version = version + 1;
                     var request = window.indexedDB.open(_this.name, _this.version);
@@ -127,6 +156,8 @@ var bongo;
                                 db.deleteObjectStore(name);
                             }
                         }
+                        db.close();
+                        _this.ensured = true;
                     };
                 });
             });
@@ -533,6 +564,7 @@ var bongo;
         var request = window.indexedDB.open(name);
         request.onsuccess = function (event) {
             var db = event.target.result;
+            db.close();
             callback(db.version);
         };
     }
@@ -542,9 +574,8 @@ var bongo;
             console.log(signature);
         }; }
         var request = window.indexedDB.open(name);
-        request.onblocked = function () {
-            callback({
-            });
+        request.onblocked = function (event) {
+            console.log('blocked', event);
         };
         request.onsuccess = function (event) {
             var x, indexes, db = event.target.result;
