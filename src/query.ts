@@ -12,7 +12,7 @@ module bongo {
     constructor(public database,public objectStores) {}
 
     findOne(criteria) {
-      this.limit = 1;
+      this._limit = 1;
       this.find(criteria);
       return this;
     }
