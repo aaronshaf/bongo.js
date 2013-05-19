@@ -6,6 +6,7 @@ Tested in Chrome 26, Chrome 29, Firefox 22, and IE 10.
 
 ```javascript
 var supported = bongo.supported();
+```
 
 ### Define database
 
@@ -14,7 +15,6 @@ var db = bongo.db({
   name: 'acme',
   objectStores: ["users"]
 });
-```
 ```
 
 ### Access database
