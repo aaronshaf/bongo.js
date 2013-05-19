@@ -41,20 +41,22 @@ describe("bongo", function() {
   it("inserts a record", function() {
     var inserted = false;
     runs(function() {
-      db.users.insert({
-        name: "John Doe",
-        email: "john@domain.com"
-      },function(error,resultId) {
-        if(!error && resultId) {
-          id = resultId;
-          inserted = true;
-        }
-      });
+     // setTimeout(function() {
+        db.users.insert({
+          name: "John Doe",
+          email: "john@domain.com"
+        },function(error,resultId) {
+          if(!error && resultId) {
+            id = resultId;
+            inserted = true;
+          }
+        });
+      // },100);
     });
 
     waitsFor(function() {
       return inserted;
-    }, "The record should be inserted", 200);
+    }, "The record should be inserted", 30000);
 
     runs(function() {
       expect(inserted).toBe(true);
