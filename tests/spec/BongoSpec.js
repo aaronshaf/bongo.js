@@ -7,29 +7,30 @@ describe("bongo", function() {
     assert.equal(bongo.supported(),true);
   });
 
-  it("defines a database", function() {
+  it("defines a database", function(done) {
+    this.timeout(30000);
+
     db = bongo.db({
       name: 'acme',
       objectStores: ["users","employees"]
+    },function() {
+      done();
     });
 
-    assert.equal((typeof db === 'undefined'),false);
-    assert.equal((typeof bongo.acme === 'undefined'),false);
+    assert.notTypeOf(db,'undefined');
+    assert.notTypeOf(bongo.acme,'undefined');
   });
 
-  // it("probes a database", function() {
-  //   var definition = null;
+  it("probes a database", function(done) {
+    this.timeout(30000);
+    var definition = null;
 
-  //   bongo.probe('acme',function(result) {
-  //     definition = result;
-  //   });
-
-  //   // waitsFor(function() {return definition;}, 200);
-
-  //   // runs(function() {expect(JSON.stringify(definition)).
-  //   //   toBe('{"name":"acme","objectStores":["employees","users"],"version":1}');
-  //   // });
-  // });
+    bongo.getStoredSignature('acme',function(signature) {
+      assert.equal(signature.name,'acme');
+      assert.equal(Object.keys(signature.objectStores).length,2);
+      done();
+    });
+  });
 
   it('can generate mongo-esque keys', function() {
     var key;
