@@ -4,6 +4,8 @@
 /// <reference path="query.ts" />
 
 module bongo {
+  export var debug = false;
+
   export function supported() {
     // Ensure support
     window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
@@ -22,19 +24,17 @@ module bongo {
 
     return bongo[definition.name];
   }
-  export var debug = false;
 
-  export function getStoredVersion(name,callback = function() {}) {
+  export function getStoredVersion(name,callback = function(version: number) {console.log(version);}) {
     var request = window.indexedDB.open(name);
     request.onsuccess = function(event) {
       var db = event.target.result;
-      version = db.version;
       //db.close();
-      callback(version);
+      callback(db.version);
     }
   }
 
-  export function getStoredSignature(name,callback = function() {}) {
+  export function getStoredSignature(name,callback = function(signature: any) {console.log(signature)}) {
     var request = window.indexedDB.open(name);
 
     request.onblocked = () => {

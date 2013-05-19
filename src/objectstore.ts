@@ -1,6 +1,11 @@
 module bongo {
   export class ObjectStore {
-    constructor(public database,definition: DatabaseDefinition) {
+    name: string;
+    keyPath: string;
+    autoIncrement: Boolean;
+    indexes: any[];
+
+    constructor(public database,definition) {
       this.name = definition.name;
       this.keyPath = definition.keyPath || '_id';
       this.autoIncrement = !!definition.autoIncrement;
@@ -23,7 +28,7 @@ module bongo {
       return query.findOne(criteria);
     }
 
-    count(criteria,callback) {
+    count(criteria,callback = function(count) {console.log(count)}) {
       if(typeof callback === 'undefined' && typeof criteria === 'function') {
         callback = [criteria, criteria = null][0]; // Is this fancy way even necessary?
       }

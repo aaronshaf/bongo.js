@@ -1,7 +1,7 @@
 module bongo {
   export class Database {
     name: string;
-    objectStores: any[] = [];
+    objectStores: any[];
     version: number;
     versionChecked: Boolean = false;
 
@@ -77,7 +77,6 @@ module bongo {
     }
 
     get(callback) {
-      return;
       var request = window.indexedDB.open(this.name);
 
       request.onupgradeneeded = (event) => {

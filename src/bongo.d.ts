@@ -1,6 +1,7 @@
 interface DatabaseDefinition {
   name: string;
   version: number;
+  autoIncrement: Boolean;
   objectStores: any[];
 }
 
@@ -27,6 +28,21 @@ interface IDBOpenDBRequest {
   onfailure?: any;
 }
 
+interface IDBFactory {
+  webkitGetDatabaseNames?: any;
+}
+
 interface EventTarget {
   result?: any;
+}
+
+interface window {
+  IDBKeyRange: any;
+  msIDBTransaction: any;
+}
+
+interface Console {
+  debug: Function;
+  group: Function;
+  groupEnd: Function;
 }

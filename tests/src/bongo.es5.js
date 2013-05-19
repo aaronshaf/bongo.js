@@ -2,7 +2,6 @@ var bongo;
 (function (bongo) {
     var Database = (function () {
         function Database(definition) {
-            this.objectStores = [];
             this.versionChecked = false;
             definition.objectStores = definition.objectStores || [];
             this.name = definition.name;
@@ -70,7 +69,6 @@ var bongo;
         };
         Database.prototype.get = function (callback) {
             var _this = this;
-            return;
             var request = window.indexedDB.open(this.name);
             request.onupgradeneeded = function (event) {
                 if(bongo.debug) {
@@ -165,6 +163,9 @@ var bongo;
             return query.findOne(criteria);
         };
         ObjectStore.prototype.count = function (criteria, callback) {
+            if (typeof callback === "undefined") { callback = function (count) {
+                console.log(count);
+            }; }
             var _this = this;
             if(typeof callback === 'undefined' && typeof criteria === 'function') {
                 callback = [
@@ -401,7 +402,7 @@ var bongo;
             this.keys = [];
         }
         Query.prototype.findOne = function (criteria) {
-            this.limit = 1;
+            this._limit = 1;
             this.find(criteria);
             return this;
         };
@@ -507,6 +508,7 @@ var bongo;
 })(bongo || (bongo = {}));
 var bongo;
 (function (bongo) {
+    bongo.debug = false;
     function supported() {
         window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
         window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
@@ -523,20 +525,20 @@ var bongo;
         return bongo[definition.name];
     }
     bongo.db = db;
-    bongo.debug = false;
     function getStoredVersion(name, callback) {
-        if (typeof callback === "undefined") { callback = function () {
+        if (typeof callback === "undefined") { callback = function (version) {
+            console.log(version);
         }; }
         var request = window.indexedDB.open(name);
         request.onsuccess = function (event) {
             var db = event.target.result;
-            version = db.version;
-            callback(version);
+            callback(db.version);
         };
     }
     bongo.getStoredVersion = getStoredVersion;
     function getStoredSignature(name, callback) {
-        if (typeof callback === "undefined") { callback = function () {
+        if (typeof callback === "undefined") { callback = function (signature) {
+            console.log(signature);
         }; }
         var request = window.indexedDB.open(name);
         request.onblocked = function () {
