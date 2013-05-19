@@ -195,9 +195,6 @@ var bongo;
             return query.findOne(criteria);
         };
         ObjectStore.prototype.count = function (criteria, callback) {
-            if (typeof callback === "undefined") { callback = function (count) {
-                console.log(count);
-            }; }
             var _this = this;
             if(typeof callback === 'undefined' && typeof criteria === 'function') {
                 callback = [
