@@ -92,6 +92,28 @@ db.users.filter(function(doc) {
 });
 ```
 
+### Limit results
+```javascript
+db.users.filter(function(doc) {
+  return doc.age > 30;
+}).limit(5).toArray(function(error,results) {
+  if(!error) {
+    //success
+  }
+});
+```
+
+### Skip results
+```javascript
+db.users.filter(function(doc) {
+  return doc.age > 30;
+}).skip(5).limit(5).toArray(function(error,results) {
+  if(!error) {
+    //success
+  }
+});
+```
+
 ### Remove
 
 ```javascript
