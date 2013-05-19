@@ -5,7 +5,7 @@ module bongo {
     ensured: Boolean = false;
     objectStores: any[] = [];
 
-    constructor(definition: DatabaseDefinition) {
+    constructor(definition: DatabaseDefinition,callback = function() {}) {
       definition.objectStores = definition.objectStores || [];
       this.name = definition.name;
       for(var x = 0;x < definition.objectStores.length;x++) {
@@ -18,7 +18,7 @@ module bongo {
         this[objectStore.name] = objectStore;
         this.objectStores.push(objectStore);
       }
-      this.ensure();
+      this.ensure(callback);
     }
 
     signature() {
@@ -146,11 +146,12 @@ module bongo {
 
           var request = bongo.indexedDB.open(this.name,this.version);
           request.onblocked = (event) => {
-            //console.log('blocked',request.error.name);
+            console.log('blocked',request.error.name);
           }
           request.onsuccess = () => {
             callback();
           }
+          // See: https://groups.google.com/a/chromium.org/forum/?fromgroups#!topic/chromium-html5/pHoKbX78rxA
           request.onupgradeneeded = (event) => {
             var db = request.result;
             for(var x = 0;x < this.objectStores.length;x++) {
@@ -163,6 +164,7 @@ module bongo {
             }
             db.close();
             this.ensured = true;
+            callback();
           };
         });
       });
