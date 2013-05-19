@@ -1,8 +1,10 @@
+assert = chai.assert;
+
 describe("bongo", function() {
   var a,db,id;
 
   it("checks to see if browser supports IndexedDB", function() {
-    expect(bongo.supported()).toBe(true);
+    assert.equal(bongo.supported(),true);
   });
 
   it("defines a database", function() {
@@ -11,8 +13,8 @@ describe("bongo", function() {
       objectStores: ["users","employees"]
     });
 
-    expect((typeof db === 'undefined')).toBe(false);
-    expect((typeof bongo.acme === 'undefined')).toBe(false);
+    assert.equal((typeof db === 'undefined'),false);
+    assert.equal((typeof bongo.acme === 'undefined'),false);
   });
 
   // it("probes a database", function() {
@@ -34,99 +36,53 @@ describe("bongo", function() {
 
     for(var x = 0;x < 101;x++) {
       key = bongo.key();
-      expect(typeof key === "string" && key.indexOf('NaN') === -1).toBe(true);
+      assert.equal(typeof key === "string" && key.indexOf('NaN') === -1,true);
     }
   });
 
-  it("inserts a record", function() {
-    var inserted = false;
-    runs(function() {
-     // setTimeout(function() {
-        db.users.insert({
-          name: "John Doe",
-          email: "john@domain.com"
-        },function(error,resultId) {
-          if(!error && resultId) {
-            id = resultId;
-            inserted = true;
-          }
-        });
-      // },100);
-    });
-
-    waitsFor(function() {
-      return inserted;
-    }, "The record should be inserted", 30000);
-
-    runs(function() {
-      expect(inserted).toBe(true);
-    });
-  });
-
-  it("saves a record", function() {
-    var inserted = false;
-
-    runs(function() {
-      db.users.save({
-        name: "John Doe",
-        email: "john@domain.com"
-      },function(error,resultId) {
-        if(!error && resultId) {
-          id = resultId;
-          inserted = true;
-        }
-      });
-    });
-
-    waitsFor(function() {
-      return inserted;
-    }, "The record should be inserted", 200);
-
-    runs(function() {
-      expect(inserted).toBe(true);
-    });
-  });
-
-  it("fetch a record", function() {
-    var fetched = false;
-    runs(function() {
-      if(id) {
-        bongo.acme.users.get(id,function(error,data) {
-          if(!error && data) {
-            fetched = true;
-          }
-        });
+  it("inserts a record without error", function(done) {
+    db.users.insert({
+      name: "John Doe",
+      email: "john@domain.com"
+    },function(error,resultId) {
+      if(!error && resultId) {
+        id = resultId;
+        done();
       }
     });
+  });
 
-    waitsFor(function() {
-      return fetched;
-    }, "The record should be fetched", 200);
-
-    runs(function() {
-      expect(fetched).toBe(true);
+  it("saves a record without error", function(done) {
+    db.users.save({
+      name: "John Doe",
+      email: "john@domain.com"
+    },function(error,resultId) {
+      if(!error && resultId) {
+        id = resultId;
+        done();
+      }
     });
   });
 
-  it("count records", function() {
-    var count;
-
-    runs(function() {
-      db.users.count(function(response) {
-        count = response;
+  it("fetch a record", function(done) {
+    if(id) {
+      bongo.acme.users.get(id,function(error,data) {
+        if(!error && data) {
+          done();
+        }
       });
-    });
+    }
+  });
 
-    waitsFor(function() {
-      return typeof count !== "undefined";
-    }, "The records should be counted", 1000);
-
-    runs(function() {
-      expect(count > 0).toBe(true);
+  it("count records", function(done) {
+    db.users.count(function(response) {
+      if(response > 0) {
+        done();
+      }
     });
   });
 
-  it("find records by empty criteria", function() {
+  it("find records by empty criteria", function(done) {
     var found = false;
 
     var insertRecord1 = function() {
@@ -147,125 +103,64 @@ describe("bongo", function() {
       bongo.acme.users.find({}).toArray(function(error,results) {
         if(!error && results && results.length) {
           found = true;
+          done();
         }
       });
     };
 
-    runs(function() {
-      insertRecord1();
-    });
+    insertRecord1();
+  });
 
-    waitsFor(function() {
-      return found;
-    }, "The inserted record should be found", 500);
-
-    runs(function() {
-      expect(found).toBe(true);
+  it("removes a record without error", function(done) {
+    bongo.acme.users.remove(id,function(error) {
+      if(!error) {
+        done();
+      }
     });
   });
 
-  it("removes a record", function() {
-    var removed = false;
-    runs(function() {
-      bongo.acme.users.remove(id,function(error) {
-        if(!error) {
-          // This should attempt to find the particular record which was removed
-          removed = true;
-        }
-      });
-    });
-
-    waitsFor(function() {
-      return removed;
-    }, "The record should be removed", 200);
-
-    runs(function() {
-      expect(removed).toBe(true);
-    });
-  });
-
-  it("filters (1)", function() {
-    var filtered = false;
-
+  it("filters (1)", function(done) {
     bongo.acme.users
       .filter(function(doc) {
         return doc.name === "Jane Doe";
       })
       .toArray(function(error, results) {
         if(!error && results.length) {
-          filtered = true;
+          done();
         }
       });
-
-    waitsFor(function() {
-      return filtered;
-    }, "Records should be filtered (1)", 200);
-
-    runs(function() {
-      expect(filtered).toBe(true);
-    });
   });
 
-  it("filters (2)", function() {
-    var filtered = false;
-
+  it("filters (2)", function(done) {
     var query = new RegExp('jane','i');
     db.users.filter(function(doc) {
       return query.test(doc.email);
     }).toArray(function(error,results) {
       if(!error && results.length) {
-        filtered = true;
+        done();
       }
-    });
-
-    waitsFor(function() {
-      return filtered;
-    }, "Records should be filtered (2)", 200);
-
-    runs(function() {
-      expect(filtered).toBe(true);
     });
   });
 
-  it("limit on find", function() {
-    var limited = false;
-    var resultCount = null;
-
+  it("limit on find", function(done) {
     db.users.find({}).limit(2).toArray(function(error,results) {
       if(!error) {
-        resultCount = results.length;
-        limited = true;
+        if(results.length == 2) {
+          done();
+        }
       }
-    });
-
-    waitsFor(function() {
-      return limited;
-    }, "Records should be filtered (2)", 200);
-
-    runs(function() {
-      expect(resultCount).toBe(2);
     });
   });
 
-  it("limit on filter", function() {
-    var limited = false;
-    var resultCount = null;
-
+  it("limit on filter", function(done) {
     db.users.filter(function() {
       return true;
     }).limit(2).toArray(function(error,results) {
       if(!error) {
-        resultCount = results.length;
-        limited = true;
+        if(results.length === 2) {
+          done();
+        }
       }
-    });
-
-    waitsFor(function() {
-      return limited;
-    }, "Records should be filtered (2)", 200);
-
-    runs(function() {
-      expect(resultCount).toBe(2);
     });
   });
 
@@ -277,7 +172,7 @@ describe("bongo", function() {
     // Forthcoming
   });
 
-  it("find (1)", function() {
+  it("find (1)", function(done) {
     var found = false;
 
     db.users.find({
@@ -285,37 +180,19 @@ describe("bongo", function() {
     }).toArray(function(error,results) {
       if(!error && results.length) {
         found = true;
+        done();
       }
-    });
-
-    waitsFor(function() {
-      return found;
-    }, "Records should be found (1)", 200);
-
-    runs(function() {
-      expect(found).toBe(true);
     });
   });
 
   // it("picks fields", function() {
   // });
 
-  it("remove all records", function() {
-    var removed = false;
-    runs(function() {
-      bongo.acme.users.remove({},function(error) {
-        if(!error) {
-          removed = true;
-        }
-      });
-    });
-
-    waitsFor(function() {
-      return removed;
-    }, "All records should be removed", 200);
-
-    runs(function() {
-      expect(removed).toBe(true);
+  it("remove all records without error", function(done) {
+    bongo.acme.users.remove({},function(error) {
+      if(!error) {
+        done();
+      }
     });
   });
 

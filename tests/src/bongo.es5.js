@@ -45,7 +45,7 @@ var bongo;
             }
             delete this.objectStores;
             var tryToDelete = function () {
-                var request = window.indexedDB.deleteDatabase(_this.name);
+                var request = bongo.indexedDB.deleteDatabase(_this.name);
                 request.onsuccess = function (event) {
                     callback();
                 }.bind(_this);
@@ -87,7 +87,7 @@ var bongo;
                 if(bongo.debug) {
                     console.log('Database is ensured');
                 }
-                var request = window.indexedDB.open(_this.name);
+                var request = bongo.indexedDB.open(_this.name);
                 request.onupgradeneeded = function (event) {
                     if(bongo.debug) {
                         console.debug('onupgradeneeded');
@@ -140,7 +140,7 @@ var bongo;
                 }
                 bongo.getStoredVersion(_this.name, function (version) {
                     _this.version = version + 1;
-                    var request = window.indexedDB.open(_this.name, _this.version);
+                    var request = bongo.indexedDB.open(_this.name, _this.version);
                     request.onblocked = function (event) {
                     };
                     request.onsuccess = function () {
@@ -340,7 +340,7 @@ var bongo;
                         }
                     };
                     index = objectStore.index(criteriaKeys[0]);
-                    range = window.IDBKeyRange.only(criteria[criteriaKeys[0]]);
+                    range = bongo.IDBKeyRange.only(criteria[criteriaKeys[0]]);
                     index.openCursor(range).onsuccess = cursorSuccess;
                     return;
                 }
@@ -539,10 +539,10 @@ var bongo;
 (function (bongo) {
     bongo.debug = false;
     function supported() {
-        window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
-        window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
-        window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
-        return !!window.indexedDB && !!window.IDBTransaction && !!window.IDBKeyRange;
+        bongo.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+        bongo.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+        bongo.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+        return !!bongo.indexedDB && !!bongo.IDBTransaction && !!bongo.IDBKeyRange;
     }
     bongo.supported = supported;
     function db(definition) {
@@ -558,7 +558,7 @@ var bongo;
         if (typeof callback === "undefined") { callback = function (version) {
             console.log(version);
         }; }
-        var request = window.indexedDB.open(name);
+        var request = bongo.indexedDB.open(name);
         request.onsuccess = function (event) {
             var db = event.target.result;
             db.close();
@@ -570,7 +570,7 @@ var bongo;
         if (typeof callback === "undefined") { callback = function (signature) {
             console.log(signature);
         }; }
-        var request = window.indexedDB.open(name);
+        var request = bongo.indexedDB.open(name);
         request.onblocked = function (event) {
             console.log('blocked', event);
         };
@@ -652,7 +652,7 @@ var bongo;
         console.group('Bongo');
         var request;
         var debugDb = function (name) {
-            var request = window.indexedDB.open(name);
+            var request = bongo.indexedDB.open(name);
             request.onsuccess = function (event) {
                 var db = event.target.result;
                 var objectStoreNames = [];
@@ -669,8 +669,8 @@ var bongo;
         if(name) {
             debugDb(name);
         } else {
-            if(window.indexedDB.webkitGetDatabaseNames) {
-                request = window.indexedDB.webkitGetDatabaseNames();
+            if(bongo.indexedDB.webkitGetDatabaseNames) {
+                request = bongo.indexedDB.webkitGetDatabaseNames();
                 request.onsuccess = function (event) {
                     var dbNameList = event.target.result;
                     for(var x = 0; x < dbNameList.length; x++) {
