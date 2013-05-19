@@ -28,7 +28,7 @@ module bongo {
       return query.findOne(criteria);
     }
 
-    count(criteria,callback = function(count) {console.log(count)}) {
+    count(criteria,callback: Function) {
       if(typeof callback === 'undefined' && typeof criteria === 'function') {
         callback = [criteria, criteria = null][0]; // Is this fancy way even necessary?
       }
