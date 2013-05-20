@@ -1,5 +1,7 @@
 ## Easy, peasy, lemon squeezy
 
+Bongo.js is a library for storing and querying structured data on the browser. Lots of it.
+
 [Tested](http://aaronshaf.github.io/bongo.js/) in Chrome 26, Chrome 29, Firefox 22, and Internet Explorer 10.
 
 ### Check for support
@@ -176,6 +178,7 @@ db.delete(function(error) {
 
 ## See also
 
+* [Introduction to Bongo.js](http://slid.es/aaronshaf/bongojs/fullscreen) (slides)
 * [aaronpowell/db.js](https://github.com/aaronpowell/db.js)
 * [jensarps/IDBWrapper](https://github.com/jensarps/IDBWrapper)
 * [axemclion/IndexedDB](https://github.com/axemclion/IndexedDB)
