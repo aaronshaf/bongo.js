@@ -166,6 +166,10 @@ db.delete(function(error) {
 });
 ```
 
+## Known issue
+
+* After many(?) database upgrades, sometimes Chrome needs to be restarted.
+
 ## License
 
 MIT
