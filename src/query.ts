@@ -1,11 +1,11 @@
 module bongo {
   export class Query {
     _limit: number = 100;
-    _skip: number = 0;
-    from: any = null;
-    to: any = null;
-    before: any = null;
-    after: any = null;
+    _skip: number  = 0;
+    from: any      = null;
+    to: any        = null;
+    before: any    = null;
+    after: any     = null;
     filters: any[] = [];
     keys: string[] = [];
 
