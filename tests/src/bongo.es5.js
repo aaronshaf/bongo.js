@@ -161,7 +161,6 @@ var bongo;
                         }
                         db.close();
                         _this.ensured = true;
-                        callback();
                     };
                 });
             });
@@ -606,12 +605,20 @@ var bongo;
                         name: objectStore.name
                     };
                 });
+                transaction.oncomplete = function () {
+                    db.close(name);
+                    return callback({
+                        name: db.name,
+                        objectStores: objectStores
+                    });
+                };
+            } else {
+                db.close(name);
+                return callback({
+                    name: db.name,
+                    objectStores: objectStores
+                });
             }
-            db.close(name);
-            return callback({
-                name: db.name,
-                objectStores: objectStores
-            });
         };
     }
     bongo.getStoredSignature = getStoredSignature;
@@ -657,6 +664,25 @@ var bongo;
         return true;
     }
     bongo.equals = equals;
+    function close(target) {
+        var db;
+        if(target instanceof window.IDBCursor) {
+            target = target.source;
+        }
+        if(target instanceof window.IDBDatabase) {
+            db = target;
+        } else if(target instanceof window.IDBTransaction) {
+            db = target.db;
+        } else if(target instanceof window.IDBObjectStore || target instanceof bongo.IDBRequest) {
+            db = target.transaction.db;
+        } else if(target instanceof window.IDBIndex) {
+            db = target.objectStore.transaction.db;
+        }
+        if(typeof (db) !== "undefined" && db != null && typeof (db.close) != "undefined") {
+            db.close();
+        }
+    }
+    bongo.close = close;
     function info(name) {
         if (typeof name === "undefined") { name = null; }
         console.group('Bongo');
