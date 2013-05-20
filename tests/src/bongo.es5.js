@@ -299,6 +299,9 @@ var bongo;
                 ], "readwrite");
                 var objectStore = transaction.objectStore(_this.name);
                 var request = objectStore.add(data);
+                request.onerror = function (event) {
+                    console.log(event.target.error);
+                };
                 request.onsuccess = function (event) {
                     callback(event.target.error, event.target.result);
                 };
