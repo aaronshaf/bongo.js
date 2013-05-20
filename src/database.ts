@@ -38,6 +38,10 @@ module bongo {
       };
     }
 
+    // "Databases has a delete pending flag which is used during deletion.
+    // When a database is requested to be deleted the flag is set to true
+    // and all attempts at opening the database are stalled until the
+    // database can be deleted." - W3 Spec, http://goo.gl/adPjR
     delete(callback = function() {}) {
       // Check for transaction on objectStores?
 
@@ -76,6 +80,9 @@ module bongo {
       });
     }
 
+    // https://groups.google.com/a/chromium.org/forum/#!topic/chromium-html5/RQFrG9SDPTI/discussion
+    // "Can transactions remain open between page reloads?"
+    //   Unfortunately in Chrome, it seem so.
     get(callback) {
       var tries = 500;
       var tryToOpen = () => {
@@ -166,7 +173,6 @@ module bongo {
             }
             db.close();
             this.ensured = true;
-            callback();
           };
         });
       });
