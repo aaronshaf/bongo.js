@@ -1,6 +1,6 @@
 ## Easy, peasy, lemon squeezy
 
-Tested in Chrome 26, Chrome 29, Firefox 22, and Internet Explorer 10.
+[Tested](http://aaronshaf.github.io/bongo.js/) in Chrome 26, Chrome 29, Firefox 22, and Internet Explorer 10.
 
 ### Check for support
 
@@ -172,7 +172,7 @@ db.delete(function(error) {
 
 ## License
 
-MIT
+[MIT](http://en.wikipedia.org/wiki/MIT_License). Forking is form of flattery.
 
 ## See also
 
