@@ -1,6 +1,6 @@
 ## Easy, peasy, lemon squeezy
 
-Tested in Chrome 26, Chrome 29, Firefox 22, and IE10.
+Tested in Chrome 26, Chrome 29, Firefox 22, and Internet Explorer 10.
 
 ### Check for support
 
