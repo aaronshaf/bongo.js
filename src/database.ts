@@ -2,7 +2,7 @@ module bongo {
   export class Database {
     name: string;
     version: number;
-    ensured: Boolean = false;
+    ensured: Boolean    = false;
     objectStores: any[] = [];
 
     constructor(definition: DatabaseDefinition,callback = function() {}) {
