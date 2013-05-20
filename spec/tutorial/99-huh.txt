@@ -1,0 +1,9 @@
+"IndexedDB is basically a glorified key-value store."
+ - Devon Govett http://goo.gl/PlT49
+
+Why not use localstorage?
+ - Blocking. Slow? Synchronous.
+ - JSON.parse
+ - 5mb limit (on iPhone)
+
+WebSQL: W3C deprecated on November 18, 2010
