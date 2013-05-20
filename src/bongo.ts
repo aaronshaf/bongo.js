@@ -61,15 +61,20 @@ module bongo {
             name: objectStore.name
           };
         });
-      }
-
-      db.close(name);
-      //setTimeout(function() {
+        transaction.oncomplete = function() {
+          db.close(name);
+          return callback({
+            name: db.name,
+            objectStores: objectStores
+          });
+        };
+      } else {
+        db.close(name);
         return callback({
           name: db.name,
           objectStores: objectStores
         });
-      //},0);
+      }
     };
   }
 
@@ -106,6 +111,28 @@ module bongo {
       return x === y; 
     }
     return true;
+  }
+
+  // Modeled after Linq2IndexedDB's closeConnection
+  export function close(target) {
+    var db;
+    if (target instanceof window.IDBCursor) {
+      target = target.source;
+    }
+
+    if(target instanceof window.IDBDatabase) {
+      db = target;
+    } else if (target instanceof window.IDBTransaction) {
+      db = target.db;
+    } else if (target instanceof window.IDBObjectStore || target instanceof bongo.IDBRequest) {
+      db = target.transaction.db;
+    } else if (target instanceof window.IDBIndex) {
+      db = target.objectStore.transaction.db;
+    }
+
+    if(typeof (db) !== "undefined" && db != null && typeof (db.close) != "undefined") {
+      db.close();
+    }
   }
 
   export function info(name = null) {
