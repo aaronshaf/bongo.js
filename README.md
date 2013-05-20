@@ -184,5 +184,6 @@ MIT
 * [ytkyaw/ydn-db](https://github.com/yathit/ydn-db/blob/master/js/ydn/db/conn/indexed_db.js) (adapter)
 * [brianleroux/lawnchair](https://github.com/brianleroux/lawnchair/blob/master/src/adapters/indexed-db.js) (adapter)
 * [daleharvey/pouchdb](https://github.com/daleharvey/pouchdb/blob/master/src/adapters/pouch.idb.js) (adapter)
-* [axemclion/IndexedDBShim](https://github.com/axemclion/IndexedDBShim) (polyfill)
 * [facebook/IndexedDB-polyfill](https://github.com/facebook/IndexedDB-polyfill) (polyfill)
+* [axemclion/IndexedDBShim](https://github.com/axemclion/IndexedDBShim) (polyfill)
+* [Parashuram's IndexedDB Experiments] (http://nparashuram.com/IndexedDB/)
