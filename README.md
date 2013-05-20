@@ -1,6 +1,6 @@
 ## Easy, peasy, lemon squeezy
 
-Tested in Chrome 26, Chrome 29, Firefox 22, and IE 10.
+Tested in Chrome 26, Chrome 29, and Firefox 22.
 
 ### Check for support
 
@@ -176,5 +176,8 @@ MIT
 * [jensarps/IDBWrapper](https://github.com/jensarps/IDBWrapper)
 * [axemclion/IndexedDB](https://github.com/axemclion/IndexedDB)
 * [grgrssll/IndexedDB](https://github.com/grgrssll/IndexedDB)
+* [linq2indexeddb](http://linq2indexeddb.codeplex.com/)
+* [ytkyaw/ydn-db](https://github.com/yathit/ydn-db/blob/master/js/ydn/db/conn/indexed_db.js) (adapter)
 * [brianleroux/lawnchair](https://github.com/brianleroux/lawnchair/blob/master/src/adapters/indexed-db.js) (adapter)
 * [daleharvey/pouchdb](https://github.com/daleharvey/pouchdb/blob/master/src/adapters/pouch.idb.js) (adapter)
+* [facebook / IndexedDB-polyfill](https://github.com/facebook/IndexedDB-polyfill) (polyfill)
