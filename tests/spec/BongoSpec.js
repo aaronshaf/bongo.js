@@ -25,11 +25,10 @@ describe("bongo", function() {
           name: 'acme',
           objectStores: ["users","employees"]
         },function() {
+          assert.notTypeOf(db,'undefined');
+          assert.notTypeOf(bongo.acme,'undefined');
           done();
         });
-
-        assert.notTypeOf(db,'undefined');
-        assert.notTypeOf(bongo.acme,'undefined');
       });
     });
 
@@ -215,13 +214,13 @@ describe("bongo", function() {
           }
         });
       });
-    });
 
-    it("remove all records without error", function(done) {
-      bongo.acme.users.remove({},function(error) {
-        if(!error) {
-          done();
-        }
+      it("remove all records without error", function(done) {
+        bongo.acme.users.remove({},function(error) {
+          if(!error) {
+            done();
+          }
+        });
       });
     });
   });
