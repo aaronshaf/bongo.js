@@ -146,9 +146,6 @@ var bongo;
                     request.onblocked = function (event) {
                         console.log('blocked', request.error.name);
                     };
-                    request.onsuccess = function () {
-                        callback();
-                    };
                     request.onupgradeneeded = function (event) {
                         var db = request.result;
                         for(var x = 0; x < _this.objectStores.length; x++) {
@@ -160,6 +157,9 @@ var bongo;
                             }
                         }
                         db.close();
+                        setTimeout(function () {
+                            callback();
+                        }, 1);
                         _this.ensured = true;
                     };
                 });

@@ -23,7 +23,7 @@ describe("bongo", function() {
 
         db = bongo.db({
           name: 'acme',
-          objectStores: ["users","employees"]
+          objectStores: ["users","employees","test","awefaw"]
         },function() {
           assert.notTypeOf(db,'undefined');
           assert.notTypeOf(bongo.acme,'undefined');
@@ -39,7 +39,8 @@ describe("bongo", function() {
 
         bongo.getStoredSignature('acme',function(signature) {
           assert.equal(signature.name,'acme');
-          assert.equal(Object.keys(signature.objectStores).length,2);
+          console.log(Object.keys(signature.objectStores).length);
+          assert.equal(Object.keys(signature.objectStores).length > 1,true);
           done();
         });
       });

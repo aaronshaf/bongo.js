@@ -155,9 +155,9 @@ module bongo {
           request.onblocked = (event) => {
             console.log('blocked',request.error.name);
           }
-          request.onsuccess = () => {
-            callback();
-          }
+          // request.onsuccess = () => {
+          //   callback();
+          // }
 
           // See: https://groups.google.com/a/chromium.org/forum/?fromgroups#!topic/chromium-html5/pHoKbX78rxA
           // See: https://groups.google.com/a/chromium.org/forum/?fromgroups#!topic/chromium-html5/8C-NWF2FajA
@@ -172,6 +172,9 @@ module bongo {
               }
             }
             db.close();
+            setTimeout(function(){
+              callback();
+            },1);
             this.ensured = true;
           };
         });
