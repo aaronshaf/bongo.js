@@ -1,4 +1,8 @@
-assert = chai.assert;
+var assert = chai.assert;
+var schema = {
+  name: 'acme',
+  objectStores: ["users","employees"]
+};
 
 describe("bongo", function() {
   var a,db,id;
@@ -21,15 +25,37 @@ describe("bongo", function() {
       it("defines a database", function(done) {
         this.timeout(30000);
 
+        db = bongo.db(schema,function() {
+          assert.notTypeOf(db,'undefined');
+          assert.notTypeOf(bongo.acme,'undefined');
+          done();
+        });
+      });
+
+      /*
+      it("redefines a database without error", function(done) {
+        this.timeout(30000);
+
         db = bongo.db({
           name: 'acme',
-          objectStores: ["users","employees","test","awefaw"]
+          objectStores: ["animals"]
         },function() {
           assert.notTypeOf(db,'undefined');
           assert.notTypeOf(bongo.acme,'undefined');
           done();
         });
       });
+
+      it("redefines it yet again", function(done) {
+        this.timeout(30000);
+
+        db = bongo.db(schema,function() {
+          assert.notTypeOf(db,'undefined');
+          assert.notTypeOf(bongo.acme,'undefined');
+          done();
+        });
+      });
+      */
     });
 
     describe("#getStoredSignature", function() {
@@ -39,8 +65,7 @@ describe("bongo", function() {
 
         bongo.getStoredSignature('acme',function(signature) {
           assert.equal(signature.name,'acme');
-          console.log(Object.keys(signature.objectStores).length);
-          assert.equal(Object.keys(signature.objectStores).length > 1,true);
+          assert.equal(Object.keys(signature.objectStores).length,schema.objectStores.length);
           done();
         });
       });
