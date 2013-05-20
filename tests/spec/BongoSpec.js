@@ -76,7 +76,6 @@ describe("bongo", function() {
     describe("#insert", function() {
       it("inserts a record without error", function(done) {
         db.users.insert({
-          _id: '12345',
           name: "John Doe",
           email: "john@domain.com"
         },function(error,resultId) {
@@ -97,24 +96,25 @@ describe("bongo", function() {
       });
     });
 
-    describe("#get", function() {
-      it("fetch a record", function(done) {
-        bongo.acme.users.get('12345',function(error,data) {
-          if(!error && data) {
+    describe("#save", function() {
+      it("saves a record without error", function(done) {
+        db.users.save({
+          _id: '12345',
+          name: "John Doe",
+          email: "john@domain.com"
+        },function(error,resultId) {
+          if(!error && resultId) {
+            id = resultId;
             done();
           }
         });
       });
     });
 
-    describe("#save", function() {
-      it("saves a record without error", function(done) {
-        db.users.save({
-          name: "John Doe",
-          email: "john@domain.com"
-        },function(error,resultId) {
-          if(!error && resultId) {
-            id = resultId;
+    describe("#get", function() {
+      it("fetch a record", function(done) {
+        bongo.acme.users.get('12345',function(error,data) {
+          if(!error && data) {
             done();
           }
         });
