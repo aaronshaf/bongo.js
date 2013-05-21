@@ -1,6 +1,6 @@
 ## Easy, peasy, lemon squeezy
 
-Bongo.js is a library for storing and querying structured data on the browser. Lots of it.
+Bongo.js is for storing and querying structured data on the browser. Lots of it.
 
 It is built on [IndexedDB](http://en.wikipedia.org/wiki/Indexed_Database_API).
 
@@ -219,7 +219,8 @@ bongo.delete(function(error) {
 
 ## Known issue
 
-* After many(?) database upgrades, sometimes Chrome needs to be restarted.
+* After many(?) database version upgrades, sometimes Chrome needs to be restarted.
+* Redefining the same database multiple times in the same pageload is problematic.
 
 ## License
 
@@ -232,6 +233,7 @@ bongo.delete(function(error) {
 * [jensarps/IDBWrapper](https://github.com/jensarps/IDBWrapper)
 * [axemclion/IndexedDB](https://github.com/axemclion/IndexedDB)
 * [grgrssll/IndexedDB](https://github.com/grgrssll/IndexedDB)
+* [malucomarinero/johodb] (http://malucomarinero.bitbucket.org/johodb/)
 * [linq2indexeddb](http://linq2indexedbongo.codeplex.com/)
 * [mozilla-b2g/gaia/async_storage.js](https://github.com/mozilla-b2g/gaia/blob/master/shared/js/async_storage.js)
 * [ytkyaw/ydn-db](https://github.com/yathit/ydn-db/blob/master/js/ydn/db/conn/indexed_bongo.js) (adapter)

@@ -10,7 +10,7 @@ module bongo {
   export var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
   export var supported = !!bongo.indexedDB && !!bongo.IDBTransaction && !!bongo.IDBKeyRange;
 
-  export function db(definition: DatabaseDefinition,callback = function() {}) {
+  export function db(definition: any,callback = function() {}) {
     if(typeof bongo[definition.name] === 'undefined') {
       Object.defineProperty(bongo,definition.name,{
         value: new bongo.Database(definition,callback)
