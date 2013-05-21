@@ -233,7 +233,8 @@ if(bongo.supported) {
 ## See also
 
 * [Introduction to Bongo.js](http://slid.es/aaronshaf/bongojs/fullscreen) (slides)
-* [aaronpowell/bongo.js](https://github.com/aaronpowell/bongo.js)
+* [aaronpowell/db.js](https://github.com/aaronpowell/db.js)
+* [maxogden/level.js](https://github.com/maxogden/level.js)
 * [jensarps/IDBWrapper](https://github.com/jensarps/IDBWrapper)
 * [axemclion/IndexedDB](https://github.com/axemclion/IndexedDB)
 * [grgrssll/IndexedDB](https://github.com/grgrssll/IndexedDB)
