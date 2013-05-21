@@ -1,11 +1,12 @@
 {
   "name": "bongo.js",
   "version": "1.0.2",
+  "description": "Store and query massive amounts of structured data on the browser. Built on IndexedDB.",
   "main": "dist/bongo.min.js",
   "ignore": [
     "**/.*",
     "src",
-    "test",
+    "tests",
     "node_modules"
   ]
 }
