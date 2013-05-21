@@ -133,17 +133,6 @@ bongo.db('acme').collection('users').filter(function(doc) {
 });
 ```
 
-```javascript
-var query = new RegExp('john','i');
-bongo.db('acme').collection('users').filter(function(doc) {
-  return query.test(doc.name);
-}).toArray(function(error,results) {
-  if(!error) {
-    //success
-  }
-});
-```
-
 ### fields
 ```javascript
 bongo.db('acme').collection('users').find({
