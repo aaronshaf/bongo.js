@@ -6,6 +6,14 @@ It is built on [IndexedDB](http://en.wikipedia.org/wiki/Indexed_Database_API).
 
 It has been [tested](http://aaronshaf.github.io/bongo.js/) in Chrome 26, Chrome 29, Firefox 22, and Internet Explorer 10.
 
+## Features
+
+* Automatic versioning and database upgrades
+* Custom filters
+* Comparison query operators ($all, $lt, $lte, $gt, $gte, $in, $nin)
+* Insert, save, remove, find, findOne
+* Pick, limit, skip
+
 ## Get started
 
 #### Check for support
@@ -91,7 +99,7 @@ bongo.users.find({
 });
 ```
 
-$all, $lt, $lte, $gt, $gte, $in, $nin are all supported.
+$all, $lt, $lte, $gt, $gte, $in, $nin are supported.
 
 #### findOne
 
