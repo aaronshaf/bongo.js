@@ -1,5 +1,0 @@
--w
---target "ES5"
---sourcemap
---out ../js/bongo.es5.js
-bongo.ts

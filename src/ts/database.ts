@@ -104,6 +104,7 @@ module bongo {
           // This should never be called here. It should be covered by the initial 'ensure'
           if(bongo.debug) console.debug('onupgradeneeded');
           var db = request.result;
+          /*
           for(var x = 0;x < this.objectStores.length;x++) {
             this.objectStores[x].ensureObjectStore(db);
           }
@@ -112,6 +113,7 @@ module bongo {
               db.deleteObjectStore(name);
             }
           }
+          */
           db.close();
         };
 

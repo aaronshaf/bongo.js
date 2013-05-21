@@ -13,8 +13,11 @@ interface ObjectStoreDefinition {
 }
 
 interface Window {
-  IDBTransaction?: any;
-  IDBKeyRange?: any;
+  IDBCursor: any;
+  IDBTransaction: any;
+  IDBKeyRange: any;
+  IDBDatabase: any;
+  IDBIndex: any;
   mozIndexedDB?: any;
   webkitIndexedDB?: any;
   webkitIDBTransaction?: any;

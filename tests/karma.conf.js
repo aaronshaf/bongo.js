@@ -4,7 +4,7 @@ files = [
   MOCHA,
   MOCHA_ADAPTER,
   'lib/chai.js',
-  '../js/bongo.es5.js',
+  '../src/js/bongo.es5.js',
   'spec/*Spec.js'
 ];
 exclude = [];
@@ -14,6 +14,6 @@ runnerPort = 9100;
 colors = true;
 logLevel = LOG_INFO;
 autoWatch = true;
-browsers = ['Chrome','ChromeCanary','Firefox']; // 'IE',
+browsers = ['Chrome','ChromeCanary','Firefox']; // Add 'IE' if you're on Windows
 captureTimeout = 60000;
-singleRun = false;
+singleRun = true;

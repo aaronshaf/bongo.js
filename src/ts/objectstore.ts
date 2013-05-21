@@ -270,7 +270,7 @@ module bongo {
   }
 
 //A cheap Mongo-esque key
-  export function key {
+  export function key() {
     var key_t = Math.floor(new Date().valueOf() / 1000).toString(16);
     if(!this.key_m) {
       this.key_m = Math.floor(Math.random() * (16777216)).toString(16);
