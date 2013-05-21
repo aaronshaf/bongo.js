@@ -585,6 +585,7 @@ var bongo;
         return copy;
     }
 })(bongo || (bongo = {}));
+
 var bongo;
 (function (bongo) {
     bongo.debug = false;
@@ -739,4 +740,9 @@ var bongo;
     }
     bongo.info = info;
 })(bongo || (bongo = {}));
+if (typeof define === "function" && define.amd) {
+    define("bongo", [], function () {
+        return bongo;
+    });
+}
 //@ sourceMappingURL=bongo.es5.js.map

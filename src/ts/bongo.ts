@@ -3,6 +3,8 @@
 /// <reference path="objectstore.ts" />
 /// <reference path="query.ts" />
 
+declare var define;
+
 module bongo {
   export var debug = false;
   export var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
@@ -148,4 +150,8 @@ module bongo {
     }
     console.groupEnd();
   }
+}
+
+if(typeof define === "function" && define.amd) {
+  define("bongo", [],function() {return bongo;});
 }
