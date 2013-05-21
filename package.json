@@ -1,7 +1,7 @@
 {
   "name": "bongo.js",
   "version": "1.0.2",
-  "description": "Store and query massive amounts of structured data on the browser.",
+  "description": "Store and query massive amounts of structured data on the browser. Built on IndexedDB.",
   "main": "dist/bongo.min.js",
   "devDependencies": {
     "grunt": "~0.4.1",
