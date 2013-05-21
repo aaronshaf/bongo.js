@@ -2,15 +2,15 @@
 <head>
   <meta charset="utf-8">
   <title>Bongo Tests</title>
-  <link rel="stylesheet" href="tests/lib/mocha/mocha.css" />
+  <link rel="stylesheet" href="lib/mocha/mocha.css" />
 </head>
 <body>
   <div id="mocha"></div>
-  <script src="tests/lib/mocha/mocha.js"></script>
-  <script src="tests/lib/chai.js"></script>
-  <script type="text/javascript" src="src/js/bongo.es5.js"></script>
+  <script src="lib/mocha/mocha.js"></script>
+  <script src="lib/chai.js"></script>
+  <script type="text/javascript" src="src/bongo.es5.js"></script>
   <script>mocha.setup('bdd')</script>
-  <script type="text/javascript" src="tests/spec/BongoSpec.js"></script>
+  <script type="text/javascript" src="spec/BongoSpec.js"></script>
   <script>
     mocha.checkLeaks();
     mocha.run();
