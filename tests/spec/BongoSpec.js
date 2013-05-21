@@ -75,7 +75,7 @@ describe("bongo", function() {
   describe("ObjectStore", function() {
     describe("#insert", function() {
       it("inserts a record without error", function(done) {
-        db.users.insert({
+        bongo.db('acme').collection('users').insert({
           name: "John Doe",
           email: "john@domain.com"
         },function(error,resultId) {
@@ -88,7 +88,7 @@ describe("bongo", function() {
 
     describe("#count",function() {
       it("count records", function(done) {
-        db.users.count(function(response) {
+        bongo.db('acme').collection('users').count(function(response) {
           if(response > 0) {
             done();
           }
@@ -98,7 +98,7 @@ describe("bongo", function() {
 
     describe("#save", function() {
       it("saves a record without error", function(done) {
-        db.users.save({
+        bongo.db('acme').collection('users').save({
           _id: '12345',
           name: "John Doe",
           email: "john@domain.com"
@@ -125,7 +125,7 @@ describe("bongo", function() {
   describe("Query", function() {
     describe("#findOne", function() {
       it("finds one record", function(done) {
-        db.users.findOne({},function(error,record) {
+        bongo.db('acme').collection('users').findOne({},function(error,record) {
           if(!error && record) {
             done();
           }
@@ -135,7 +135,7 @@ describe("bongo", function() {
 
     describe("#limit", function() {
       it("limit on find", function(done) {
-        db.users.find({}).limit(2).toArray(function(error,results) {
+        bongo.db('acme').collection('users').find({}).limit(2).toArray(function(error,results) {
           if(!error) {
             if(results.length == 2) {
               done();
@@ -145,7 +145,7 @@ describe("bongo", function() {
       });
 
       it("limit on filter", function(done) {
-        db.users.filter(function() {
+        bongo.db('acme').collection('users').filter(function() {
           return true;
         }).limit(2).toArray(function(error,results) {
           if(!error) {
@@ -162,14 +162,14 @@ describe("bongo", function() {
         var found = false;
 
         var insertRecord1 = function() {
-          db.users.insert({
+          bongo.db('acme').collection('users').insert({
             name: "John Doe",
             email: "john@domain.com"
           },insertRecord2);
         };
 
         var insertRecord2 = function() {
-          db.users.insert({
+          bongo.db('acme').collection('users').insert({
             name: "Jane Doe",
             email: "jane@domain.com",
             pets: 3,
@@ -192,7 +192,7 @@ describe("bongo", function() {
       it("find records with string-value criteria", function(done) {
         var found = false;
 
-        db.users.find({
+        bongo.db('acme').collection('users').find({
           name: 'Jane Doe'
         }).toArray(function(error,results) {
           if(!error && results.length) {
@@ -204,7 +204,7 @@ describe("bongo", function() {
 
       describe('Comparison query operators',function() {
         it("should find a record with satisfied $gt criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             pets: {$gt: 2}
           }).toArray(function(error,results) {
             if(!error && results.length) {
@@ -214,7 +214,7 @@ describe("bongo", function() {
         });
 
         it("should not find a record with unsatisfied $gt criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             pets: {$gt: 3}
           }).toArray(function(error,results) {
             if(!error && !results.length) {
@@ -224,7 +224,7 @@ describe("bongo", function() {
         });
 
         it("should find a record with satisfied $gte criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             pets: {$gte: 3}
           }).toArray(function(error,results) {
             if(!error && results.length) {
@@ -234,7 +234,7 @@ describe("bongo", function() {
         });
 
         it("should not find a record with unsatisfied $gte criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             pets: {$gte: 4}
           }).toArray(function(error,results) {
             if(!error && !results.length) {
@@ -244,7 +244,7 @@ describe("bongo", function() {
         });
 
         it("should find a record with satisfied $lt criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             pets: {$lt: 4}
           }).toArray(function(error,results) {
             if(!error && results.length) {
@@ -254,7 +254,7 @@ describe("bongo", function() {
         });
 
         it("should not find a record with unsatisfied $lt criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             pets: {$lt: 2}
           }).toArray(function(error,results) {
             if(!error && !results.length) {
@@ -264,7 +264,7 @@ describe("bongo", function() {
         });
 
         it("should find a record with satisfied $lte criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             pets: {$lte: 3}
           }).toArray(function(error,results) {
             if(!error && results.length) {
@@ -274,7 +274,7 @@ describe("bongo", function() {
         });
 
         it("should not find a record with unsatisfied $lte criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             pets: {$lte: 2}
           }).toArray(function(error,results) {
             if(!error && !results.length) {
@@ -284,7 +284,7 @@ describe("bongo", function() {
         });
 
         it("should find a record with satisfied $ne criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             pets: {$ne: 4}
           }).toArray(function(error,results) {
             if(!error && results.length) {
@@ -294,7 +294,7 @@ describe("bongo", function() {
         });
 
         it("should not find a record with unsatisfied $ne criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             pets: {$ne: 3}
           }).toArray(function(error,results) {
             if(!error && !results.length) {
@@ -304,7 +304,7 @@ describe("bongo", function() {
         });
 
         it("should find a record with satisfied $all criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             years: {$all: [2010,2011]}
           }).toArray(function(error,results) {
             if(!error && results.length) {
@@ -314,7 +314,7 @@ describe("bongo", function() {
         });
 
         it("should not find a record with unsatisfied $all criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             years: {$all: [2010,2013]}
           }).toArray(function(error,results) {
             if(!error && !results.length) {
@@ -324,7 +324,7 @@ describe("bongo", function() {
         });
 
         it("should find a record with satisfied $in criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             pets: {$in: [1,2,3]}
           }).toArray(function(error,results) {
             if(!error && results.length) {
@@ -334,7 +334,7 @@ describe("bongo", function() {
         });
 
         it("should not find a record with un satisfied $in criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             pets: {$in: [1,2,4]}
           }).toArray(function(error,results) {
             if(!error && !results.length) {
@@ -344,7 +344,7 @@ describe("bongo", function() {
         });
 
         it("should find a record with satisfied $nin criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             pets: {$nin: [1,2,4]}
           }).toArray(function(error,results) {
             if(!error && results.length) {
@@ -354,7 +354,7 @@ describe("bongo", function() {
         });
 
         it("should find a record with satisfied $nin criteria, value being undefined", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             enemies: {$nin: ['Sally','Mary']}
           }).toArray(function(error,results) {
             if(!error && results.length) {
@@ -364,7 +364,7 @@ describe("bongo", function() {
         });
 
         it("should not find a record with un unsatisfied $nin criteria", function(done) {
-          db.users.find({
+          bongo.db('acme').collection('users').find({
             name: {$nin: ['John Doe','Jane Doe']}
           }).toArray(function(error,results) {
             if(!error && !results.length) {
@@ -375,7 +375,7 @@ describe("bongo", function() {
       });
 
       it("find records with RegExp criteria", function(done) {
-        db.users.find({
+        bongo.db('acme').collection('users').find({
           name: /jane/i
         }).toArray(function(error,results) {
           if(!error && results.length) {
@@ -400,7 +400,7 @@ describe("bongo", function() {
 
       it("filters (2)", function(done) {
         var query = new RegExp('jane','i');
-        db.users.filter(function(doc) {
+        bongo.db('acme').collection('users').filter(function(doc) {
           return query.test(doc.email);
         }).toArray(function(error,results) {
           if(!error && results.length) {

@@ -14,6 +14,16 @@ module bongo {
   export var supported = !!bongo.indexedDB && !!bongo.IDBTransaction && !!bongo.IDBKeyRange;
 
   export function db(definition: any,callback = function() {}) {
+    if(typeof definition === "string") {
+      if(typeof bongo[definition] !== 'undefined') {
+        return bongo[definition];
+      } else {
+        definition = {
+          name: definition
+        };
+      }
+    }
+
     if(typeof bongo[definition.name] === 'undefined') {
       Object.defineProperty(bongo,definition.name,{
         value: new bongo.Database(definition,callback)

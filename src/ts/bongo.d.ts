@@ -2,6 +2,7 @@ interface DatabaseDefinition {
   name: string;
   version: number;
   autoIncrement: Boolean;
+  collections?: any[];
   objectStores: any[];
 }
 

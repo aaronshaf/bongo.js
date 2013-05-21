@@ -52,7 +52,7 @@ bongo.db({
 ### insert
 
 ```javascript
-bongo.acme.users.insert({
+bongo.db('acme').collection('users').insert({
   name: "John Doe",
   email: "john@domain.com"
 });
@@ -61,7 +61,7 @@ bongo.acme.users.insert({
 ### save
 
 ```javascript
-bongo.acme.users.save({
+bongo.db('acme').collection('users').save({
   _id: "[key]", //optional
   name: "Jane Doe",
   email: "jane@domain.com",
@@ -72,7 +72,7 @@ bongo.acme.users.save({
 ### get
 
 ```javascript
-bongo.acme.users.get("[key]", function(error,data) {
+bongo.db('acme').collection('users').get("[key]", function(error,data) {
   if(!error) {
     //success
   }
@@ -82,7 +82,7 @@ bongo.acme.users.get("[key]", function(error,data) {
 ### find
 
 ```javascript
-bongo.acme.users.find({
+bongo.db('acme').collection('users').find({
   name: "John Doe"
 }).toArray(function(error,results) {
   if(!error) {
@@ -94,7 +94,7 @@ bongo.acme.users.find({
 #### Regular expressions
 
 ```javascript
-bongo.acme.users.find({
+bongo.db('acme').collection('users').find({
   name: /john/i
 }).toArray(function(error,results) {
   if(!error) {
@@ -106,7 +106,7 @@ bongo.acme.users.find({
 #### Comparison query operators
 
 ```javascript
-bongo.acme.users.find({
+bongo.db('acme').collection('users').find({
   pets: {$gt: 2}
 }).toArray(function(error,results) {
   if(!error) {
@@ -120,7 +120,7 @@ $all, $lt, $lte, $gt, $gte, $in, $nin are supported.
 ### findOne
 
 ```javascript
-bongo.acme.users.findOne({
+bongo.db('acme').collection('users').findOne({
   name: "John Doe"
 }),function(error,record) {
   if(!error) {
@@ -132,7 +132,7 @@ bongo.acme.users.findOne({
 ### filter
 
 ```javascript
-bongo.acme.users.filter(function(doc) {
+bongo.db('acme').collection('users').filter(function(doc) {
   return doc.age > 30;
 }).toArray(function(error,results) {
   if(!error) {
@@ -143,7 +143,7 @@ bongo.acme.users.filter(function(doc) {
 
 ```javascript
 var query = new RegExp('john','i');
-bongo.acme.users.filter(function(doc) {
+bongo.db('acme').collection('users').filter(function(doc) {
   return query.test(doc.name);
 }).toArray(function(error,results) {
   if(!error) {
@@ -154,7 +154,7 @@ bongo.acme.users.filter(function(doc) {
 
 ### pick
 ```javascript
-bongo.acme.users.filter(function(doc) {
+bongo.db('acme').collection('users').filter(function(doc) {
   return doc.age > 30;
 }).pick(['name','email']).toArray(function(error,results) {
   if(!error) {
@@ -165,7 +165,7 @@ bongo.acme.users.filter(function(doc) {
 
 ### limit
 ```javascript
-bongo.acme.users.filter(function(doc) {
+bongo.db('acme').collection('users').filter(function(doc) {
   return doc.age > 30;
 }).limit(5).toArray(function(error,results) {
   if(!error) {
@@ -176,7 +176,7 @@ bongo.acme.users.filter(function(doc) {
 
 ### skip
 ```javascript
-bongo.acme.users.filter(function(doc) {
+bongo.db('acme').collection('users').filter(function(doc) {
   return doc.age > 30;
 }).skip(5).limit(5).toArray(function(error,results) {
   if(!error) {
@@ -188,7 +188,7 @@ bongo.acme.users.filter(function(doc) {
 ### remove
 
 ```javascript
-bongo.acme.users.remove({
+bongo.db('acme').collection('users').remove({
   email: "john@domain.com"
 }, function(error, data) {
   if(!error) {
@@ -200,7 +200,7 @@ bongo.acme.users.remove({
 Or just use the key:
 
 ```javascript
-bongo.acme.users.remove("[key]", function(error, data) {
+bongo.db('acme').collection('users').remove("[key]", function(error, data) {
   if(!error) {
     //success
   }

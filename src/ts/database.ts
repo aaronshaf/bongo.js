@@ -6,7 +6,7 @@ module bongo {
     objectStores: any[] = [];
 
     constructor(definition: DatabaseDefinition,callback = function() {}) {
-      definition.objectStores = definition.objectStores || [];
+      definition.objectStores = definition.objectStores || definition.collections || [];
       this.name = definition.name;
       for(var x = 0;x < definition.objectStores.length;x++) {
         if(typeof definition.objectStores[x] === 'string') {
@@ -20,6 +20,9 @@ module bongo {
       }
       this.ensure(callback);
     }
+
+    collection(name) {return this[name];}
+    objectStore(name) {return this[name];}
 
     signature() {
       var objectStores = {};
