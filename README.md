@@ -1,4 +1,4 @@
-## Easy, peasy, lemon squeezy
+# Bongo.js
 
 Bongo.js is for storing and querying structured data on the browser. Lots of it.
 
@@ -8,13 +8,13 @@ It [tested](http://aaronshaf.github.io/bongo.js/) in Chrome 26, Chrome 29, Firef
 
 ## Features
 
+* Insert, save, remove, find, findOne
+* Comparison query operators ($all, $lt, $lte, $gt, $gte, $in, $nin)
+* Mongo-esque key generator (on _id)
+* Pick, limit, skip
 * Automatic versioning and database upgrades
 * Custom filters
-* Mongo-esque key generator (on _id)
-* Comparison query operators ($all, $lt, $lte, $gt, $gte, $in, $nin)
-* Insert, save, remove, find, findOne
-* Pick, limit, skip
-* 11k. Oh come on, it's worth it.
+* 11k
 
 ## Get started
 
