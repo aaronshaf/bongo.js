@@ -113,7 +113,7 @@ describe("bongo", function() {
 
     describe("#get", function() {
       it("fetch a record", function(done) {
-        bongo.acme.users.get('12345',function(error,data) {
+        bongo.db('acme').collection('users').get('12345',function(error,data) {
           if(!error && data) {
             done();
           }
@@ -178,7 +178,7 @@ describe("bongo", function() {
         };
 
         var findRecords = function() {
-          bongo.acme.users.find({}).toArray(function(error,results) {
+          bongo.db('acme').collection('users').find({}).toArray(function(error,results) {
             if(!error && results && results.length) {
               found = true;
               done();
@@ -387,7 +387,7 @@ describe("bongo", function() {
 
     describe("#filter", function() {
       it("filters (1)", function(done) {
-        bongo.acme.users
+        bongo.db('acme').collection('users')
           .filter(function(doc) {
             return doc.name === "Jane Doe";
           })
@@ -418,7 +418,7 @@ describe("bongo", function() {
 
     describe("#remove", function() {
       it("removes a record without error", function(done) {
-        bongo.acme.users.remove(id,function(error) {
+        bongo.db('acme').collection('users').remove(id,function(error) {
           if(!error) {
             done();
           }
@@ -426,7 +426,7 @@ describe("bongo", function() {
       });
 
       it("remove all records without error", function(done) {
-        bongo.acme.users.remove({},function(error) {
+        bongo.db('acme').collection('users').remove({},function(error) {
           if(!error) {
             done();
           }
