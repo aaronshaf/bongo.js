@@ -146,8 +146,8 @@ bongo.db('acme').collection('users').filter(function(doc) {
 
 ### pick
 ```javascript
-bongo.db('acme').collection('users').filter(function(doc) {
-  return doc.age > 30;
+bongo.db('acme').collection('users').find({
+  age: {$gt: 30}
 }).pick(['name','email']).toArray(function(error,results) {
   if(!error) {
     //success
@@ -157,8 +157,8 @@ bongo.db('acme').collection('users').filter(function(doc) {
 
 ### limit
 ```javascript
-bongo.db('acme').collection('users').filter(function(doc) {
-  return doc.age > 30;
+bongo.db('acme').collection('users').find({
+  age: {$gt: 30}
 }).limit(5).toArray(function(error,results) {
   if(!error) {
     //success
@@ -168,8 +168,8 @@ bongo.db('acme').collection('users').filter(function(doc) {
 
 ### skip
 ```javascript
-bongo.db('acme').collection('users').filter(function(doc) {
-  return doc.age > 30;
+bongo.db('acme').collection('users').find({
+  age: {$gt: 30}
 }).skip(5).limit(5).toArray(function(error,results) {
   if(!error) {
     //success
