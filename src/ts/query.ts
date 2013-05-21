@@ -1,11 +1,11 @@
 module bongo {
   export class Query {
     _limit: number = 100;
-    _skip: number  = 0;
-    from: any      = null;
-    to: any        = null;
-    before: any    = null;
-    after: any     = null;
+    _skip: number = 0;
+    from: any = null;
+    to: any = null;
+    before: any = null;
+    after: any = null;
     filters: any[] = [];
     keys: string[] = [];
 
@@ -28,6 +28,10 @@ module bongo {
         for(var key in criteria) {
           if(typeof criteria[key] === 'string') {
             if(typeof doc[key] === 'undefined' || doc[key] != criteria[key]) {
+              return false;
+            }
+          } else if(typeof criteria[key] === 'object' && criteria[key] instanceof RegExp) {
+            if(typeof doc[key] === 'undefined' || !criteria[key].test(doc[key])) {
               return false;
             }
           }

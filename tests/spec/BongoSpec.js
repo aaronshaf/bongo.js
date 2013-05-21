@@ -187,11 +187,24 @@ describe("bongo", function() {
         insertRecord1();
       });
 
-      it("find records with criteria", function(done) {
+      it("find records with string-value criteria", function(done) {
         var found = false;
 
         db.users.find({
           name: 'Jane Doe'
+        }).toArray(function(error,results) {
+          if(!error && results.length) {
+            found = true;
+            done();
+          }
+        });
+      });
+
+      it("find records with RegExp criteria", function(done) {
+        var found = false;
+
+        db.users.find({
+          name: /jane/i
         }).toArray(function(error,results) {
           if(!error && results.length) {
             found = true;

@@ -447,6 +447,10 @@ var bongo;
                         if (typeof doc[key] === 'undefined' || doc[key] != criteria[key]) {
                             return false;
                         }
+                    } else if (typeof criteria[key] === 'object' && criteria[key] instanceof RegExp) {
+                        if (typeof doc[key] === 'undefined' || !criteria[key].test(doc[key])) {
+                            return false;
+                        }
                     }
                 }
                 return match;
