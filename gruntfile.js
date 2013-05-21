@@ -22,14 +22,21 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['**/*.ts'],
-      tasks: ['clean','type','uglify','karma']
+      'default': {
+        files: ['**/*.ts'],
+        tasks: ['clean','type','karma:unit:run','uglify']  
+      },
+      karma: {
+        files: ['tests/spec/*.js'],
+        tasks: ['karma:unit:run']
+      }
     },
     karma: {
       unit: {
         configFile: 'tests/karma.conf.js',
         runnerPort: 9100,
-        singleRun: true,
+        background: true,
+        singleRun: false,
         browsers: ['Chrome','ChromeCanary','Firefox'] // Add 'IE' if you're on Windows
       }
     }
