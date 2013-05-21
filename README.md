@@ -18,7 +18,23 @@ It [tested](http://aaronshaf.github.io/bongo.js/) in Chrome 26, Chrome 29, Firef
 
 ## Get started
 
-#### Check for support
+### Install
+
+Use [Bower](https://github.com/bower/bower):
+```
+bower install bongo.js
+```
+And include the file in your app:
+
+```html
+<script src='/components/bongo.js/dist/bongo.min.js'></script>
+```
+
+Or  [download the compressed, production version](https://raw.github.com/aaronshaf/bongo.js/master/dist/bongo.min.js)
+
+Or [download the uncompressed, development version](https://raw.github.com/aaronshaf/bongo.js/master/src/js/bongo.es5.js)
+
+### Check for support
 
 ```javascript
 if(bongo.supported) {
@@ -26,7 +42,7 @@ if(bongo.supported) {
 }
 ```
 
-#### Define database
+### Define database
 
 ```javascript
 bongo.db({
@@ -35,7 +51,7 @@ bongo.db({
 });
 ```
 
-#### insert
+### insert
 
 ```javascript
 bongo.users.insert({
@@ -44,7 +60,7 @@ bongo.users.insert({
 });
 ```
 
-#### save
+### save
 
 ```javascript
 bongo.users.save({
@@ -55,7 +71,7 @@ bongo.users.save({
 });
 ```
 
-#### get
+### get
 
 ```javascript
 bongo.users.get("[key]", function(error,data) {
@@ -65,7 +81,7 @@ bongo.users.get("[key]", function(error,data) {
 });
 ```
 
-#### find
+### find
 
 ```javascript
 bongo.users.find({
@@ -77,7 +93,7 @@ bongo.users.find({
 });
 ```
 
-##### Regular expressions
+#### Regular expressions
 
 ```javascript
 bongo.users.find({
@@ -89,7 +105,7 @@ bongo.users.find({
 });
 ```
 
-##### Comparison query operators
+#### Comparison query operators
 
 ```javascript
 bongo.users.find({
@@ -103,7 +119,7 @@ bongo.users.find({
 
 $all, $lt, $lte, $gt, $gte, $in, $nin are supported.
 
-#### findOne
+### findOne
 
 ```javascript
 bongo.users.findOne({
@@ -115,7 +131,7 @@ bongo.users.findOne({
 });
 ```
 
-#### filter
+### filter
 
 ```javascript
 bongo.users.filter(function(doc) {
@@ -138,7 +154,7 @@ bongo.users.filter(function(doc) {
 });
 ```
 
-#### pick
+### pick
 ```javascript
 bongo.users.filter(function(doc) {
   return doc.age > 30;
@@ -149,7 +165,7 @@ bongo.users.filter(function(doc) {
 });
 ```
 
-#### limit
+### limit
 ```javascript
 bongo.users.filter(function(doc) {
   return doc.age > 30;
@@ -160,7 +176,7 @@ bongo.users.filter(function(doc) {
 });
 ```
 
-#### skip
+### skip
 ```javascript
 bongo.users.filter(function(doc) {
   return doc.age > 30;
@@ -171,7 +187,7 @@ bongo.users.filter(function(doc) {
 });
 ```
 
-#### remove
+### remove
 
 ```javascript
 bongo.users.remove({
@@ -193,7 +209,7 @@ bongo.users.remove("[key]", function(error, data) {
 });
 ```
 
-#### Delete the database
+### Delete the database
 
 ```javascript
 bongo.delete(function(error) {
