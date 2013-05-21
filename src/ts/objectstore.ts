@@ -18,9 +18,9 @@ module bongo {
       return query.filter(fn);
     }
 
-    find(criteria) {
+    find(criteria,fields: any = null) {
       var query = new bongo.Query(this.database,[this.name]);
-      return query.find(criteria);
+      return query.find(criteria,fields);
     }
 
     findOne(criteria,callback) {

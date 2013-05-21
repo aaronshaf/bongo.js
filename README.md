@@ -144,7 +144,22 @@ bongo.db('acme').collection('users').filter(function(doc) {
 });
 ```
 
-### pick
+### fields
+```javascript
+bongo.db('acme').collection('users').find({
+  age: {$gt: 30}
+},{
+  name: 1,
+  email: 1
+}).toArray(function(error,results) {
+  if(!error) {
+    //success
+  }
+});
+```
+
+or
+
 ```javascript
 bongo.db('acme').collection('users').find({
   age: {$gt: 30}

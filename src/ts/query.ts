@@ -26,7 +26,17 @@ module bongo {
       });
     }
 
-    find(criteria = {}) {
+    find(criteria = {},fields: any = null) {
+      var key: string;
+      if(fields && typeof fields === 'object') {
+        var _fields = [];
+        for(key in fields) {
+          if(fields[key]) {
+            _fields.push(key);
+          }
+        }
+        this.pick(_fields);
+      }
       this.filters.push(function(doc) {
         var match = true,x,y;
         for(var key in criteria) {

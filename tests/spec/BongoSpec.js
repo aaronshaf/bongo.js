@@ -144,6 +144,16 @@ describe("bongo", function() {
         });
       });
 
+      it("limit returned fields on find", function(done) {
+        bongo.db('acme').collection('users').find({},{
+          name: 1
+        }).toArray(function(error,results) {
+          if(!error && Object.keys(results[0]).length === 1 && results[0].name) {
+            done();
+          }
+        });
+      });
+
       it("limit on filter", function(done) {
         bongo.db('acme').collection('users').filter(function() {
           return true;

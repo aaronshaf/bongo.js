@@ -182,11 +182,12 @@ var bongo;
             ]);
             return query.filter(fn);
         };
-        ObjectStore.prototype.find = function (criteria) {
+        ObjectStore.prototype.find = function (criteria, fields) {
+            if (typeof fields === "undefined") { fields = null; }
             var query = new bongo.Query(this.database, [
                 this.name
             ]);
-            return query.find(criteria);
+            return query.find(criteria, fields);
         };
         ObjectStore.prototype.findOne = function (criteria, callback) {
             var query = new bongo.Query(this.database, [
@@ -447,8 +448,19 @@ var bongo;
                 }
             });
         };
-        Query.prototype.find = function (criteria) {
+        Query.prototype.find = function (criteria, fields) {
             if (typeof criteria === "undefined") { criteria = {}; }
+            if (typeof fields === "undefined") { fields = null; }
+            var key;
+            if (fields && typeof fields === 'object') {
+                var _fields = [];
+                for(key in fields) {
+                    if (fields[key]) {
+                        _fields.push(key);
+                    }
+                }
+                this.pick(_fields);
+            }
             this.filters.push(function (doc) {
                 var match = true, x, y;
                 for(var key in criteria) {
