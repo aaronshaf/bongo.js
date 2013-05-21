@@ -12,6 +12,10 @@ module bongo {
     constructor(public database,public objectStores) {}
 
     findOne(criteria,callback) {
+      if(!bongo.supported) {
+        return callback('IndexedDB not supported');
+      }
+
       this.find(criteria).limit(1).toArray(function(error,results){
         if(error) return callback(error);
         if(!results.length) {
@@ -109,6 +113,10 @@ module bongo {
     }
 
     toArray(callback) {
+      if(!bongo.supported) {
+        return callback('IndexedDB not supported');
+      }
+      
       this.database.get((database) => {
         var transaction = database.transaction(this.objectStores, "readonly");
         var objectStore = transaction.objectStore(this.objectStores[0]);

@@ -433,6 +433,9 @@ var bongo;
             this.keys = [];
         }
         Query.prototype.findOne = function (criteria, callback) {
+            if (!bongo.supported) {
+                return callback('IndexedDB not supported');
+            }
             this.find(criteria).limit(1).toArray(function (error, results) {
                 if (error) {
                     return callback(error);
@@ -526,6 +529,9 @@ var bongo;
         };
         Query.prototype.toArray = function (callback) {
             var _this = this;
+            if (!bongo.supported) {
+                return callback('IndexedDB not supported');
+            }
             this.database.get(function (database) {
                 var transaction = database.transaction(_this.objectStores, "readonly");
                 var objectStore = transaction.objectStore(_this.objectStores[0]);

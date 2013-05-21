@@ -32,14 +32,6 @@ And include the file in your app:
 
 You can also [download the compressed, production version](https://raw.github.com/aaronshaf/bongo.js/master/dist/bongo.min.js) or the [uncompressed, development version](https://raw.github.com/aaronshaf/bongo.js/master/src/js/bongo.es5.js).
 
-### Check for support
-
-```javascript
-if(bongo.supported) {
-  // Woo hoo!
-}
-```
-
 ### Define database
 
 ```javascript
@@ -215,6 +207,14 @@ bongo.delete(function(error) {
     // Success
   }
 });
+```
+
+### Check for support
+
+```javascript
+if(bongo.supported) {
+  // Woo hoo!
+}
 ```
 
 ## Known issue
