@@ -2,7 +2,7 @@
 
 Bongo.js is a library for storing and querying structured data on the browser. Lots of it.
 
-It is built on IndexedDB.
+It is built on [http://en.wikipedia.org/wiki/Indexed_Database_API](IndexedDB).
 
 It has been [tested](http://aaronshaf.github.io/bongo.js/) in Chrome 26, Chrome 29, Firefox 22, and Internet Explorer 10.
 
