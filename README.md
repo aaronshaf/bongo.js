@@ -233,6 +233,7 @@ bongo.delete(function(error) {
 * [jensarps/IDBWrapper](https://github.com/jensarps/IDBWrapper)
 * [axemclion/IndexedDB](https://github.com/axemclion/IndexedDB)
 * [grgrssll/IndexedDB](https://github.com/grgrssll/IndexedDB)
+* [ironfroggy/plasmid](https://github.com/ironfroggy/plasmid)
 * [malucomarinero/johodb] (http://malucomarinero.bitbucket.org/johodb/)
 * [linq2indexeddb](http://linq2indexedbongo.codeplex.com/)
 * [mozilla-b2g/gaia/async_storage.js](https://github.com/mozilla-b2g/gaia/blob/master/shared/js/async_storage.js)
