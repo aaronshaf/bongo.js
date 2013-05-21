@@ -9,7 +9,7 @@ var bongo;
             definition.objectStores = definition.objectStores || [];
             this.name = definition.name;
             for(var x = 0; x < definition.objectStores.length; x++) {
-                if(typeof definition.objectStores[x] === 'string') {
+                if (typeof definition.objectStores[x] === 'string') {
                     definition.objectStores[x] = {
                         name: definition.objectStores[x]
                     };
@@ -22,8 +22,7 @@ var bongo;
             this.ensure(callback);
         }
         Database.prototype.signature = function () {
-            var objectStores = {
-            };
+            var objectStores = {};
             this.objectStores.forEach(function (objectStore) {
                 objectStores[objectStore.name] = {
                     autoIncrement: objectStore.autoIncrement,
@@ -52,7 +51,7 @@ var bongo;
                     callback();
                 }.bind(_this);
                 request.onblocked = function (event) {
-                    if(tries < 40) {
+                    if (tries < 40) {
                         setTimeout(function () {
                             tryToDelete();
                             tries++;
@@ -74,39 +73,31 @@ var bongo;
             var _this = this;
             var tries = 500;
             var tryToOpen = function () {
-                if(!_this.ensured) {
-                    if(bongo.debug) {
+                if (!_this.ensured) {
+                    if (bongo.debug) {
                         console.log('Database not ensured yet');
                     }
                     tries--;
-                    if(tries > 0) {
+                    if (tries > 0) {
                         setTimeout(function () {
                             tryToOpen();
                         }, 200);
                     }
                     return;
                 }
-                if(bongo.debug) {
+                if (bongo.debug) {
                     console.log('Database is ensured');
                 }
                 var request = bongo.indexedDB.open(_this.name);
                 request.onupgradeneeded = function (event) {
-                    if(bongo.debug) {
+                    if (bongo.debug) {
                         console.debug('onupgradeneeded');
                     }
                     var db = request.result;
-                    for(var x = 0; x < _this.objectStores.length; x++) {
-                        _this.objectStores[x].ensureObjectStore(db);
-                    }
-                    for(var name in signature.objectStores) {
-                        if(typeof _this[name] === 'undefined' && db.objectStoreNames.contains(name)) {
-                            db.deleteObjectStore(name);
-                        }
-                    }
                     db.close();
                 };
                 request.onsuccess = function (event) {
-                    if(bongo.debug) {
+                    if (bongo.debug) {
                         console.debug('onsuccess');
                     }
                     callback(event.target.result);
@@ -128,11 +119,11 @@ var bongo;
             if (typeof callback === "undefined") { callback = function () {
             }; }
             var _this = this;
-            if(bongo.debug) {
+            if (bongo.debug) {
                 console.debug('Ensuring ' + this.name);
             }
             bongo.getStoredSignature(this.name, function (signature) {
-                if(bongo.equals(signature, _this.signature())) {
+                if (bongo.equals(signature, _this.signature())) {
                     bongo.getStoredVersion(_this.name, function (version) {
                         _this.version = version;
                         callback();
@@ -152,7 +143,7 @@ var bongo;
                             _this.objectStores[x].ensureObjectStore(db);
                         }
                         for(var name in signature.objectStores) {
-                            if(typeof _this[name] === 'undefined' && db.objectStoreNames.contains(name)) {
+                            if (typeof _this[name] === 'undefined' && db.objectStoreNames.contains(name)) {
                                 db.deleteObjectStore(name);
                             }
                         }
@@ -199,7 +190,7 @@ var bongo;
         };
         ObjectStore.prototype.count = function (criteria, callback) {
             var _this = this;
-            if(typeof callback === 'undefined' && typeof criteria === 'function') {
+            if (typeof callback === 'undefined' && typeof criteria === 'function') {
                 callback = [
                     criteria, 
                     criteria = null
@@ -219,11 +210,11 @@ var bongo;
             }.bind(this));
         };
         ObjectStore.prototype.ensureObjectStore = function (database) {
-            if(bongo.debug) {
+            if (bongo.debug) {
                 console.debug('ensureObjectStore');
             }
-            if(!database.objectStoreNames || !database.objectStoreNames.contains(this.name)) {
-                if(bongo.debug) {
+            if (!database.objectStoreNames || !database.objectStoreNames.contains(this.name)) {
+                if (bongo.debug) {
                     console.debug('Creating ' + this.name);
                 }
                 var objectStore = database.createObjectStore(this.name, {
@@ -260,9 +251,9 @@ var bongo;
                 ], "readwrite");
                 var objectStore = transaction.objectStore(_this.name);
                 var request;
-                if(typeof criteria === "string") {
+                if (typeof criteria === "string") {
                     request = objectStore.delete(criteria);
-                } else if(JSON.stringify(criteria) === "{}") {
+                } else if (JSON.stringify(criteria) === "{}") {
                     request = objectStore.clear();
                 }
                 request.onsuccess = function (event) {
@@ -274,7 +265,7 @@ var bongo;
             if (typeof callback === "undefined") { callback = function () {
             }; }
             var _this = this;
-            if(!data._id) {
+            if (!data._id) {
                 data._id = bongo.key();
             }
             this.database.get(function (database) {
@@ -290,7 +281,7 @@ var bongo;
             if (typeof callback === "undefined") { callback = function () {
             }; }
             var _this = this;
-            if(!data._id) {
+            if (!data._id) {
                 data._id = bongo.key();
             }
             this.database.get(function (database) {
@@ -309,8 +300,7 @@ var bongo;
         };
         ObjectStore.prototype.oldFind = function (options, callback) {
             var _this = this;
-            var criteria = options.criteria || {
-            };
+            var criteria = options.criteria || {};
             var skip = options.skip || 0;
             this.database.get(function (database) {
                 var transaction = database.transaction([
@@ -318,27 +308,27 @@ var bongo;
                 ], "readonly");
                 var objectStore = transaction.objectStore(_this.name);
                 var sortKeys = [];
-                if(options.sort) {
+                if (options.sort) {
                     sortKeys = Object.keys(options.sort);
                 }
                 var criteriaKeys = Object.keys(criteria);
-                if(typeof criteria[criteriaKeys[0]] === "boolean") {
+                if (typeof criteria[criteriaKeys[0]] === "boolean") {
                     criteria[criteriaKeys[0]] = criteria[criteriaKeys[0]] ? 1 : 0;
                 }
                 var data = [];
                 var range, index, cursorSuccess;
-                if(criteriaKeys.length === 1 && objectStore.indexNames && objectStore.indexNames.contains(criteriaKeys[0])) {
+                if (criteriaKeys.length === 1 && objectStore.indexNames && objectStore.indexNames.contains(criteriaKeys[0])) {
                     cursorSuccess = function (event) {
-                        if(event.target.error) {
+                        if (event.target.error) {
                             return callback(event.target.error);
                         }
                         var cursor = event.target.result;
-                        if(skip > 0) {
+                        if (skip > 0) {
                             skip--;
-                        } else if(cursor) {
+                        } else if (cursor) {
                             data.push(cursor.value);
                         }
-                        if(cursor && (!options.limit || data.length < options.limit)) {
+                        if (cursor && (!options.limit || data.length < options.limit)) {
                             cursor['continue']();
                         } else {
                             callback(null, data);
@@ -351,30 +341,30 @@ var bongo;
                     return;
                 }
                 cursorSuccess = function (event) {
-                    if(event.target.error) {
+                    if (event.target.error) {
                         return callback(event.target.error);
                     }
                     var cursor = event.target.result;
-                    if(cursor) {
-                        if(!criteriaKeys.length) {
-                            if(skip > 0) {
+                    if (cursor) {
+                        if (!criteriaKeys.length) {
+                            if (skip > 0) {
                                 skip--;
-                            } else if(cursor) {
+                            } else if (cursor) {
                                 data.push(cursor.value);
                             }
                         } else {
                             var match = true;
                             var key;
                             for(key in criteriaKeys) {
-                                if(typeof cursor.value[criteriaKeys[key]] === "undefined" || cursor.value[criteriaKeys[key]] !== criteria[criteriaKeys[key]]) {
+                                if (typeof cursor.value[criteriaKeys[key]] === "undefined" || cursor.value[criteriaKeys[key]] !== criteria[criteriaKeys[key]]) {
                                     match = false;
                                 }
                             }
-                            if(match) {
+                            if (match) {
                                 data.push(cursor.value);
                             }
                         }
-                        if(!options.limit || data.length < options.limit) {
+                        if (!options.limit || data.length < options.limit) {
                             cursor['continue']();
                         } else {
                             callback(null, data);
@@ -385,9 +375,9 @@ var bongo;
                         return;
                     }
                 };
-                if(options.sort && objectStore.indexNames.contains(sortKeys[0])) {
+                if (options.sort && objectStore.indexNames.contains(sortKeys[0])) {
                     index = objectStore.index(sortKeys[0]);
-                    if(options.sort[sortKeys[0]] === 1) {
+                    if (options.sort[sortKeys[0]] === 1) {
                         index.openCursor().onsuccess = cursorSuccess;
                     } else {
                         index.openCursor(null, 'prev').onsuccess = cursorSuccess;
@@ -402,15 +392,15 @@ var bongo;
     bongo.ObjectStore = ObjectStore;    
     function key() {
         var key_t = Math.floor(new Date().valueOf() / 1000).toString(16);
-        if(!this.key_m) {
+        if (!this.key_m) {
             this.key_m = Math.floor(Math.random() * (16777216)).toString(16);
         }
-        if(!this.key_p) {
+        if (!this.key_p) {
             this.key_p = Math.floor(Math.random() * (32767)).toString(16);
         }
-        if(typeof this.key_i === "undefined") {
+        if (typeof this.key_i === "undefined") {
             this.key_i = 0;
-        } else if(this.key_i > 0xffffff) {
+        } else if (this.key_i > 0xffffff) {
             this.key_i = 0;
         }
         this.key_i = Number(this.key_i);
@@ -438,10 +428,10 @@ var bongo;
         }
         Query.prototype.findOne = function (criteria, callback) {
             this.find(criteria).limit(1).toArray(function (error, results) {
-                if(error) {
+                if (error) {
                     return callback(error);
                 }
-                if(!results.length) {
+                if (!results.length) {
                     callback(error, null);
                 } else {
                     callback(error, results[0]);
@@ -449,18 +439,66 @@ var bongo;
             });
         };
         Query.prototype.find = function (criteria) {
-            if (typeof criteria === "undefined") { criteria = {
-            }; }
+            if (typeof criteria === "undefined") { criteria = {}; }
             this.filters.push(function (doc) {
-                var match = true;
+                var match = true, x, y;
                 for(var key in criteria) {
-                    if(typeof criteria[key] === 'string') {
-                        if(typeof doc[key] === 'undefined' || doc[key] != criteria[key]) {
+                    if (criteria[key].constructor === Object) {
+                        for(x in criteria[key]) {
+                            if (x !== '$nin' && typeof doc[key] === 'undefined') {
+                                return false;
+                            }
+                            if (x === '$gt') {
+                                if (doc[key] <= criteria[key][x]) {
+                                    return false;
+                                }
+                            } else if (x === '$gte') {
+                                if (doc[key] < criteria[key][x]) {
+                                    return false;
+                                }
+                            } else if (x === '$lt') {
+                                if (doc[key] >= criteria[key][x]) {
+                                    return false;
+                                }
+                            } else if (x === '$lte') {
+                                if (doc[key] > criteria[key][x]) {
+                                    return false;
+                                }
+                            } else if (x === '$ne') {
+                                if (doc[key] == criteria[key][x]) {
+                                    return false;
+                                }
+                            } else if (x === '$in' && criteria[key][x] instanceof Array) {
+                                if (criteria[key][x].indexOf(doc[key]) === -1) {
+                                    return false;
+                                }
+                            } else if (x === '$nin' && criteria[key][x] instanceof Array) {
+                                if (criteria[key][x].indexOf(doc[key]) !== -1) {
+                                    return false;
+                                }
+                            } else if (x === '$all' && doc[key] instanceof Array && criteria[key][x] instanceof Array) {
+                                for(y = 0; y < criteria[key][x].length; y++) {
+                                    if (doc[key].indexOf(criteria[key][x][y]) === -1) {
+                                        return false;
+                                    }
+                                }
+                            } else {
+                                return false;
+                            }
+                        }
+                    } else if (typeof doc[key] === 'undefined') {
+                        return false;
+                    } else if (typeof criteria[key] === 'string') {
+                        if (doc[key] != criteria[key]) {
+                            return false;
+                        }
+                    } else if (typeof criteria[key] === 'object' && criteria[key] instanceof RegExp) {
+                        if (!criteria[key].test(doc[key])) {
                             return false;
                         }
                     }
                 }
-                return match;
+                return true;
             });
             return this;
         };
@@ -487,18 +525,18 @@ var bongo;
                 var objectStore = transaction.objectStore(_this.objectStores[0]);
                 var results = [];
                 var cursorSuccess = function (event) {
-                    if(event.target.error) {
+                    if (event.target.error) {
                         database.close();
                         return callback(event.target.error);
                     }
                     var value, match, cursor = event.target.result;
-                    if(cursor) {
+                    if (cursor) {
                         value = cursor.value;
-                        if(!_this.filters.length) {
-                            if(_this._skip > 0) {
+                        if (!_this.filters.length) {
+                            if (_this._skip > 0) {
                                 _this._skip--;
                             } else {
-                                if(_this.keys.length) {
+                                if (_this.keys.length) {
                                     value = pick(value, _this.keys);
                                 }
                                 results.push(value);
@@ -506,18 +544,18 @@ var bongo;
                         } else {
                             match = true;
                             for(var x = 0; x < _this.filters.length; x++) {
-                                if(!_this.filters[x](cursor.value)) {
+                                if (!_this.filters[x](cursor.value)) {
                                     match = false;
                                 }
                             }
-                            if(match) {
-                                if(_this.keys.length) {
+                            if (match) {
+                                if (_this.keys.length) {
                                     value = pick(value, _this.keys);
                                 }
                                 results.push(value);
                             }
                         }
-                        if(results.length < _this._limit) {
+                        if (results.length < _this._limit) {
                             cursor.continue();
                         } else {
                             database.close();
@@ -537,10 +575,9 @@ var bongo;
     })();
     bongo.Query = Query;    
     function pick(obj, keys) {
-        var copy = {
-        };
+        var copy = {};
         for(var x = 0; x < keys.length; x++) {
-            if(keys[x] in obj) {
+            if (keys[x] in obj) {
                 copy[keys[x]] = obj[keys[x]];
             }
             ;
@@ -558,7 +595,7 @@ var bongo;
     function db(definition, callback) {
         if (typeof callback === "undefined") { callback = function () {
         }; }
-        if(typeof bongo[definition.name] === 'undefined') {
+        if (typeof bongo[definition.name] === 'undefined') {
             Object.defineProperty(bongo, definition.name, {
                 value: new bongo.Database(definition, callback)
             });
@@ -588,12 +625,11 @@ var bongo;
         };
         request.onsuccess = function (event) {
             var x, indexes, db = event.target.result;
-            var name, objectStore, objectStoreNames = [], objectStores = {
-            };
+            var name, objectStore, objectStoreNames = [], objectStores = {};
             for(x = 0; x < db.objectStoreNames.length; x++) {
                 objectStoreNames.push(db.objectStoreNames.item(x));
             }
-            if(objectStoreNames.length) {
+            if (objectStoreNames.length) {
                 var transaction = db.transaction(objectStoreNames, "readonly");
                 objectStoreNames.forEach(function (objectStoreName) {
                     var objectStore = transaction.objectStore(objectStoreName);
@@ -627,36 +663,36 @@ var bongo;
     bongo.getStoredSignature = getStoredSignature;
     function equals(x, y) {
         var p;
-        if(x === y) {
+        if (x === y) {
             return true;
         }
         for(p in x) {
-            if(typeof (y[p]) == 'undefined') {
+            if (typeof (y[p]) == 'undefined') {
                 return false;
             }
         }
         for(p in y) {
-            if(typeof (x[p]) == 'undefined') {
+            if (typeof (x[p]) == 'undefined') {
                 return false;
             }
         }
-        if(typeof x !== typeof y) {
+        if (typeof x !== typeof y) {
             return false;
         }
-        if(typeof x === 'object') {
+        if (typeof x === 'object') {
             for(p in x) {
-                if(x[p]) {
-                    if(typeof (x[p]) === 'object') {
-                        if(!equals(x[p], y[p])) {
+                if (x[p]) {
+                    if (typeof (x[p]) === 'object') {
+                        if (!equals(x[p], y[p])) {
                             return false;
                         }
                     } else {
-                        if(x[p] !== y[p]) {
+                        if (x[p] !== y[p]) {
                             return false;
                         }
                     }
                 } else {
-                    if(y[p]) {
+                    if (y[p]) {
                         return false;
                     }
                 }
@@ -667,25 +703,6 @@ var bongo;
         return true;
     }
     bongo.equals = equals;
-    function close(target) {
-        var db;
-        if(target instanceof window.IDBCursor) {
-            target = target.source;
-        }
-        if(target instanceof window.IDBDatabase) {
-            db = target;
-        } else if(target instanceof window.IDBTransaction) {
-            db = target.db;
-        } else if(target instanceof window.IDBObjectStore || target instanceof bongo.IDBRequest) {
-            db = target.transaction.db;
-        } else if(target instanceof window.IDBIndex) {
-            db = target.objectStore.transaction.db;
-        }
-        if(typeof (db) !== "undefined" && db != null && typeof (db.close) != "undefined") {
-            db.close();
-        }
-    }
-    bongo.close = close;
     function info(name) {
         if (typeof name === "undefined") { name = null; }
         console.group('Bongo');
@@ -705,10 +722,10 @@ var bongo;
                 });
             };
         };
-        if(name) {
+        if (name) {
             debugDb(name);
         } else {
-            if(bongo.indexedDB.webkitGetDatabaseNames) {
+            if (bongo.indexedDB.webkitGetDatabaseNames) {
                 request = bongo.indexedDB.webkitGetDatabaseNames();
                 request.onsuccess = function (event) {
                     var dbNameList = event.target.result;
