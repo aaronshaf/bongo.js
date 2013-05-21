@@ -1,6 +1,6 @@
 # Bongo.js
 
-Bongo.js is for storing and querying structured data on the browser. Lots of it.
+Bongo.js is a JavaScript library for storing and querying structured data on the browser. Lots of it.
 
 It is built on [IndexedDB](http://en.wikipedia.org/wiki/Indexed_Database_API).
 
