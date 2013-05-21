@@ -19,22 +19,16 @@ if(bongo.supported) {
 #### Define database
 
 ```javascript
-var db = bongo.db({
+bongo.db({
   name: 'acme',
   objectStores: ["users"]
 });
 ```
 
-#### Access database
-
-```javascript
-var db = bongo.acme;
-```
-
 #### insert
 
 ```javascript
-db.users.insert({
+bongo.users.insert({
   name: "John Doe",
   email: "john@domain.com"
 });
@@ -43,7 +37,7 @@ db.users.insert({
 #### save
 
 ```javascript
-db.users.save({
+bongo.users.save({
   _id: "[key]", //optional
   name: "John Doe",
   email: "john@domain.com"
@@ -53,7 +47,7 @@ db.users.save({
 #### get
 
 ```javascript
-db.users.get("[key]", function(error,data) {
+bongo.users.get("[key]", function(error,data) {
   if(!error) {
     //success
   }
@@ -63,7 +57,7 @@ db.users.get("[key]", function(error,data) {
 #### find
 
 ```javascript
-db.users.find({
+bongo.users.find({
   name: "John Doe"
 }).toArray(function(error,results) {
     if(!error) {
@@ -75,7 +69,7 @@ db.users.find({
 #### findOne
 
 ```javascript
-db.users.findOne({
+bongo.users.findOne({
   name: "John Doe"
 }),function(error,record) {
     if(!error) {
@@ -87,7 +81,7 @@ db.users.findOne({
 #### filter
 
 ```javascript
-db.users.filter(function(doc) {
+bongo.users.filter(function(doc) {
   return doc.age > 30;
 }).toArray(function(error,results) {
   if(!error) {
@@ -98,7 +92,7 @@ db.users.filter(function(doc) {
 
 ```javascript
 var query = new RegExp('john','i');
-db.users.filter(function(doc) {
+bongo.users.filter(function(doc) {
   return query.test(doc.name);
 }).toArray(function(error,results) {
   if(!error) {
@@ -109,7 +103,7 @@ db.users.filter(function(doc) {
 
 #### pick
 ```javascript
-db.users.filter(function(doc) {
+bongo.users.filter(function(doc) {
   return doc.age > 30;
 }).pick(['name','email']).toArray(function(error,results) {
   if(!error) {
@@ -120,7 +114,7 @@ db.users.filter(function(doc) {
 
 #### limit
 ```javascript
-db.users.filter(function(doc) {
+bongo.users.filter(function(doc) {
   return doc.age > 30;
 }).limit(5).toArray(function(error,results) {
   if(!error) {
@@ -131,7 +125,7 @@ db.users.filter(function(doc) {
 
 #### skip
 ```javascript
-db.users.filter(function(doc) {
+bongo.users.filter(function(doc) {
   return doc.age > 30;
 }).skip(5).limit(5).toArray(function(error,results) {
   if(!error) {
@@ -143,7 +137,7 @@ db.users.filter(function(doc) {
 #### remove
 
 ```javascript
-db.users.remove({
+bongo.users.remove({
   email: "john@domain.com"
 }, function(error, data) {
   if(!error) {
@@ -155,7 +149,7 @@ db.users.remove({
 Or just use the key:
 
 ```javascript
-db.users.remove("[key]", function(error, data) {
+bongo.users.remove("[key]", function(error, data) {
   if(!error) {
     //success
   }
@@ -165,7 +159,7 @@ db.users.remove("[key]", function(error, data) {
 #### Delete the database
 
 ```javascript
-db.delete(function(error) {
+bongo.delete(function(error) {
   if(!error) {
     // Success
   }
@@ -183,14 +177,14 @@ db.delete(function(error) {
 ## See also
 
 * [Introduction to Bongo.js](http://slid.es/aaronshaf/bongojs/fullscreen) (slides)
-* [aaronpowell/db.js](https://github.com/aaronpowell/db.js)
+* [aaronpowell/bongo.js](https://github.com/aaronpowell/bongo.js)
 * [jensarps/IDBWrapper](https://github.com/jensarps/IDBWrapper)
 * [axemclion/IndexedDB](https://github.com/axemclion/IndexedDB)
 * [grgrssll/IndexedDB](https://github.com/grgrssll/IndexedDB)
-* [linq2indexeddb](http://linq2indexeddb.codeplex.com/)
-* [ytkyaw/ydn-db](https://github.com/yathit/ydn-db/blob/master/js/ydn/db/conn/indexed_db.js) (adapter)
-* [brianleroux/lawnchair](https://github.com/brianleroux/lawnchair/blob/master/src/adapters/indexed-db.js) (adapter)
-* [daleharvey/pouchdb](https://github.com/daleharvey/pouchdb/blob/master/src/adapters/pouch.idb.js) (adapter)
+* [linq2indexeddb](http://linq2indexedbongo.codeplex.com/)
+* [ytkyaw/ydn-db](https://github.com/yathit/ydn-db/blob/master/js/ydn/db/conn/indexed_bongo.js) (adapter)
+* [brianleroux/lawnchair](https://github.com/brianleroux/lawnchair/blob/master/src/adapters/indexed-bongo.js) (adapter)
+* [daleharvey/pouchdb](https://github.com/daleharvey/pouchdb/blob/master/src/adapters/pouch.ibongo.js) (adapter)
 * [facebook/IndexedDB-polyfill](https://github.com/facebook/IndexedDB-polyfill) (polyfill)
 * [axemclion/IndexedDBShim](https://github.com/axemclion/IndexedDBShim) (polyfill)
 * [Parashuram's IndexedDB Experiments] (http://nparashuram.com/IndexedDB/)
