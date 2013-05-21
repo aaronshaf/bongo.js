@@ -61,10 +61,10 @@ bongo.users.get("[key]", function(error,data) {
 bongo.users.find({
   name: "John Doe"
 }).toArray(function(error,results) {
-    if(!error) {
-      //success
-    }
-  });
+  if(!error) {
+    //success
+  }
+});
 ```
 
 ##### Regular expressions
@@ -73,10 +73,10 @@ bongo.users.find({
 bongo.users.find({
   name: /john/i
 }).toArray(function(error,results) {
-    if(!error) {
-      //success
-    }
-  });
+  if(!error) {
+    //success
+  }
+});
 ```
 
 ##### Comparison query operators
@@ -85,10 +85,10 @@ bongo.users.find({
 bongo.users.find({
   pets: {$gt: 2}
 }).toArray(function(error,results) {
-    if(!error) {
-      //success
-    }
-  });
+  if(!error) {
+    //success
+  }
+});
 ```
 
 $all, $lt, $lte, $gt, $gte, $in, $nin are all supported.
@@ -99,10 +99,10 @@ $all, $lt, $lte, $gt, $gte, $in, $nin are all supported.
 bongo.users.findOne({
   name: "John Doe"
 }),function(error,record) {
-    if(!error) {
-      //success
-    }
-  });
+  if(!error) {
+    //success
+  }
+});
 ```
 
 #### filter
