@@ -1,8 +1,8 @@
 {
   "name": "bongo.js",
-  "version": "1.5.20",
+  "version": "1.0.1",
   "description": "Store and query massive amounts of structured data on the browser.",
-  "main": "bongo.min.js",
+  "main": "dist/bongo.min.js",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-clean": "~0.4.1",

@@ -1,0 +1,10 @@
+{
+  "name": "bongo.js",
+  "version": "1.0.1",
+  "main": "dist/bongo.min.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ]
+}
