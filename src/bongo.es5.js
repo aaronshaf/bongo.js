@@ -739,3 +739,4 @@ var bongo;
     }
     bongo.info = info;
 })(bongo || (bongo = {}));
+//@ sourceMappingURL=bongo.es5.js.map
