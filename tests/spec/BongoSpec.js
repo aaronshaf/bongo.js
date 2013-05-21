@@ -1,7 +1,7 @@
 var assert = chai.assert;
 var schema = {
   name: 'acme',
-  objectStores: ["users","employees"]
+  collections: ["users","employees"]
 };
 
 describe("bongo", function() {
