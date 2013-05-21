@@ -2,9 +2,13 @@
 
 Bongo.js is a library for storing and querying structured data on the browser. Lots of it.
 
-[Tested](http://aaronshaf.github.io/bongo.js/) in Chrome 26, Chrome 29, Firefox 22, and Internet Explorer 10.
+It is built on IndexedDB.
 
-### Check for support
+It has been [tested](http://aaronshaf.github.io/bongo.js/) in Chrome 26, Chrome 29, Firefox 22, and Internet Explorer 10.
+
+## Get started
+
+#### Check for support
 
 ```javascript
 if(bongo.supported) {
@@ -12,7 +16,7 @@ if(bongo.supported) {
 }
 ```
 
-### Define database
+#### Define database
 
 ```javascript
 var db = bongo.db({
@@ -21,13 +25,13 @@ var db = bongo.db({
 });
 ```
 
-### Access database
+#### Access database
 
 ```javascript
 var db = bongo.acme;
 ```
 
-### insert
+#### insert
 
 ```javascript
 db.users.insert({
@@ -36,7 +40,7 @@ db.users.insert({
 });
 ```
 
-### save
+#### save
 
 ```javascript
 db.users.save({
@@ -46,7 +50,7 @@ db.users.save({
 });
 ```
 
-### get
+#### get
 
 ```javascript
 db.users.get("[key]", function(error,data) {
@@ -56,7 +60,7 @@ db.users.get("[key]", function(error,data) {
 });
 ```
 
-### find
+#### find
 
 ```javascript
 db.users.find({
@@ -68,7 +72,7 @@ db.users.find({
   });
 ```
 
-### findOne
+#### findOne
 
 ```javascript
 db.users.findOne({
@@ -80,7 +84,7 @@ db.users.findOne({
   });
 ```
 
-### filter
+#### filter
 
 ```javascript
 db.users.filter(function(doc) {
@@ -103,7 +107,7 @@ db.users.filter(function(doc) {
 });
 ```
 
-### pick
+#### pick
 ```javascript
 db.users.filter(function(doc) {
   return doc.age > 30;
@@ -114,7 +118,7 @@ db.users.filter(function(doc) {
 });
 ```
 
-### limit
+#### limit
 ```javascript
 db.users.filter(function(doc) {
   return doc.age > 30;
@@ -125,7 +129,7 @@ db.users.filter(function(doc) {
 });
 ```
 
-### skip
+#### skip
 ```javascript
 db.users.filter(function(doc) {
   return doc.age > 30;
@@ -136,7 +140,7 @@ db.users.filter(function(doc) {
 });
 ```
 
-### remove
+#### remove
 
 ```javascript
 db.users.remove({
@@ -158,7 +162,7 @@ db.users.remove("[key]", function(error, data) {
 });
 ```
 
-### Delete the database
+#### Delete the database
 
 ```javascript
 db.delete(function(error) {
