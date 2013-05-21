@@ -4,6 +4,7 @@
 /// <reference path="query.ts" />
 
 declare var define;
+declare var module;
 
 module bongo {
   export var debug = false;
@@ -152,6 +153,8 @@ module bongo {
   }
 }
 
-if(typeof define === "function" && define.amd) {
+if(typeof module === "object" && typeof module.exports === "object") {
+  module.exports = bongo;
+} else if(typeof define === "function" && define.amd) {
   define("bongo", [],function() {return bongo;});
 }

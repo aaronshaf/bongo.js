@@ -586,6 +586,7 @@ var bongo;
     }
 })(bongo || (bongo = {}));
 
+
 var bongo;
 (function (bongo) {
     bongo.debug = false;
@@ -740,7 +741,9 @@ var bongo;
     }
     bongo.info = info;
 })(bongo || (bongo = {}));
-if (typeof define === "function" && define.amd) {
+if (typeof module === "object" && typeof module.exports === "object") {
+    module.exports = bongo;
+} else if (typeof define === "function" && define.amd) {
     define("bongo", [], function () {
         return bongo;
     });
