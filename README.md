@@ -39,8 +39,9 @@ bongo.users.insert({
 ```javascript
 bongo.users.save({
   _id: "[key]", //optional
-  name: "John Doe",
-  email: "john@domain.com"
+  name: "Jane Doe",
+  email: "jane@domain.com",
+  pets: 3
 });
 ```
 
@@ -65,6 +66,32 @@ bongo.users.find({
     }
   });
 ```
+
+##### Regular expressions
+
+```javascript
+bongo.users.find({
+  name: /john/i
+}).toArray(function(error,results) {
+    if(!error) {
+      //success
+    }
+  });
+```
+
+##### Comparison query operators
+
+```javascript
+bongo.users.find({
+  pets: {$gt: 2}
+}).toArray(function(error,results) {
+    if(!error) {
+      //success
+    }
+  });
+```
+
+$all, $lt, $lte, $gt, $gte, $in, $nin are all supported.
 
 #### findOne
 

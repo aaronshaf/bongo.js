@@ -441,19 +441,64 @@ var bongo;
         Query.prototype.find = function (criteria) {
             if (typeof criteria === "undefined") { criteria = {}; }
             this.filters.push(function (doc) {
-                var match = true;
+                var match = true, x, y;
                 for(var key in criteria) {
-                    if (typeof criteria[key] === 'string') {
-                        if (typeof doc[key] === 'undefined' || doc[key] != criteria[key]) {
+                    if (criteria[key].constructor === Object) {
+                        for(x in criteria[key]) {
+                            if (x !== '$nin' && typeof doc[key] === 'undefined') {
+                                return false;
+                            }
+                            if (x === '$gt') {
+                                if (doc[key] <= criteria[key][x]) {
+                                    return false;
+                                }
+                            } else if (x === '$gte') {
+                                if (doc[key] < criteria[key][x]) {
+                                    return false;
+                                }
+                            } else if (x === '$lt') {
+                                if (doc[key] >= criteria[key][x]) {
+                                    return false;
+                                }
+                            } else if (x === '$lte') {
+                                if (doc[key] > criteria[key][x]) {
+                                    return false;
+                                }
+                            } else if (x === '$ne') {
+                                if (doc[key] == criteria[key][x]) {
+                                    return false;
+                                }
+                            } else if (x === '$in' && criteria[key][x] instanceof Array) {
+                                if (criteria[key][x].indexOf(doc[key]) === -1) {
+                                    return false;
+                                }
+                            } else if (x === '$nin' && criteria[key][x] instanceof Array) {
+                                if (criteria[key][x].indexOf(doc[key]) !== -1) {
+                                    return false;
+                                }
+                            } else if (x === '$all' && doc[key] instanceof Array && criteria[key][x] instanceof Array) {
+                                for(y = 0; y < criteria[key][x].length; y++) {
+                                    if (doc[key].indexOf(criteria[key][x][y]) === -1) {
+                                        return false;
+                                    }
+                                }
+                            } else {
+                                return false;
+                            }
+                        }
+                    } else if (typeof doc[key] === 'undefined') {
+                        return false;
+                    } else if (typeof criteria[key] === 'string') {
+                        if (doc[key] != criteria[key]) {
                             return false;
                         }
                     } else if (typeof criteria[key] === 'object' && criteria[key] instanceof RegExp) {
-                        if (typeof doc[key] === 'undefined' || !criteria[key].test(doc[key])) {
+                        if (!criteria[key].test(doc[key])) {
                             return false;
                         }
                     }
                 }
-                return match;
+                return true;
             });
             return this;
         };

@@ -171,7 +171,9 @@ describe("bongo", function() {
         var insertRecord2 = function() {
           db.users.insert({
             name: "Jane Doe",
-            email: "jane@domain.com"
+            email: "jane@domain.com",
+            pets: 3,
+            years: [2010,2011,2012]
           },findRecords);
         };
 
@@ -200,14 +202,183 @@ describe("bongo", function() {
         });
       });
 
-      it("find records with RegExp criteria", function(done) {
-        var found = false;
+      describe('Comparison query operators',function() {
+        it("should find a record with satisfied $gt criteria", function(done) {
+          db.users.find({
+            pets: {$gt: 2}
+          }).toArray(function(error,results) {
+            if(!error && results.length) {
+              done();
+            }
+          });
+        });
 
+        it("should not find a record with unsatisfied $gt criteria", function(done) {
+          db.users.find({
+            pets: {$gt: 3}
+          }).toArray(function(error,results) {
+            if(!error && !results.length) {
+              done();
+            }
+          });
+        });
+
+        it("should find a record with satisfied $gte criteria", function(done) {
+          db.users.find({
+            pets: {$gte: 3}
+          }).toArray(function(error,results) {
+            if(!error && results.length) {
+              done();
+            }
+          });
+        });
+
+        it("should not find a record with unsatisfied $gte criteria", function(done) {
+          db.users.find({
+            pets: {$gte: 4}
+          }).toArray(function(error,results) {
+            if(!error && !results.length) {
+              done();
+            }
+          });
+        });
+
+        it("should find a record with satisfied $lt criteria", function(done) {
+          db.users.find({
+            pets: {$lt: 4}
+          }).toArray(function(error,results) {
+            if(!error && results.length) {
+              done();
+            }
+          });
+        });
+
+        it("should not find a record with unsatisfied $lt criteria", function(done) {
+          db.users.find({
+            pets: {$lt: 2}
+          }).toArray(function(error,results) {
+            if(!error && !results.length) {
+              done();
+            }
+          });
+        });
+
+        it("should find a record with satisfied $lte criteria", function(done) {
+          db.users.find({
+            pets: {$lte: 3}
+          }).toArray(function(error,results) {
+            if(!error && results.length) {
+              done();
+            }
+          });
+        });
+
+        it("should not find a record with unsatisfied $lte criteria", function(done) {
+          db.users.find({
+            pets: {$lte: 2}
+          }).toArray(function(error,results) {
+            if(!error && !results.length) {
+              done();
+            }
+          });
+        });
+
+        it("should find a record with satisfied $ne criteria", function(done) {
+          db.users.find({
+            pets: {$ne: 4}
+          }).toArray(function(error,results) {
+            if(!error && results.length) {
+              done();
+            }
+          });
+        });
+
+        it("should not find a record with unsatisfied $ne criteria", function(done) {
+          db.users.find({
+            pets: {$ne: 3}
+          }).toArray(function(error,results) {
+            if(!error && !results.length) {
+              done();
+            }
+          });
+        });
+
+        it("should find a record with satisfied $all criteria", function(done) {
+          db.users.find({
+            years: {$all: [2010,2011]}
+          }).toArray(function(error,results) {
+            if(!error && results.length) {
+              done();
+            }
+          });
+        });
+
+        it("should not find a record with unsatisfied $all criteria", function(done) {
+          db.users.find({
+            years: {$all: [2010,2013]}
+          }).toArray(function(error,results) {
+            if(!error && !results.length) {
+              done();
+            }
+          });
+        });
+
+        it("should find a record with satisfied $in criteria", function(done) {
+          db.users.find({
+            pets: {$in: [1,2,3]}
+          }).toArray(function(error,results) {
+            if(!error && results.length) {
+              done();
+            }
+          });
+        });
+
+        it("should not find a record with un satisfied $in criteria", function(done) {
+          db.users.find({
+            pets: {$in: [1,2,4]}
+          }).toArray(function(error,results) {
+            if(!error && !results.length) {
+              done();
+            }
+          });
+        });
+
+        it("should find a record with satisfied $nin criteria", function(done) {
+          db.users.find({
+            pets: {$nin: [1,2,4]}
+          }).toArray(function(error,results) {
+            if(!error && results.length) {
+              done();
+            }
+          });
+        });
+
+        it("should find a record with satisfied $nin criteria, value being undefined", function(done) {
+          db.users.find({
+            enemies: {$nin: ['Sally','Mary']}
+          }).toArray(function(error,results) {
+            if(!error && results.length) {
+              done();
+            }
+          });
+        });
+
+        it("should not find a record with un unsatisfied $nin criteria", function(done) {
+          db.users.find({
+            name: {$nin: ['John Doe','Jane Doe']}
+          }).toArray(function(error,results) {
+            if(!error && !results.length) {
+              done();
+            }
+          });
+        });
+      });
+
+      it("find records with RegExp criteria", function(done) {
         db.users.find({
           name: /jane/i
         }).toArray(function(error,results) {
           if(!error && results.length) {
-            found = true;
             done();
           }
         });
