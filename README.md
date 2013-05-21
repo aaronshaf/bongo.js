@@ -30,9 +30,7 @@ And include the file in your app:
 <script src='/components/bongo.js/dist/bongo.min.js'></script>
 ```
 
-Or  [download the compressed, production version](https://raw.github.com/aaronshaf/bongo.js/master/dist/bongo.min.js)
-
-Or [download the uncompressed, development version](https://raw.github.com/aaronshaf/bongo.js/master/src/js/bongo.es5.js)
+You can also [download the compressed, production version](https://raw.github.com/aaronshaf/bongo.js/master/dist/bongo.min.js) or the [uncompressed, development version](https://raw.github.com/aaronshaf/bongo.js/master/src/js/bongo.es5.js).
 
 ### Check for support
 
