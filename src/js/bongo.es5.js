@@ -19,7 +19,9 @@ var bongo;
                 this[objectStore.name] = objectStore;
                 this.objectStores.push(objectStore);
             }
-            this.ensure(callback);
+            if (bongo.supported) {
+                this.ensure(callback);
+            }
         }
         Database.prototype.collection = function (name) {
             return this[name];

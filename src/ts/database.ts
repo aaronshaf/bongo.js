@@ -18,7 +18,7 @@ module bongo {
         this[objectStore.name] = objectStore;
         this.objectStores.push(objectStore);
       }
-      this.ensure(callback);
+      if(bongo.supported) this.ensure(callback);
     }
 
     collection(name) {return this[name];}
