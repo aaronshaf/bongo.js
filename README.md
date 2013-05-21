@@ -37,7 +37,7 @@ You can also [download the compressed, production version](https://raw.github.co
 ```javascript
 bongo.db({
   name: 'acme',
-  objectStores: ["users"]
+  collections: ["users"]
 });
 ```
 
