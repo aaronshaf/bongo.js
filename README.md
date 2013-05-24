@@ -47,6 +47,11 @@ bongo.db({
 bongo.db('acme').collection('users').insert({
   name: "John Doe",
   email: "john@domain.com"
+},function(error,id) {
+  if(!error) {
+    // success
+  }
+}
 });
 ```
 
