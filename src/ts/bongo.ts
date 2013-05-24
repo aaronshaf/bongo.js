@@ -157,7 +157,10 @@ module bongo {
             debugDb(dbNameList.item(x));
           }
         }
+
       }
+      // IE has IDBFactory.msGetDatabaseName()
+      // IDBOpenDBRequest(s) in moz ?
     }
     console.groupEnd();
   }
