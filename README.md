@@ -245,7 +245,7 @@ if(bongo.supported) {
 * [grgrssll/IndexedDB](https://github.com/grgrssll/IndexedDB)
 * [ironfroggy/plasmid](https://github.com/ironfroggy/plasmid)
 * [malucomarinero/johodb] (http://malucomarinero.bitbucket.org/johodb/)
-* [linq2indexeddb](http://linq2indexedbongo.codeplex.com/)
+* [linq2indexeddb](http://linq2indexeddb.codeplex.com/)
 * [mozilla-b2g/gaia/async_storage.js](https://github.com/mozilla-b2g/gaia/blob/master/shared/js/async_storage.js)
 * [ytkyaw/ydn-db](https://github.com/yathit/ydn-db/blob/master/js/ydn/db/conn/indexed_bongo.js) (adapter)
 * [brianleroux/lawnchair](https://github.com/brianleroux/lawnchair/blob/master/src/adapters/indexed-bongo.js) (adapter)
