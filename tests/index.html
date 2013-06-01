@@ -6,11 +6,11 @@
 </head>
 <body>
   <div id="mocha"></div>
-  <script src="lib/mocha/mocha.js"></script>
-  <script src="lib/chai.js"></script>
+  <script src="/tests/lib/mocha/mocha.js"></script>
+  <script src="/tests/lib/chai.js"></script>
   <script type="text/javascript" src="../src/js/bongo.es5.js"></script>
   <script>mocha.setup('bdd')</script>
-  <script type="text/javascript" src="spec/BongoSpec.js"></script>
+  <script type="text/javascript" src="/tests/spec/BongoSpec.js"></script>
   <script>
     mocha.checkLeaks();
     mocha.run();
