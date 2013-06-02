@@ -131,6 +131,9 @@ var bongo;
                 console.debug('Ensuring ' + this.name);
             }
             bongo.getStoredSignature(this.name, function (signature) {
+                if (bongo.debug) {
+                    console.debug('Signature found: ' + JSON.stringify(signature));
+                }
                 if (bongo.equals(signature, _this.signature())) {
                     bongo.getStoredVersion(_this.name, function (version) {
                         _this.version = version;
@@ -140,12 +143,18 @@ var bongo;
                     return;
                 }
                 bongo.getStoredVersion(_this.name, function (version) {
+                    if (bongo.debug) {
+                        console.debug('Version found: ' + version);
+                    }
                     _this.version = version + 1;
                     var request = bongo.indexedDB.open(_this.name, _this.version);
                     request.onblocked = function (event) {
                         console.log('blocked', request.error.name);
                     };
                     request.onupgradeneeded = function (event) {
+                        if (bongo.debug) {
+                            console.debug('onupgradeneeded in ensure, version ' + _this.version);
+                        }
                         var db = request.result;
                         for(var x = 0; x < _this.objectStores.length; x++) {
                             _this.objectStores[x].ensureObjectStore(db);
@@ -155,7 +164,6 @@ var bongo;
                                 db.deleteObjectStore(name);
                             }
                         }
-                        db.close();
                         setTimeout(function () {
                             callback();
                         }, 1);
