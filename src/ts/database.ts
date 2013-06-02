@@ -144,6 +144,7 @@ module bongo {
       if(bongo.debug) console.debug('Ensuring ' + this.name);
       // Compare signature of definition and definition of current database
       bongo.getStoredSignature(this.name,(signature) => {
+        if(bongo.debug) console.debug('Signature found: ' + JSON.stringify(signature));
         //console.log(bongo.equals(signature,this.signature()));
         if(bongo.equals(signature,this.signature())) {
           bongo.getStoredVersion(this.name,(version) => {
@@ -154,6 +155,7 @@ module bongo {
           return;
         }
         bongo.getStoredVersion(this.name,(version) => {
+          if(bongo.debug) console.debug('Version found: ' + version);
           this.version = version + 1;
 
           var request = bongo.indexedDB.open(this.name,this.version);
@@ -167,6 +169,7 @@ module bongo {
           // See: https://groups.google.com/a/chromium.org/forum/?fromgroups#!topic/chromium-html5/pHoKbX78rxA
           // See: https://groups.google.com/a/chromium.org/forum/?fromgroups#!topic/chromium-html5/8C-NWF2FajA
           request.onupgradeneeded = (event) => {
+            if(bongo.debug) console.debug('onupgradeneeded in ensure, version ' + this.version);
             var db = request.result;
             for(var x = 0;x < this.objectStores.length;x++) {
               this.objectStores[x].ensureObjectStore(db);
@@ -176,7 +179,7 @@ module bongo {
                 db.deleteObjectStore(name);
               }
             }
-            db.close();
+            // db.close();
             setTimeout(function(){
               callback();
             },1);
