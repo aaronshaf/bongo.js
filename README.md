@@ -244,6 +244,7 @@ if(bongo.supported) {
 * [axemclion/IndexedDB](https://github.com/axemclion/IndexedDB)
 * [grgrssll/IndexedDB](https://github.com/grgrssll/IndexedDB)
 * [ironfroggy/plasmid](https://github.com/ironfroggy/plasmid)
+* [lukasolson/Local-DB](https://github.com/lukasolson/Local-DB)
 * [malucomarinero/johodb] (http://malucomarinero.bitbucket.org/johodb/)
 * [linq2indexeddb](http://linq2indexeddb.codeplex.com/)
 * [mozilla-b2g/gaia/async_storage.js](https://github.com/mozilla-b2g/gaia/blob/master/shared/js/async_storage.js)
