@@ -159,10 +159,14 @@ module bongo {
                 }
               }
               if(match) {
-                if(this.keys.length) {
-                  value = pick(value,this.keys);
+                if(this._skip > 0) {
+                  this._skip--;
+                } else {
+                  if(this.keys.length) {
+                    value = pick(value,this.keys);
+                  }
+                  results.push(value); 
                 }
-                results.push(value);
               }
             }
             if(results.length < this._limit) {
