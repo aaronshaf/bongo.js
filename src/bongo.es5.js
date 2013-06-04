@@ -255,7 +255,6 @@ var bongo;
             }.bind(this));
         };
         ObjectStore.prototype.ensureObjectStore = function (transaction, signature, database) {
-            console.log('sig', signature);
             var transaction, objectStore, indexName = null;
             if (bongo.debug) {
                 console.debug('ensureObjectStore');
@@ -312,7 +311,7 @@ var bongo;
                 var request;
                 if (typeof criteria === "string") {
                     request = objectStore.delete(criteria);
-                } else if (JSON.stringify(criteria) === "{}") {
+                } else if (typeof criteria === 'undefined' || JSON.stringify(criteria) === "{}") {
                     request = objectStore.clear();
                 }
                 request.onsuccess = function (event) {
@@ -561,7 +560,7 @@ var bongo;
                         }
                     } else if (typeof doc[key] === 'undefined') {
                         return false;
-                    } else if (typeof criteria[key] === 'string') {
+                    } else if (typeof criteria[key] === 'string' || typeof criteria[key] === 'number') {
                         if (doc[key] != criteria[key]) {
                             return false;
                         }
