@@ -1,7 +1,16 @@
 var assert = chai.assert;
 var schema = {
   name: 'acme',
-  collections: ["users","employees"]
+  objectStores: {
+    users: [],
+    employees: ['salary']
+  }
+};
+
+// Style 2
+var schema2 = {
+  name: 'acme',
+  objectStores: ['users','salary']
 };
 
 describe("bongo", function() {
@@ -65,7 +74,7 @@ describe("bongo", function() {
 
         bongo.getStoredSignature('acme',function(signature) {
           assert.equal(signature.name,'acme');
-          assert.equal(Object.keys(signature.objectStores).length,schema.objectStores.length);
+          assert.equal(Object.keys(signature.objectStores).length,Object.keys(schema.objectStores).length);
           done();
         });
       });
