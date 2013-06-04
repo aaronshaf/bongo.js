@@ -116,7 +116,7 @@ module bongo {
         var request;
         if(typeof criteria === "string") {
           request = objectStore.delete(criteria);  
-        } else if(JSON.stringify(criteria) === "{}") {
+        } else if(typeof criteria === 'undefined' || JSON.stringify(criteria) === "{}") {
           request = objectStore.clear();  
         }
         request.onsuccess = function(event) {
