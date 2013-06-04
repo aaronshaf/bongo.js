@@ -255,7 +255,6 @@ var bongo;
             }.bind(this));
         };
         ObjectStore.prototype.ensureObjectStore = function (transaction, signature, database) {
-            console.log('sig', signature);
             var transaction, objectStore, indexName = null;
             if (bongo.debug) {
                 console.debug('ensureObjectStore');
