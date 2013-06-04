@@ -86,7 +86,7 @@ module bongo {
             }
           } else if(typeof doc[key] === 'undefined') {
             return false;
-          } else if(typeof criteria[key] === 'string') {
+          } else if(typeof criteria[key] === 'string' || typeof criteria[key] === 'number') {
             if(doc[key] != criteria[key]) {
               return false;
             }
