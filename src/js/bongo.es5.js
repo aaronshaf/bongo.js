@@ -624,10 +624,14 @@ var bongo;
                                 }
                             }
                             if (match) {
-                                if (_this.keys.length) {
-                                    value = pick(value, _this.keys);
+                                if (_this._skip > 0) {
+                                    _this._skip--;
+                                } else {
+                                    if (_this.keys.length) {
+                                        value = pick(value, _this.keys);
+                                    }
+                                    results.push(value);
                                 }
-                                results.push(value);
                             }
                         }
                         if (results.length < _this._limit) {
