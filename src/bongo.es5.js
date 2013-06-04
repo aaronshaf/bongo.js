@@ -6,21 +6,54 @@ var bongo;
             }; }
             this.ensured = false;
             this.objectStores = [];
-            definition.objectStores = definition.objectStores || [];
+            var name;
+            var objectStore;
+            var definition;
+            var indexes;
+            definition.objectStores = definition.objectStores || definition.collections || [];
             this.name = definition.name;
-            for(var x = 0; x < definition.objectStores.length; x++) {
-                if (typeof definition.objectStores[x] === 'string') {
-                    definition.objectStores[x] = {
-                        name: definition.objectStores[x]
-                    };
+            if (definition.objectStores instanceof Array) {
+                for(var x = 0; x < definition.objectStores.length; x++) {
+                    if (typeof definition.objectStores[x] === 'string') {
+                        definition.objectStores[x] = {
+                            name: definition.objectStores[x]
+                        };
+                    }
+                    objectStore = new bongo.ObjectStore(this, definition.objectStores[x]);
+                    this[objectStore.name] = objectStore;
+                    this.objectStores.push(objectStore);
                 }
-                ;
-                var objectStore = new bongo.ObjectStore(this, definition.objectStores[x]);
-                this[objectStore.name] = objectStore;
-                this.objectStores.push(objectStore);
+            } else {
+                for(name in definition.objectStores) {
+                    if (definition.objectStores[name] instanceof Array) {
+                        indexes = {};
+                        definition.objectStores[name].forEach(function (index) {
+                            indexes[index] = {
+                                keyPath: index,
+                                multiEntry: false,
+                                unique: false
+                            };
+                        });
+                        definition.objectStores[name] = {
+                            name: name,
+                            indexes: indexes
+                        };
+                    }
+                    objectStore = new bongo.ObjectStore(this, definition.objectStores[name]);
+                    this[objectStore.name] = objectStore;
+                    this.objectStores.push(objectStore);
+                }
             }
-            this.ensure(callback);
+            if (bongo.supported) {
+                this.ensure(callback);
+            }
         }
+        Database.prototype.collection = function (name) {
+            return this[name];
+        };
+        Database.prototype.objectStore = function (name) {
+            return this[name];
+        };
         Database.prototype.signature = function () {
             var objectStores = {};
             this.objectStores.forEach(function (objectStore) {
@@ -94,7 +127,6 @@ var bongo;
                         console.debug('onupgradeneeded');
                     }
                     var db = request.result;
-                    db.close();
                 };
                 request.onsuccess = function (event) {
                     if (bongo.debug) {
@@ -123,6 +155,9 @@ var bongo;
                 console.debug('Ensuring ' + this.name);
             }
             bongo.getStoredSignature(this.name, function (signature) {
+                if (bongo.debug) {
+                    console.debug('Signature found: ' + JSON.stringify(signature));
+                }
                 if (bongo.equals(signature, _this.signature())) {
                     bongo.getStoredVersion(_this.name, function (version) {
                         _this.version = version;
@@ -132,22 +167,31 @@ var bongo;
                     return;
                 }
                 bongo.getStoredVersion(_this.name, function (version) {
+                    if (bongo.debug) {
+                        console.debug('Version found: ' + version);
+                    }
                     _this.version = version + 1;
                     var request = bongo.indexedDB.open(_this.name, _this.version);
                     request.onblocked = function (event) {
                         console.log('blocked', request.error.name);
                     };
                     request.onupgradeneeded = function (event) {
+                        if (bongo.debug) {
+                            console.debug('onupgradeneeded in ensure, version ' + _this.version);
+                        }
+                        var transaction = event.currentTarget.transaction;
                         var db = request.result;
                         for(var x = 0; x < _this.objectStores.length; x++) {
-                            _this.objectStores[x].ensureObjectStore(db);
+                            _this.objectStores[x].ensureObjectStore(transaction, signature, db);
                         }
                         for(var name in signature.objectStores) {
                             if (typeof _this[name] === 'undefined' && db.objectStoreNames.contains(name)) {
                                 db.deleteObjectStore(name);
                             }
                         }
-                        db.close();
+                        if (_this.version > 2) {
+                            db.close();
+                        }
                         setTimeout(function () {
                             callback();
                         }, 1);
@@ -168,7 +212,7 @@ var bongo;
             this.name = definition.name;
             this.keyPath = definition.keyPath || '_id';
             this.autoIncrement = !!definition.autoIncrement;
-            this.indexes = definition.indexes || [];
+            this.indexes = definition.indexes || {};
         }
         ObjectStore.prototype.filter = function (fn) {
             var query = new bongo.Query(this.database, [
@@ -176,11 +220,12 @@ var bongo;
             ]);
             return query.filter(fn);
         };
-        ObjectStore.prototype.find = function (criteria) {
+        ObjectStore.prototype.find = function (criteria, fields) {
+            if (typeof fields === "undefined") { fields = null; }
             var query = new bongo.Query(this.database, [
                 this.name
             ]);
-            return query.find(criteria);
+            return query.find(criteria, fields);
         };
         ObjectStore.prototype.findOne = function (criteria, callback) {
             var query = new bongo.Query(this.database, [
@@ -209,7 +254,9 @@ var bongo;
                 request.onsuccess = success;
             }.bind(this));
         };
-        ObjectStore.prototype.ensureObjectStore = function (database) {
+        ObjectStore.prototype.ensureObjectStore = function (transaction, signature, database) {
+            console.log('sig', signature);
+            var transaction, objectStore, indexName = null;
             if (bongo.debug) {
                 console.debug('ensureObjectStore');
             }
@@ -217,11 +264,23 @@ var bongo;
                 if (bongo.debug) {
                     console.debug('Creating ' + this.name);
                 }
-                var objectStore = database.createObjectStore(this.name, {
+                objectStore = database.createObjectStore(this.name, {
                     keyPath: "_id",
                     autoIncrement: false
                 });
-            } else {
+            } else if (database.objectStoreNames && database.objectStoreNames.contains(this.name)) {
+                objectStore = transaction.objectStore(this.name);
+            }
+            for(var x = 0; x < objectStore.indexNames.length; x++) {
+                if (typeof this.indexes[objectStore.indexNames.item(x)] === 'undefined') {
+                    console.log('deleting');
+                    objectStore.deleteIndex(objectStore.indexNames.item(x));
+                }
+            }
+            for(var indexName in this.indexes) {
+                if (!objectStore.indexNames.contains(indexName)) {
+                    objectStore.createIndex(indexName, this.indexes[indexName].keyPath);
+                }
             }
             return objectStore;
         };
@@ -427,6 +486,9 @@ var bongo;
             this.keys = [];
         }
         Query.prototype.findOne = function (criteria, callback) {
+            if (!bongo.supported) {
+                return callback('IndexedDB not supported');
+            }
             this.find(criteria).limit(1).toArray(function (error, results) {
                 if (error) {
                     return callback(error);
@@ -438,8 +500,19 @@ var bongo;
                 }
             });
         };
-        Query.prototype.find = function (criteria) {
+        Query.prototype.find = function (criteria, fields) {
             if (typeof criteria === "undefined") { criteria = {}; }
+            if (typeof fields === "undefined") { fields = null; }
+            var key;
+            if (fields && typeof fields === 'object') {
+                var _fields = [];
+                for(key in fields) {
+                    if (fields[key]) {
+                        _fields.push(key);
+                    }
+                }
+                this.pick(_fields);
+            }
             this.filters.push(function (doc) {
                 var match = true, x, y;
                 for(var key in criteria) {
@@ -520,6 +593,9 @@ var bongo;
         };
         Query.prototype.toArray = function (callback) {
             var _this = this;
+            if (!bongo.supported) {
+                return callback('IndexedDB not supported');
+            }
             this.database.get(function (database) {
                 var transaction = database.transaction(_this.objectStores, "readonly");
                 var objectStore = transaction.objectStore(_this.objectStores[0]);
@@ -585,6 +661,8 @@ var bongo;
         return copy;
     }
 })(bongo || (bongo = {}));
+
+
 var bongo;
 (function (bongo) {
     bongo.debug = false;
@@ -595,6 +673,15 @@ var bongo;
     function db(definition, callback) {
         if (typeof callback === "undefined") { callback = function () {
         }; }
+        if (typeof definition === "string") {
+            if (typeof bongo[definition] !== 'undefined') {
+                return bongo[definition];
+            } else {
+                definition = {
+                    name: definition
+                };
+            }
+        }
         if (typeof bongo[definition.name] === 'undefined') {
             Object.defineProperty(bongo, definition.name, {
                 value: new bongo.Database(definition, callback)
@@ -633,9 +720,15 @@ var bongo;
                 var transaction = db.transaction(objectStoreNames, "readonly");
                 objectStoreNames.forEach(function (objectStoreName) {
                     var objectStore = transaction.objectStore(objectStoreName);
-                    indexes = [];
+                    var index;
+                    indexes = {};
                     for(var x = 0; x < objectStore.indexNames.length; x++) {
-                        indexes.push(objectStore.indexNames.item(x));
+                        index = objectStore.index(objectStore.indexNames.item(x));
+                        indexes[objectStore.indexNames.item(x)] = {
+                            keyPath: index.keyPath,
+                            multiEntry: index.multiEntry,
+                            unique: index.unique
+                        };
                     }
                     objectStores[objectStoreName] = {
                         autoIncrement: objectStore.autoIncrement,
@@ -739,3 +832,11 @@ var bongo;
     }
     bongo.info = info;
 })(bongo || (bongo = {}));
+if (typeof module === "object" && typeof module.exports === "object") {
+    module.exports = bongo;
+} else if (typeof define === "function" && define.amd) {
+    define("bongo", [], function () {
+        return bongo;
+    });
+}
+//@ sourceMappingURL=bongo.es5.js.map
