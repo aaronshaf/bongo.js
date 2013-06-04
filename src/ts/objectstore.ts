@@ -64,7 +64,6 @@ module bongo {
 
     ensureObjectStore(transaction,signature,database) {
       // http://stackoverflow.com/a/11550171/176758
-      console.log('sig',signature);
       var transaction,objectStore,indexName = null;
 
       // signature.objectStores[this.name].indexes
