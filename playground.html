@@ -49,7 +49,7 @@
     function AppController($scope) {
       $scope.players = [];
       $scope.query = 'bongo.playground.players.find({age:32}).limit(100).toArray(update)';
-      $.getJSON('/mock.json',function(data) {
+      $.getJSON('mock.json',function(data) {
         data.players.forEach(function(player) {
           bongo.playground.players.save(player);
         });
