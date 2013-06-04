@@ -6,18 +6,43 @@ var bongo;
             }; }
             this.ensured = false;
             this.objectStores = [];
+            var name;
+            var objectStore;
+            var definition;
+            var indexes;
             definition.objectStores = definition.objectStores || definition.collections || [];
             this.name = definition.name;
-            for(var x = 0; x < definition.objectStores.length; x++) {
-                if (typeof definition.objectStores[x] === 'string') {
-                    definition.objectStores[x] = {
-                        name: definition.objectStores[x]
-                    };
+            if (definition.objectStores instanceof Array) {
+                for(var x = 0; x < definition.objectStores.length; x++) {
+                    if (typeof definition.objectStores[x] === 'string') {
+                        definition.objectStores[x] = {
+                            name: definition.objectStores[x]
+                        };
+                    }
+                    objectStore = new bongo.ObjectStore(this, definition.objectStores[x]);
+                    this[objectStore.name] = objectStore;
+                    this.objectStores.push(objectStore);
                 }
-                ;
-                var objectStore = new bongo.ObjectStore(this, definition.objectStores[x]);
-                this[objectStore.name] = objectStore;
-                this.objectStores.push(objectStore);
+            } else {
+                for(name in definition.objectStores) {
+                    if (definition.objectStores[name] instanceof Array) {
+                        indexes = {};
+                        definition.objectStores[name].forEach(function (index) {
+                            indexes[index] = {
+                                keyPath: index,
+                                multiEntry: false,
+                                unique: false
+                            };
+                        });
+                        definition.objectStores[name] = {
+                            name: name,
+                            indexes: indexes
+                        };
+                    }
+                    objectStore = new bongo.ObjectStore(this, definition.objectStores[name]);
+                    this[objectStore.name] = objectStore;
+                    this.objectStores.push(objectStore);
+                }
             }
             if (bongo.supported) {
                 this.ensure(callback);
@@ -102,7 +127,6 @@ var bongo;
                         console.debug('onupgradeneeded');
                     }
                     var db = request.result;
-                    db.close();
                 };
                 request.onsuccess = function (event) {
                     if (bongo.debug) {
@@ -155,14 +179,18 @@ var bongo;
                         if (bongo.debug) {
                             console.debug('onupgradeneeded in ensure, version ' + _this.version);
                         }
+                        var transaction = event.currentTarget.transaction;
                         var db = request.result;
                         for(var x = 0; x < _this.objectStores.length; x++) {
-                            _this.objectStores[x].ensureObjectStore(db);
+                            _this.objectStores[x].ensureObjectStore(transaction, signature, db);
                         }
                         for(var name in signature.objectStores) {
                             if (typeof _this[name] === 'undefined' && db.objectStoreNames.contains(name)) {
                                 db.deleteObjectStore(name);
                             }
+                        }
+                        if (_this.version > 2) {
+                            db.close();
                         }
                         setTimeout(function () {
                             callback();
@@ -184,7 +212,7 @@ var bongo;
             this.name = definition.name;
             this.keyPath = definition.keyPath || '_id';
             this.autoIncrement = !!definition.autoIncrement;
-            this.indexes = definition.indexes || [];
+            this.indexes = definition.indexes || {};
         }
         ObjectStore.prototype.filter = function (fn) {
             var query = new bongo.Query(this.database, [
@@ -226,7 +254,9 @@ var bongo;
                 request.onsuccess = success;
             }.bind(this));
         };
-        ObjectStore.prototype.ensureObjectStore = function (database) {
+        ObjectStore.prototype.ensureObjectStore = function (transaction, signature, database) {
+            console.log('sig', signature);
+            var transaction, objectStore, indexName = null;
             if (bongo.debug) {
                 console.debug('ensureObjectStore');
             }
@@ -234,11 +264,23 @@ var bongo;
                 if (bongo.debug) {
                     console.debug('Creating ' + this.name);
                 }
-                var objectStore = database.createObjectStore(this.name, {
+                objectStore = database.createObjectStore(this.name, {
                     keyPath: "_id",
                     autoIncrement: false
                 });
-            } else {
+            } else if (database.objectStoreNames && database.objectStoreNames.contains(this.name)) {
+                objectStore = transaction.objectStore(this.name);
+            }
+            for(var x = 0; x < objectStore.indexNames.length; x++) {
+                if (typeof this.indexes[objectStore.indexNames.item(x)] === 'undefined') {
+                    console.log('deleting');
+                    objectStore.deleteIndex(objectStore.indexNames.item(x));
+                }
+            }
+            for(var indexName in this.indexes) {
+                if (!objectStore.indexNames.contains(indexName)) {
+                    objectStore.createIndex(indexName, this.indexes[indexName].keyPath);
+                }
             }
             return objectStore;
         };
@@ -678,9 +720,15 @@ var bongo;
                 var transaction = db.transaction(objectStoreNames, "readonly");
                 objectStoreNames.forEach(function (objectStoreName) {
                     var objectStore = transaction.objectStore(objectStoreName);
-                    indexes = [];
+                    var index;
+                    indexes = {};
                     for(var x = 0; x < objectStore.indexNames.length; x++) {
-                        indexes.push(objectStore.indexNames.item(x));
+                        index = objectStore.index(objectStore.indexNames.item(x));
+                        indexes[objectStore.indexNames.item(x)] = {
+                            keyPath: index.keyPath,
+                            multiEntry: index.multiEntry,
+                            unique: index.unique
+                        };
                     }
                     objectStores[objectStoreName] = {
                         autoIncrement: objectStore.autoIncrement,
