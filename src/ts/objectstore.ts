@@ -3,13 +3,13 @@ module bongo {
     name: string;
     keyPath: string;
     autoIncrement: Boolean;
-    indexes: any[];
+    indexes: {};
 
     constructor(public database,definition) {
       this.name = definition.name;
       this.keyPath = definition.keyPath || '_id';
       this.autoIncrement = !!definition.autoIncrement;
-      this.indexes = definition.indexes || [];
+      this.indexes = definition.indexes || {};
       //this.compoundIndexes = findCompoundIndexes(objectStore.indexes || []);
     }
 
@@ -62,30 +62,40 @@ module bongo {
       }.bind(this));
     }
 
-    ensureObjectStore(database) {
+    ensureObjectStore(transaction,signature,database) {
+      // http://stackoverflow.com/a/11550171/176758
+      console.log('sig',signature);
+      var transaction,objectStore,indexName = null;
+
+      // signature.objectStores[this.name].indexes
+
       if(bongo.debug) console.debug('ensureObjectStore');
       if(!database.objectStoreNames || !database.objectStoreNames.contains(this.name)) {
         if(bongo.debug) console.debug('Creating ' + this.name);
-        var objectStore = database.createObjectStore(this.name, {
+        objectStore = database.createObjectStore(this.name, {
           keyPath: "_id",
           autoIncrement:false
         });
-      } else {
+      } else if(database.objectStoreNames && database.objectStoreNames.contains(this.name)) {
+        objectStore = transaction.objectStore(this.name);
+
         // Check to see if keyPath or autoIncrement has changed
         // If so, recreate objectStore
 
         // Check to see if indexes have changed
       }
 
-      /*
-      this.indexes.forEach(function(index) {
-        if(index instanceof Array) {
-          objectStore.createIndex(index.join(),index,{unique: false});
-        } else if(typeof index === "string") {
-          objectStore.createIndex(index,index,{unique: false});
+      for(var x = 0;x < objectStore.indexNames.length;x++) {
+        if(typeof this.indexes[objectStore.indexNames.item(x)] === 'undefined') {
+          console.log('deleting');
+          objectStore.deleteIndex(objectStore.indexNames.item(x));
         }
-      });
-      */ 
+      }
+      for(var indexName in this.indexes) {
+        if(!objectStore.indexNames.contains(indexName)) {
+          objectStore.createIndex(indexName,this.indexes[indexName].keyPath);
+        }
+      }
       return objectStore; 
     }
 

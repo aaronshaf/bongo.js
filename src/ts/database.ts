@@ -6,17 +6,44 @@ module bongo {
     objectStores: any[] = [];
 
     constructor(definition: DatabaseDefinition,callback = function() {}) {
+      var name: string;
+      var objectStore: any;
+      var definition: any;
+      var indexes: any;
+
       definition.objectStores = definition.objectStores || definition.collections || [];
       this.name = definition.name;
-      for(var x = 0;x < definition.objectStores.length;x++) {
-        if(typeof definition.objectStores[x] === 'string') {
-          definition.objectStores[x] = {
-            name: definition.objectStores[x]
+      if(definition.objectStores instanceof Array) {
+        for(var x = 0;x < definition.objectStores.length;x++) {
+          if(typeof definition.objectStores[x] === 'string') {
+            definition.objectStores[x] = {
+              name: definition.objectStores[x]
+            }
           }
-        };
-        var objectStore = new bongo.ObjectStore(this,definition.objectStores[x]);
-        this[objectStore.name] = objectStore;
-        this.objectStores.push(objectStore);
+          objectStore = new bongo.ObjectStore(this,definition.objectStores[x]);
+          this[objectStore.name] = objectStore;
+          this.objectStores.push(objectStore);
+        }
+      } else {
+        for(name in definition.objectStores) {
+          if(definition.objectStores[name] instanceof Array) {
+            indexes = {};
+            definition.objectStores[name].forEach(function(index) {
+              indexes[index] = {
+                keyPath: index,
+                multiEntry: false, // For now
+                unique: false // For now
+              };
+            });
+            definition.objectStores[name] = {
+              name: name,
+              indexes: indexes
+            }
+          }
+          objectStore = new bongo.ObjectStore(this,definition.objectStores[name]);
+          this[objectStore.name] = objectStore;
+          this.objectStores.push(objectStore);
+        }
       }
       if(bongo.supported) this.ensure(callback);
     }
@@ -117,7 +144,7 @@ module bongo {
             }
           }
           */
-          db.close();
+          // db.close();
         };
 
         request.onsuccess = (event) => {
@@ -145,7 +172,6 @@ module bongo {
       // Compare signature of definition and definition of current database
       bongo.getStoredSignature(this.name,(signature) => {
         if(bongo.debug) console.debug('Signature found: ' + JSON.stringify(signature));
-        //console.log(bongo.equals(signature,this.signature()));
         if(bongo.equals(signature,this.signature())) {
           bongo.getStoredVersion(this.name,(version) => {
             this.version = version;
@@ -170,16 +196,22 @@ module bongo {
           // See: https://groups.google.com/a/chromium.org/forum/?fromgroups#!topic/chromium-html5/8C-NWF2FajA
           request.onupgradeneeded = (event) => {
             if(bongo.debug) console.debug('onupgradeneeded in ensure, version ' + this.version);
+            var transaction = event.currentTarget.transaction;
             var db = request.result;
             for(var x = 0;x < this.objectStores.length;x++) {
-              this.objectStores[x].ensureObjectStore(db);
+              this.objectStores[x].ensureObjectStore(transaction,signature,db);
             }
             for(var name in signature.objectStores) {
               if(typeof this[name] === 'undefined' && db.objectStoreNames.contains(name)) {
                 db.deleteObjectStore(name);
               }
             }
-            // db.close();
+
+            // Not sure why this is necessary yet, but it breaks otherwise
+            if(this.version > 2) {
+              db.close(); 
+            }
+
             setTimeout(function(){
               callback();
             },1);

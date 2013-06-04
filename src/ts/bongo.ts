@@ -53,7 +53,6 @@ module bongo {
     request.onsuccess = function(event) {
       var x,indexes,db = event.target.result;
       var name,objectStore,objectStoreNames = [],objectStores = {};
-
       for(x = 0;x < db.objectStoreNames.length;x++) {
         objectStoreNames.push(db.objectStoreNames.item(x));
       }
@@ -62,9 +61,16 @@ module bongo {
         var transaction = db.transaction(objectStoreNames, "readonly");
         objectStoreNames.forEach(function(objectStoreName) {
           var objectStore = transaction.objectStore(objectStoreName);
-          indexes = [];
+          var index;
+          indexes = {};
           for(var x = 0;x < objectStore.indexNames.length;x++) {
-            indexes.push(objectStore.indexNames.item(x));
+            // console.log('.',objectStore.index(objectStore.indexNames.item(x)));
+            index = objectStore.index(objectStore.indexNames.item(x));
+            indexes[objectStore.indexNames.item(x)] = {
+              keyPath: index.keyPath,
+              multiEntry: index.multiEntry,
+              unique: index.unique
+            };
           }
           objectStores[objectStoreName] = {
             autoIncrement: objectStore.autoIncrement,
