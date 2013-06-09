@@ -48,8 +48,22 @@ module bongo {
       if(bongo.supported) this.ensure(callback);
     }
 
-    collection(name) {return this[name];}
-    objectStore(name) {return this[name];}
+    collection(name: string) {
+      return this.objectStore(name);
+    }
+
+    objectStore(name) {
+      if(typeof this[name] === 'undefined') {
+        console.log('name',name);
+          var objectStore = new bongo.ObjectStore(this,name);
+          this[objectStore.name] = objectStore;
+          this.objectStores.push(objectStore);
+          this.ensured = false;
+          this.ensure();
+          return objectStore;
+      }
+      return this[name];
+    }
 
     signature() {
       var objectStores = {};
