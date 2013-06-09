@@ -49,9 +49,18 @@ var bongo;
             }
         }
         Database.prototype.collection = function (name) {
-            return this[name];
+            return this.objectStore(name);
         };
         Database.prototype.objectStore = function (name) {
+            if (typeof this[name] === 'undefined') {
+                console.log('name', name);
+                var objectStore = new bongo.ObjectStore(this, name);
+                this[objectStore.name] = objectStore;
+                this.objectStores.push(objectStore);
+                this.ensured = false;
+                this.ensure();
+                return objectStore;
+            }
             return this[name];
         };
         Database.prototype.signature = function () {
