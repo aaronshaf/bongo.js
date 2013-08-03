@@ -256,3 +256,4 @@ if(bongo.supported) {
 * [axemclion/IndexedDBShim](https://github.com/axemclion/IndexedDBShim) (polyfill)
 * [Parashuram's IndexedDB Experiments] (http://nparashuram.com/IndexedDB/)
 * [The ObjectStore Database System, by Charles Lamb, Gordon Landis, Jack Orenstein, and Dan Weinreb](http://diaswww.epfl.ch/courses/adms07/papers/p50-lamb.pdf) (PDF)
+* [louischatriot/nedb]((https://github.com/louischatriot/nedb)
