@@ -1,4 +1,4 @@
-# Bongo.js
+# Bongo.js (deprecated)
 
 Bongo.js is a JavaScript library for storing and querying structured data on the browser. Lots of it.
 
